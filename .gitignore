@@ -259,3 +259,12 @@ paket-files/
 # Python Tools for Visual Studio (PTVS)
 __pycache__/
 *.pyc
+/Library
+/ProjectSettings
+/Temp
+/test_Data
+/UnityPackageManager
+/IDG_Game_One.csproj
+/IDG_Game_One.sln
+*.dll
+*.exe
