@@ -83,7 +83,7 @@ namespace IDG.FightClient
                
             }
         }
-        public int ClientId;
+        public int ClientId=-1;
         private ShapBase _shap;
         public ShapBase Shap
         {
@@ -140,11 +140,18 @@ namespace IDG.FightClient
     //    this.y = new Ratio(0);
     //    this.z = new Ratio(0);
     //}
-    public V2(int x,int y)
+        public V2(int x,int y)
         {
             this.x = new Ratio(x,1);
             this.y = new Ratio(y,1);
            
+        }
+        public V2(float x, float y)
+        {
+            
+            this.x = new Ratio((int)x, 1);
+            this.y = new Ratio((int)y, 1);
+
         }
         public V2(Ratio x, Ratio y)
         {
