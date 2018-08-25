@@ -31,7 +31,7 @@ namespace IDG
         }
         public static Ratio operator +(Ratio a, int b)
         {
-            return new Ratio(a._ratio + b);
+            return new Ratio(a._ratio + b*precision);
         }
         public static Ratio operator -(Ratio a, Ratio b)
         {
@@ -39,7 +39,7 @@ namespace IDG
         }
         public static Ratio operator -(Ratio a, int b)
         {
-            return new Ratio(a._ratio - b);
+            return new Ratio(a._ratio - b * precision);
         }
         public static Ratio operator *(Ratio a, Ratio b)
         {
@@ -61,6 +61,14 @@ namespace IDG
         public static bool operator <(Ratio a, Ratio b)
         {
             return a._ratio < b._ratio;
+        }
+        public static bool operator >=(Ratio a, Ratio b)
+        {
+            return a._ratio >= b._ratio;
+        }
+        public static bool operator <=(Ratio a, Ratio b)
+        {
+            return a._ratio <= b._ratio;
         }
         public static bool operator ==(Ratio a, Ratio b)
         {

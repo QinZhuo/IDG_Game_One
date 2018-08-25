@@ -6,7 +6,7 @@ using UnityEngine;
 using IDG.FightClient;
 namespace IDG
 {
-    class Tree4
+    public class Tree4
     {
         public static int MaxSize = 100;
         public static int MaxDepth=5;
@@ -23,17 +23,25 @@ namespace IDG
         {
             objs = new List<NetInfo>(SplitSize+1);
             
-            size = MaxSize / 2;
-            border = new Tree4Border(new V2(), MaxSize / 2);
+            size = MaxSize;
+            border = new Tree4Border(new V2(0,0), size);
+            brother = new Tree4Brother();
             depth = 0;
         }
-        public Tree4(Tree4Border border)
+        public Tree4(int depth, Tree4Border border)
         {
-
+            this.depth = depth;
+            objs = new List<NetInfo>(SplitSize + 1);
+            this.border = border;
         }
         public void Split()
         {
-            child = new Tree4Child(border, brother);
+            child = new Tree4Child(depth+1,border, brother);
+            while (objs.Count>0)
+            {
+                AddChild(objs[0]);
+                objs.RemoveAt(0);
+            }
             Debug.Log(1);
         }
         public void Add(NetInfo obj)
@@ -41,30 +49,51 @@ namespace IDG
             if (child == null)
             {
                 objs.Add(obj);
-                if (objs.Count > SplitSize)
+                if (objs.Count > SplitSize&&depth<=MaxDepth)
                 {
                     Split();
                 }
             }
             else
             {
-                child.Add(obj);
+               AddChild(obj);
             }
          
         }
         public void AddChild(NetInfo obj)
         {
-            if (obj.Right>border.center.x)
+            if (obj.Left <= border.center.x)
             {
-                if (obj.Down > border.center.y)
+                if (obj.Up >= border.center.y)
                 {
                     child.LeftUp.Add(obj);
                 }
-                else if(obj.Down < border.center.y)
-                {
+            }
 
+            if (obj.Left <= border.center.x)
+            {
+                if (obj.Down <= border.center.y)
+                {
+                    child.LeftDown.Add(obj);
                 }
             }
+            if (obj.Right >= border.center.x)
+            {
+                if (obj.Up >= border.center.y)
+                {
+                    child.RightUp.Add(obj);
+                }
+            }
+            if (obj.Right >= border.center.x)
+            {
+                if (obj.Down <= border.center.y)
+                {
+                    child.RightDown.Add(obj);
+                }
+            }
+
+
+            
         }
         //public Tree4()
         //{
@@ -72,7 +101,7 @@ namespace IDG
         //}
         // List<object>
     }
-    class Tree4Child
+    public class Tree4Child
     {
         public Tree4 LeftUp{ get { return trees[(int)Pos.LeftUp]; } }
         public Tree4 LeftDown { get { return trees[(int)Pos.LeftDown]; } }
@@ -80,12 +109,13 @@ namespace IDG
         public Tree4 RightDown { get { return trees[(int)Pos.RightDown]; } }
 
         private Tree4[] trees;
-        public Tree4Child(Tree4Border border,Tree4Brother brother)
+        public Tree4Child(int depth,Tree4Border border,Tree4Brother brother)
         {
+            trees = new Tree4[4];
             Tree4Border[] borders= border.Split();
             for (int i = 0; i < 4; i++)
             {
-                trees[i] = new Tree4(borders[i]);
+                trees[i] = new Tree4(depth,borders[i]);
             }
             trees[(int)Pos.LeftUp].brother = new Tree4Brother(brother.Left,RightUp,brother.Up,LeftDown);
             trees[(int)Pos.LeftDown].brother = new Tree4Brother(brother.Left, RightDown,LeftUp, brother.Down);
@@ -94,7 +124,7 @@ namespace IDG
         }
         
     }
-    class Tree4Brother
+    public class Tree4Brother
     {
         public Tree4 Left { get { return brothers[(int)Dir.Left]; } }
         public Tree4 Right { get { return brothers[(int)Dir.Right]; } }
@@ -128,16 +158,16 @@ namespace IDG
         Left=0,
         Right=1,
         Up=2,
-        Down=4,
+        Down=3,
     }
     enum Pos: byte
     {
         LeftUp=0,
         LeftDown=1,
         RightUp=2,
-        RightDown=0,
+        RightDown=3,
     }
-    class Tree4Border
+    public class Tree4Border
     {
         public Ratio Left { get { return borders[(int)Dir.Left]; } }
         public Ratio Right { get { return borders[(int)Dir.Right]; } }
@@ -165,6 +195,7 @@ namespace IDG
             borders[(int)Dir.Right] = right;
             borders[(int)Dir.Up] = up;
             borders[(int)Dir.Down] = down;
+            center = new V2((left + right) / 2, (up+down) / 2);
         }
         
         public Tree4Border[] Split()

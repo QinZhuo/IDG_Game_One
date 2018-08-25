@@ -4,19 +4,23 @@ using UnityEngine;
 using IDG;
 using IDG.FightClient;
 public class Cube : NetObject {
-   // public NetInfo net;
+    // public NetInfo net;
+    private void Awake()
+    {
+        ShapPhysics.Init();
+    }
     private void Start()
     {
+        //ShapPhysics.tree.Add(net);
         net.Position = new V2(transform.position.x, transform.position.z);
-
+        net.Shap = new BoxShap(new Ratio(1, 2));
         if (net.ClientId >= 0)
         {
            
             net.Input.framUpdate += FrameUpdate;
         }
-       
+
         
-        net.Shap = new BoxShap(new Ratio(1,2));
     }
     //float last;
     protected void FrameUpdate()

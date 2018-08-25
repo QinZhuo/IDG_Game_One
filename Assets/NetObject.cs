@@ -24,34 +24,34 @@ namespace IDG.FightClient
     [System.Serializable]
     public class NetInfo
     {
-        private V2 _position;
-        private V2 _previewPos;
+        private V2 _position=new V2();
+        private V2 _previewPos=new V2();
         public Ratio Left
         {
             get
             {
-                return  Shap.left + _previewPos.x;
+                return  _shap.left + _previewPos.x;
             }
         }
         public Ratio Right
         {
             get
             {
-                return Shap.right + _previewPos.x;
+                return _shap.right + _previewPos.x;
             }
         }
         public Ratio Up
         {
             get
             {
-                return Shap.up + _previewPos.y;
+                return _shap.up + _previewPos.y;
             }
         }
         public Ratio Down
         {
             get
             {
-                return Shap.down + _previewPos.y;
+                return _shap.down + _previewPos.y;
             }
         }
         public V2 Position
@@ -84,7 +84,7 @@ namespace IDG.FightClient
             }
         }
         public int ClientId=-1;
-        private ShapBase _shap;
+        private ShapBase _shap;//=new BoxShap(new Ratio(1,2));
         public ShapBase Shap
         {
             get
@@ -93,15 +93,18 @@ namespace IDG.FightClient
             }
             set
             {
+                //ShapPhysics.Add(this);
+                //_shap = new BoxShap(new Ratio(1, 2));
+                _shap = value;
                 if (value != null)
                 {
-                    ShapPhysics.shaps.Add(this);
+                    ShapPhysics.Add(this);
                 }
                 else
                 {
-                    ShapPhysics.shaps.Remove(this);
+                   // ShapPhysics.remove(this);
                 }
-                _shap = value;
+                
             }
         }
         public Ratio deltaTime
@@ -125,8 +128,21 @@ namespace IDG.FightClient
 
     public class ShapPhysics
     {
-        public static List<NetInfo> shaps=new List<NetInfo>();
-
+        private static List<NetInfo> shaps=null;
+        public static Tree4 tree = null;
+        public static void Init()
+        {
+            if (shaps == null && tree == null)
+            {
+                shaps = new List<NetInfo>();
+                tree = new Tree4();
+            }
+        }
+        public static void Add(NetInfo obj)
+        {
+            shaps.Add(obj);
+            tree.Add(obj);
+        }
         public static bool Check(NetInfo a)
         {
             foreach (NetInfo item in shaps)
@@ -196,7 +212,7 @@ namespace IDG.FightClient
             Points = v2s;
         }
     }
-    public class ShapBase
+    public abstract class ShapBase
     {
         public Ratio left;
         public Ratio right;
@@ -205,12 +221,13 @@ namespace IDG.FightClient
         private V2[] _points;
         public V2[] Points
         {
-            get
-            {
-                return _points;
-            }
+            //get
+            //{
+            //    return _points;
+            //}
             set
             {
+                _points = value;
                 left = value[0].x;
                 right = value[0].x;
                 up = value[0].y;
@@ -234,7 +251,7 @@ namespace IDG.FightClient
                         up = value[i].y;
                     }
                 }
-                _points = value;
+                
             }
         }
         
