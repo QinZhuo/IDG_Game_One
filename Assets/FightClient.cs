@@ -27,7 +27,7 @@ namespace IDG.FightClient
                 lock (_messageList)
                 {
                     return _messageList;
-                }
+                } 
             }
         }
         private Connection _serverCon;
