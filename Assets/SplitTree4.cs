@@ -15,16 +15,16 @@ namespace IDG
         public Tree4Border border;
         public Tree4Brother brother;
         public List<NetInfo> objs;
-       
+        public static Tree4 root;
         public int depth;
         //bool isLeaf = false;
-        public int size;
+       // public int size;
         public Tree4()
         {
             objs = new List<NetInfo>(SplitSize+1);
-            
-            size = MaxSize;
-            border = new Tree4Border(new V2(0,0), size);
+            root = this;
+            //size = MaxSize;
+            border = new Tree4Border(new V2(0,0), new Ratio(MaxSize,1));
             brother = new Tree4Brother();
             depth = 0;
         }
@@ -39,62 +39,118 @@ namespace IDG
             child = new Tree4Child(depth+1,border, brother);
             while (objs.Count>0)
             {
-                AddChild(objs[0]);
-                objs.RemoveAt(0);
+                child.Add(objs[0]);
+                //AddChild(objs[0]);
+                DisLink(objs[0]);
             }
             Debug.Log(1);
         }
         public void Add(NetInfo obj)
         {
+            if (!IsIn(obj)) return;
+            if (objs.Contains(obj)) return;
             if (child == null)
             {
-                objs.Add(obj);
+                Link(obj);
                 if (objs.Count > SplitSize&&depth<=MaxDepth)
                 {
                     Split();
-                }
+                } 
             }
             else
             {
-               AddChild(obj);
+                child.Add(obj);
             }
-         
         }
-        public void AddChild(NetInfo obj)
+        private void Link(NetInfo obj)
         {
-            if (obj.Left <= border.center.x)
-            {
-                if (obj.Up >= border.center.y)
-                {
-                    child.LeftUp.Add(obj);
-                }
-            }
-
-            if (obj.Left <= border.center.x)
-            {
-                if (obj.Down <= border.center.y)
-                {
-                    child.LeftDown.Add(obj);
-                }
-            }
-            if (obj.Right >= border.center.x)
-            {
-                if (obj.Up >= border.center.y)
-                {
-                    child.RightUp.Add(obj);
-                }
-            }
-            if (obj.Right >= border.center.x)
-            {
-                if (obj.Down <= border.center.y)
-                {
-                    child.RightDown.Add(obj);
-                }
-            }
-
-
-            
+            objs.Add(obj);
+            obj.trees.Add(this);
         }
+        private void DisLink(NetInfo obj)
+        {
+            objs.Remove(obj);
+            obj.trees.Remove(this);
+        }
+        public static bool BoxCheck(NetInfo objA,NetInfo objB)
+        {
+            if ((objA.Position.x-objB.Position.x).Abs()<(objA.Width+objB.Width)/2
+                &&
+                (objA.Position.y - objB.Position.y).Abs() < (objA.Height + objB.Height) / 2
+                )
+            {
+                return true;
+            }
+            return false;
+        }
+        public static void Move(NetInfo obj)
+        {
+            Tree4[] trees = obj.trees.ToArray();
+            foreach (var item in trees)
+            {
+                item.SubMove(obj);
+                
+            }
+        }
+        public void SubMove(NetInfo obj)
+        {
+            if (!IsIn(obj))
+            {
+                DisLink(obj);
+            }
+            brother.Add(obj);
+            //root.Add(obj);
+        }
+        public bool IsIn(NetInfo obj)
+        {
+            if(((border.center.x-obj.Position.x).Abs()<(border.size+obj.Width/2))
+                &&
+                ((border.center.y - obj.Position.y).Abs() < (border.size + obj.Height/2))
+                )
+            {
+                return true;
+            }
+            return false;
+        }
+        //public void AddChild(NetInfo obj)
+        //{
+        //    child.LeftUp.Add(obj);
+        //    child.LeftDown.Add(obj);
+        //    child.RightUp.Add(obj);
+        //    child.RightDown.Add(obj);
+        //    //if (obj.Left <= border.center.x)
+        //    //{
+        //    //    if (obj.Up >= border.center.y)
+        //    //    {
+        //    //        child.LeftUp.Add(obj);
+        //    //    }
+        //    //}
+
+        //    //if (obj.Left <= border.center.x)
+        //    //{
+        //    //    if (obj.Down <= border.center.y)
+        //    //    {
+        //    //        child.LeftDown.Add(obj);
+        //    //    }
+        //    //}
+        //    //if (obj.Right >= border.center.x)
+        //    //{
+        //    //    if (obj.Up >= border.center.y)
+        //    //    {
+        //    //        child.RightUp.Add(obj);
+        //    //    }
+        //    //}
+        //    //if (obj.Right >= border.center.x)
+        //    //{
+        //    //    if (obj.Down <= border.center.y)
+        //    //    {
+        //    //        child.RightDown.Add(obj);
+        //    //    }
+        //    //}
+
+
+
+        //}
         //public Tree4()
         //{
         //    objs = new List<object>(SplitSize);
@@ -121,6 +177,13 @@ namespace IDG
             trees[(int)Pos.LeftDown].brother = new Tree4Brother(brother.Left, RightDown,LeftUp, brother.Down);
             trees[(int)Pos.RightUp].brother = new Tree4Brother(LeftUp, brother.Right, brother.Up, RightDown);
             trees[(int)Pos.RightDown].brother = new Tree4Brother(LeftDown, brother.Right, RightUp, brother.Down);
+        }
+        public void Add(NetInfo obj)
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                trees[i].Add(obj);
+            }
         }
         
     }
@@ -152,6 +215,17 @@ namespace IDG
             brothers[(int)Dir.Up] = up;
             brothers[(int)Dir.Down] = down;
         }
+        public void Add(NetInfo obj)
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                if (brothers[i] != null)
+                {
+                    brothers[i].Add(obj);
+                }
+                
+            }
+        }
     }
     enum Dir:byte
     {
@@ -169,42 +243,42 @@ namespace IDG
     }
     public class Tree4Border
     {
-        public Ratio Left { get { return borders[(int)Dir.Left]; } }
-        public Ratio Right { get { return borders[(int)Dir.Right]; } }
-        public Ratio Up { get { return borders[(int)Dir.Up]; } }
-        public Ratio Down { get { return borders[(int)Dir.Down]; } }
+        //public Ratio Left { get { return borders[(int)Dir.Left]; } }
+        //public Ratio Right { get { return borders[(int)Dir.Right]; } }
+        //public Ratio Up { get { return borders[(int)Dir.Up]; } }
+        //public Ratio Down { get { return borders[(int)Dir.Down]; } }
 
-        //public Tree4Border(Ratio Left,Ratio Right, Ratio Up,Ratio Down)
-        //{
+        public Ratio size;
         public V2 center;
-        //}
-        Ratio[] borders;
-        public Tree4Border(V2 center,int size)
+        
+        //Ratio[] borders;
+        public Tree4Border(V2 center,Ratio size)
         {
-            borders = new Ratio[4];
+            //borders = new Ratio[4];
             this.center = center;
-            borders[(int)Dir.Left] = center.x - size;
-            borders[(int)Dir.Right] = center.x + size;
-            borders[(int)Dir.Up] = center.y + size;
-            borders[(int)Dir.Down] = center.y - size;
+            this.size = size;
+            //borders[(int)Dir.Left] = center.x - size;
+            //borders[(int)Dir.Right] = center.x + size;
+            //borders[(int)Dir.Up] = center.y + size;
+            //borders[(int)Dir.Down] = center.y - size;
         }
-        public Tree4Border(Ratio left, Ratio right, Ratio up,Ratio down)
-        {
-            borders = new Ratio[4];
-            borders[(int)Dir.Left] = left;
-            borders[(int)Dir.Right] = right;
-            borders[(int)Dir.Up] = up;
-            borders[(int)Dir.Down] = down;
-            center = new V2((left + right) / 2, (up+down) / 2);
-        }
+        //public Tree4Border(Ratio left, Ratio right, Ratio up,Ratio down)
+        //{
+        //    borders = new Ratio[4];
+        //    borders[(int)Dir.Left] = left;
+        //    borders[(int)Dir.Right] = right;
+        //    borders[(int)Dir.Up] = up;
+        //    borders[(int)Dir.Down] = down;
+        //    center = new V2((left + right) / 2, (up+down) / 2);
+        //}
         
         public Tree4Border[] Split()
         {
             Tree4Border[] bs = new Tree4Border[4];
-            bs[(int)Pos.LeftUp] = new Tree4Border(Left, center.x, Up, center.y);
-            bs[(int)Pos.LeftDown] = new Tree4Border(Left, center.x, center.y,Down);
-            bs[(int)Pos.RightUp] = new Tree4Border(center.x, Right, Up, center.y);
-            bs[(int)Pos.RightDown] = new Tree4Border(center.x,Right , center.y, Down);
+            bs[(int)Pos.LeftUp] = new Tree4Border(new V2(center.x-size / 2 , size/2+center.y),size/2);
+            bs[(int)Pos.LeftDown] = new Tree4Border(new V2(center.x - size / 2,  center.y- size / 2), size / 2);
+            bs[(int)Pos.RightUp] = new Tree4Border(new V2(center.x + size / 2, center.y + size / 2), size / 2);
+            bs[(int)Pos.RightDown] = new Tree4Border(new V2(center.x + size / 2, center.y - size / 2), size / 2);
             return bs;
         }
     }

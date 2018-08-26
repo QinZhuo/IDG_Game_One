@@ -20,45 +20,66 @@ namespace IDG.FightClient
         {
             LerpNetPos(Time.deltaTime*10);
         }
+        private void OnDrawGizmos()
+        {
+            if (net.Shap == null) return;
+            Gizmos.color = Color.white;
+            Gizmos.DrawWireCube(net.Position.ToVector3(), new Vector3(net.Width.ToFloat(), 1, net.Height.ToFloat()));
+        }
     }
     [System.Serializable]
     public class NetInfo
     {
         private V2 _position=new V2();
         private V2 _previewPos=new V2();
-        public Ratio Left
+        public Ratio Width
         {
             get
             {
-                return  _shap.left + _previewPos.x;
+                return Shap.width;
             }
         }
-        public Ratio Right
+        public Ratio Height
         {
             get
             {
-                return _shap.right + _previewPos.x;
+                return Shap.height;
             }
         }
-        public Ratio Up
-        {
-            get
-            {
-                return _shap.up + _previewPos.y;
-            }
-        }
-        public Ratio Down
-        {
-            get
-            {
-                return _shap.down + _previewPos.y;
-            }
-        }
+        public List<Tree4> trees = new List<Tree4>();
+        //public Ratio Left
+        //{
+        //    get
+        //    {
+        //        return  _shap.left + _previewPos.x;
+        //    }
+        //}
+        //public Ratio Right
+        //{
+        //    get
+        //    {
+        //        return _shap.right + _previewPos.x;
+        //    }
+        //}
+        //public Ratio Up
+        //{
+        //    get
+        //    {
+        //        return _shap.up + _previewPos.y;
+        //    }
+        //}
+        //public Ratio Down
+        //{
+        //    get
+        //    {
+        //        return _shap.down + _previewPos.y;
+        //    }
+        //}
         public V2 Position
         {
             get
             {
-                return _position;
+                return _previewPos;
             }
             set
             {
@@ -73,6 +94,9 @@ namespace IDG.FightClient
                     if (!ShapPhysics.Check(this))
                     {
                         _position = value;
+                        
+                         Tree4 .Move(this);
+                        
                     }
                     else
                     {
@@ -158,44 +182,44 @@ namespace IDG.FightClient
         }
         public static bool Check(NetInfo a,NetInfo b)
         {
-            bool xB=false, yB = false;
-            if (a.Position.x < b.Position.x)
-            {
-                if (a.Right > b.Left)
-                {
-                    xB = true;
-                }
-            }
-            else if (a.Position.x > b.Position.x )
-            {
-                if (b.Right >a.Left)
-                {
-                    xB = true;
-                }
-            }
-            else
-            {
-                xB = true;
-            }
-            if (a.Position.y < b.Position.y )
-            {
-                if ( a.Up > b.Down)
-                {
-                    yB = true;
-                }
-            }
-            else if (a.Position.y > b.Position.y)
-            {
-                if (b.Up > a.Down)
-                {
-                    yB = true;
-                }
-            }
-            else
-            {
-                yB = true;
-            }
-            return xB&&yB;
+            //bool xB=false, yB = false;
+            //if (a.Position.x < b.Position.x)
+            //{
+            //    if (a.Right > b.Left)
+            //    {
+            //        xB = true;
+            //    }
+            //}
+            //else if (a.Position.x > b.Position.x )
+            //{
+            //    if (b.Right >a.Left)
+            //    {
+            //        xB = true;
+            //    }
+            //}
+            //else
+            //{
+            //    xB = true;
+            //}
+            //if (a.Position.y < b.Position.y )
+            //{
+            //    if ( a.Up > b.Down)
+            //    {
+            //        yB = true;
+            //    }
+            //}
+            //else if (a.Position.y > b.Position.y)
+            //{
+            //    if (b.Up > a.Down)
+            //    {
+            //        yB = true;
+            //    }
+            //}
+            //else
+            //{
+            //    yB = true;
+            //}
+            return Tree4.BoxCheck(a, b);// xB&&yB;
         }
     }
 
@@ -214,10 +238,12 @@ namespace IDG.FightClient
     }
     public abstract class ShapBase
     {
-        public Ratio left;
-        public Ratio right;
-        public Ratio up;
-        public Ratio down;
+        private Ratio left;
+        private Ratio right;
+        private Ratio up;
+        private Ratio down;
+        public Ratio height;// { get { return Ratio.AbsMax(up,down); } }
+        public Ratio width;// { get { return Ratio.AbsMax(left, right); } }
         private V2[] _points;
         public V2[] Points
         {
@@ -251,6 +277,8 @@ namespace IDG.FightClient
                         up = value[i].y;
                     }
                 }
+                width = Ratio.Max(left.Abs(), right.Abs())*2;
+                height = Ratio.Max(up.Abs(), down.Abs())*2;
                 
             }
         }

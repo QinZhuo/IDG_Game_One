@@ -10,6 +10,16 @@ namespace IDG
 
         private static readonly int precision = 100;
         private int _ratio;
+
+        public static Ratio Max(Ratio a,Ratio b)
+        {
+            return a > b ? a : b;
+        }
+        public Ratio Abs()
+        {
+            return new Ratio(Math.Abs(_ratio));
+        }
+
         public Ratio(int up, int down)
         {
             _ratio = (up * precision) / down;
@@ -44,6 +54,10 @@ namespace IDG
         public static Ratio operator *(Ratio a, Ratio b)
         {
             return new Ratio(a._ratio * b._ratio / precision);
+        }
+        public static Ratio operator *(Ratio a, int b)
+        {
+            return new Ratio(a._ratio * b );
         }
 
         public static Ratio operator /(Ratio a, Ratio b)

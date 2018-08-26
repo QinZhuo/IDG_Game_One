@@ -41,18 +41,25 @@ namespace IDG
                 while (nodes.Count>0)
                 {
                     node = nodes.Pop();
-                    //Debug.Log(1);
-                    
-                    size = (node.border.Right - node.border.Left).ToFloat()-node.depth*1f/Tree4.MaxDepth;
                     i = indexs.Pop();
-                    if (i > 0) {
-                        c  = colors[i ];
+                    //Debug.Log(1);
+
+                    size = (node.border.size).ToFloat()*2-node.depth*1f/Tree4.MaxDepth;
+                   
+                    if (i >= 0) {
+                        c  = colors[i];
                     }
                     Gizmos.color = c;
                     Gizmos.DrawWireCube(node.border.center.ToVector3(), new Vector3(size,(Tree4.MaxDepth- node.depth)*10, size));
                     c.a = 0.2f*(1f * node.objs.Count/ Tree4.SplitSize);
                     Gizmos.color = c;
-                    Gizmos.DrawCube(node.border.center.ToVector3(), new Vector3(size, (Tree4.MaxDepth - node.depth) *10, size));
+                    Gizmos.DrawCube(node.border.center.ToVector3(), new Vector3(size, (Tree4.MaxDepth - node.depth) * 10, size));
+                    c.a = 0.3f;
+                    Gizmos.color = c;
+                    foreach (var item in node.objs)
+                    {
+                        Gizmos.DrawSphere(item.Position.ToVector3()+Vector3.up*(i+2), 1);
+                    }
                     if (node.child != null)
                     {
                         nodes.Push(node.child.LeftDown);
