@@ -76,6 +76,14 @@ namespace IDG
         {
             return a._ratio < b._ratio;
         }
+        public static bool operator <(Ratio a, int b)
+        {
+            return a._ratio < b*precision;
+        }
+        public static bool operator >(Ratio a, int b)
+        {
+            return a._ratio > b * precision;
+        }
         public static bool operator >=(Ratio a, Ratio b)
         {
             return a._ratio >= b._ratio;

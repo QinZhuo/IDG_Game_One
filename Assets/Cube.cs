@@ -5,15 +5,28 @@ using IDG;
 using IDG.FightClient;
 public class Cube : NetObject {
     // public NetInfo net;
+    static int cubuid=1;
+    
     private void Awake()
     {
         ShapPhysics.Init();
+        Debug.Log("init");
+       // ShapBase a = new TestShap(true);
+       // ShapBase b = new TestShap(false);
+        //Debug.Log("testShap Sport:" + ShapBase.Support(a, b, new V2(1, 0)));
+        //Debug.Log("testShap Sport:" + ShapBase.Support(a, b, new V2(-1, 0)));
+        //Debug.Log("testShap Sport:" + ShapBase.Support(a, b, new V2(0, 1)));
+        //Debug.Log("testShap Sport:" + ShapBase.Support(a, b, new V2(0, -1)));
+        //ShapPhysics.GJKCheck(a, b);
+        //Debug.Log("ABxAOxAB2:" + (new V2(-12, -4) * new V2(8, 2)) * new V2(-12, -4));
     }
     private void Start()
     {
+        name = "cube" + cubuid++;
         //ShapPhysics.tree.Add(net);
         net.Position = new V2(transform.position.x, transform.position.z);
         net.Shap = new BoxShap(new Ratio(1, 2));
+        net.name = name;
         if (net.ClientId >= 0)
         {
            
@@ -25,7 +38,7 @@ public class Cube : NetObject {
     //float last;
     protected void FrameUpdate()
     {
-        Debug.Log("frameTime:" + Time.time);
+       // Debug.Log("frameTime:" + Time.time);
        // last = Time.time;
         if (net.Input.GetKey(FrameKey.Left))
         {
@@ -43,7 +56,7 @@ public class Cube : NetObject {
         {
             net.Position += (V2.down * net.deltaTime);
         }
-        Debug.Log(net.Position);
+        //Debug.Log(net.Position);
     }
 
     // Use this for initialization

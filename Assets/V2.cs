@@ -55,22 +55,47 @@ namespace IDG
         {
             return new V2(a.x + b.x, a.y + b.y);
         }
+        public static V2 operator -(V2 a, V2 b)
+        {
+            return new V2(a.x - b.x, a.y - b.y);
+        }
         public static V2 operator *(V2 a, Ratio b)
         {
             return new V2(a.x * b, a.y * b);
         }
+        //public static V2 operator *(Ratio a, V2 b)
+        //{
+        //    return new V2(a*b.x,  a* b.y);
+        //}
         public static V2 left = new V2(-1, 0);
         public static V2 right = new V2(1, 0);
         public static V2 up = new V2(0, 1);
         public static V2 down = new V2(0, -1);
-
+        public static V2 zero = new V2(0, 0);
         //public static V3 operator +(V3 v3,Ratio ratio)
         //{
 
         //}
+        public Ratio Dot(V2 b)
+        {
+            return Dot(this, b);
+        }
+        public static Ratio Dot(V2 a,V2 b)
+        {
+            return a.x*b.x+b.y*a.y;
+        }
+
+        public static V2 operator -(V2 a)
+        {
+            return new V2(-a.x, -a.y);
+        }
+        public static V3 operator *(V2 a, V2 b)
+        {
+            return new V3(new Ratio(),new Ratio(),  a.x * b.y - a.y * b.x);
+        }
         public override string ToString()
         {
-            return "{" + x.ToString() + ",0," + y.ToString() + "}" + ":" + ToVector3().ToString();
+            return "{" + x.ToString() + "," + y.ToString() + "}";// + ":" + ToVector3().ToString();
         }
     }
 }

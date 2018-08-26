@@ -24,14 +24,15 @@ namespace IDG.FightClient
         {
             if (net.Shap == null) return;
             Gizmos.color = Color.white;
-            Gizmos.DrawWireCube(net.Position.ToVector3(), new Vector3(net.Width.ToFloat(), 1, net.Height.ToFloat()));
+            Gizmos.DrawWireCube(net.Shap.position.ToVector3(), new Vector3(net.Width.ToFloat(), 1, net.Height.ToFloat()));
         }
     }
     [System.Serializable]
     public class NetInfo
     {
+        public string name;
         private V2 _position=new V2();
-        private V2 _previewPos=new V2();
+        private V2 _lastPos=new V2();
         public Ratio Width
         {
             get
@@ -79,29 +80,37 @@ namespace IDG.FightClient
         {
             get
             {
-                return _previewPos;
+                if (Shap == null)
+                {
+                    return _position;
+                }
+                else
+                {
+                    return Shap.position;
+                }
+                
             }
             set
             {
                 if (Shap==null)
                 {
                     _position = value;
-                    _previewPos = _position;
+                    _lastPos = _position;
                 }
                 else
                 {
-                    _previewPos = value;
+                    Shap.position = value;
                     if (!ShapPhysics.Check(this))
                     {
-                        _position = value;
+                         _lastPos= Shap.position;
                         
                          Tree4 .Move(this);
                         
                     }
                     else
                     {
-                        Debug.Log("碰撞" + this.ClientId);
-                        _previewPos = _position;
+                        
+                        Shap.position =_lastPos ;
                     }
                 }
                
@@ -119,14 +128,20 @@ namespace IDG.FightClient
             {
                 //ShapPhysics.Add(this);
                 //_shap = new BoxShap(new Ratio(1, 2));
-                _shap = value;
+                
+                
                 if (value != null)
                 {
+                   
+                    _shap = value;
+                    _shap.position = _position;
                     ShapPhysics.Add(this);
+                    
                 }
                 else
                 {
-                   // ShapPhysics.remove(this);
+                    _shap = value;
+                    // ShapPhysics.remove(this);
                 }
                 
             }
@@ -148,8 +163,35 @@ namespace IDG.FightClient
        
     }
     //[System.Serializable]
-    
 
+    public class TestShap : ShapBase
+    {
+
+        public TestShap(bool isA)
+        {
+            position = new V2(0, 0);
+            V2[] v2s;
+            if (isA)
+            {
+               
+                v2s = new V2[3];
+                v2s[0] = new V2(4, 5);
+                v2s[1] = new V2(4, 11);
+                v2s[2] = new V2(9, 9);
+            }
+            else
+            {
+                v2s = new V2[4];
+                v2s[0] = new V2(7, 3);
+                v2s[1] = new V2(5, 7);
+                v2s[2] = new V2(12, 7);
+                v2s[3] = new V2(10, 2);
+            }
+            
+            Points = v2s;
+        }
+
+    }
     public class ShapPhysics
     {
         private static List<NetInfo> shaps=null;
@@ -160,6 +202,7 @@ namespace IDG.FightClient
             {
                 shaps = new List<NetInfo>();
                 tree = new Tree4();
+                
             }
         }
         public static void Add(NetInfo obj)
@@ -174,6 +217,7 @@ namespace IDG.FightClient
 
                 if (item!=a&&Check(a, item))
                 {
+                    Debug.Log("碰撞" + item.name);
                     return true;
                 }
             }
@@ -182,47 +226,117 @@ namespace IDG.FightClient
         }
         public static bool Check(NetInfo a,NetInfo b)
         {
-            //bool xB=false, yB = false;
-            //if (a.Position.x < b.Position.x)
-            //{
-            //    if (a.Right > b.Left)
-            //    {
-            //        xB = true;
-            //    }
-            //}
-            //else if (a.Position.x > b.Position.x )
-            //{
-            //    if (b.Right >a.Left)
-            //    {
-            //        xB = true;
-            //    }
-            //}
-            //else
-            //{
-            //    xB = true;
-            //}
-            //if (a.Position.y < b.Position.y )
-            //{
-            //    if ( a.Up > b.Down)
-            //    {
-            //        yB = true;
-            //    }
-            //}
-            //else if (a.Position.y > b.Position.y)
-            //{
-            //    if (b.Up > a.Down)
-            //    {
-            //        yB = true;
-            //    }
-            //}
-            //else
-            //{
-            //    yB = true;
-            //}
-            return Tree4.BoxCheck(a, b);// xB&&yB;
+
+            return GJKCheck(a.Shap, b.Shap);//Tree4.BoxCheck(a, b);// xB&&yB;
+        }
+        public static bool GJKCheck(ShapBase a, ShapBase b)
+        {
+            V2 direction =  a.position - b.position;
+            //V2 A = ;
+            Simplex s = new Simplex();
+            s.Push(ShapBase.Support(a, b, direction));
+            direction =-direction;
+            
+            while (true)
+            {
+
+                s.Push(ShapBase.Support(a, b, direction));
+                if (s.GetA().Dot(direction) < 0)
+                {
+                    return false;
+                }
+                else
+                {
+                    if (s.ContainsOrigin())
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        direction = s.GetDirection();
+                    }
+                }
+                //s.Push(A);
+
+            }
+            //return false;
         }
     }
+    class Simplex
+    {
+        List<V2> points=new List<V2>();
+        private V2 d;
+        public void Push(V2 point)
+        {
+            points.Add(point);
+        }
+        //public V2 Pop()
+        //{
+        //    V2 point = points[0];
+        //    points.RemoveAt(0);
+        //    return point;
+        //}
+        //public V2 Peek()
+        //{
+        //    return points[0];
+        //}
+        public V2 GetA()
+        {
+            return points[points.Count - 1];
+        }
+        public V2 GetB()
+        {
+            return points[points.Count - 2];
+        }
+        public V2 GetC()
+        {
+            return points[points.Count - 3];
+        }
+        public bool ContainsOrigin()
+        {
+            V2 A = GetA();
+            V2 AO = -A;
+            V2 B = GetB();
+            V2 AB = B - A;
+            if (points.Count == 3)
+            {
+                V2 C = GetC();
 
+                V2 AC = C - A;
+                V2 ABnormal = AC * AB * AB;
+                V2 ACnormal = AB * AC * AC;
+               // Debug.Log("A" + A + "B" + B + "C" + C);
+                if (ABnormal.Dot(AO) > 0)
+                {
+                    points.Remove(C);
+                    d = ABnormal;
+                }
+                else
+                {
+                    if (ACnormal.Dot(AO) > 0)
+                    {
+                        points.Remove(B);
+                        d = ACnormal;
+                    }
+                    else
+                    {
+                        return true;
+                    }
+                }
+            }
+            else
+            {
+                //Debug.Log("A" + A + "B" + B);
+                d =AB*AO*AB;
+            }
+            return false;
+        }
+        public V2 GetDirection()
+        {
+            return d;
+        }
+        
+    }
     public class BoxShap:ShapBase
     {
         
@@ -235,6 +349,7 @@ namespace IDG.FightClient
             v2s[3] = new V2(-r, -r);
             Points = v2s;
         }
+       
     }
     public abstract class ShapBase
     {
@@ -245,6 +360,7 @@ namespace IDG.FightClient
         public Ratio height;// { get { return Ratio.AbsMax(up,down); } }
         public Ratio width;// { get { return Ratio.AbsMax(left, right); } }
         private V2[] _points;
+        public V2 position;
         public V2[] Points
         {
             //get
@@ -282,7 +398,34 @@ namespace IDG.FightClient
                 
             }
         }
-        
+
+        public V2 Support(V2 direction)
+        {
+            int index = 0;
+            Ratio maxDot,t;
+            V2 p;
+            p = _points[index];
+            maxDot=V2.Dot(p, direction);
+            for (; index < _points.Length; index++)
+            {
+                t = V2.Dot(_points[index], direction);
+                //Debug.Log(_points[index] + "dot" + direction + "=" + t);
+                if (t > maxDot)
+                {
+                    maxDot = t;
+                    p = _points[index];
+                }
+            }
+            return p+position;
+        }
+        public static V2 Support(ShapBase a,ShapBase b, V2 direction)
+        {
+            V2 p1 = a.Support(direction);
+            V2 p2= b.Support(-direction);
+            //Debug.Log("Support{ p1:" + p1 + "p2:" + p2 + "p3:" + (p1 - p2));
+            return p1 - p2;
+        }
+
     }
     
 }

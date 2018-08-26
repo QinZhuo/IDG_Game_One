@@ -43,7 +43,7 @@ namespace IDG
                 //AddChild(objs[0]);
                 DisLink(objs[0]);
             }
-            Debug.Log(1);
+            //Debug.Log(1);
         }
         public void Add(NetInfo obj)
         {
