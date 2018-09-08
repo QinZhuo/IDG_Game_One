@@ -17,6 +17,9 @@ public class Test : MonoBehaviour {
         if (instance == null) instance = this;
         client = new FightClient();
         client.Connect("127.0.0.1", 12345,10);
+        V2 v2 = new V2(1, 0);
+      
+        Debug.Log(v2.Rotate(new Ratio(90)));
        // InputCenter.Instance.framUpdate += FrameUpdate;
 
     }

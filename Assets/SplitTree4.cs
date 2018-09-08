@@ -67,10 +67,24 @@ namespace IDG
             objs.Add(obj);
             obj.trees.Add(this);
         }
+        public static void Remove(NetInfo obj)
+        {
+            Tree4[] trees = obj.trees.ToArray();
+            foreach (var item in trees)
+            {
+                item.DisLink(obj);
+            }
+        }
         private void DisLink(NetInfo obj)
         {
-            objs.Remove(obj);
-            obj.trees.Remove(this);
+            if (objs.Contains(obj))
+            {
+                objs.Remove(obj);
+            }
+            if (obj.trees.Contains(this))
+            {
+                obj.trees.Remove(this);
+            }
         }
         public static bool BoxCheck(NetInfo objA,NetInfo objB)
         {
@@ -103,9 +117,9 @@ namespace IDG
         }
         public bool IsIn(NetInfo obj)
         {
-            if(((border.center.x-obj.Position.x).Abs()<(border.size+obj.Width/2))
+            if(((border.center.x-obj.Position.x).Abs()<=(border.size+obj.Width/2))
                 &&
-                ((border.center.y - obj.Position.y).Abs() < (border.size + obj.Height/2))
+                ((border.center.y - obj.Position.y).Abs() <= (border.size + obj.Height/2))
                 )
             {
                 return true;

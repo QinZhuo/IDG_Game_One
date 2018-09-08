@@ -15,6 +15,7 @@ namespace IDG
         {
             return a > b ? a : b;
         }
+
         public Ratio Abs()
         {
             return new Ratio(Math.Abs(_ratio));
@@ -23,6 +24,11 @@ namespace IDG
         public Ratio(int up, int down)
         {
             _ratio = (up * precision) / down;
+
+        }
+        public Ratio(float up)
+        {
+            _ratio = UnityEngine.Mathf.FloorToInt(up * precision);
 
         }
         private Ratio(int precisionRatio)
@@ -64,9 +70,17 @@ namespace IDG
         {
             return new Ratio(a._ratio * precision / b._ratio);
         }
+        //public static Ratio operator *(Ratio a, float b)
+        //{
+        //    return new Ratio(a._ratio *UnityEngine.Mathf.Floor(b));
+        //}
         public static Ratio operator /(Ratio a, int b)
         {
             return new Ratio(a._ratio/ b);
+        }
+        public static Ratio operator %(Ratio a, int b)
+        {
+            return new Ratio(a._ratio% (b*precision));
         }
         public static bool operator >(Ratio a, Ratio b)
         {

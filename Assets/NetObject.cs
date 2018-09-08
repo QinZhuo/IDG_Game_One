@@ -10,10 +10,11 @@ namespace IDG.FightClient
         public NetInfo net;
         // Use this for initialization
 
-      
+        
         protected void LerpNetPos(float timer)
         {
             transform.position = Vector3.Lerp(transform.position, net.Position.ToVector3(), timer);
+            transform.rotation = Quaternion.Euler(0, -net.Rotation.ToFloat(), 0);
         }
         // Update is called once per frame
         void Update()
@@ -24,7 +25,12 @@ namespace IDG.FightClient
         {
             if (net.Shap == null) return;
             Gizmos.color = Color.white;
-            Gizmos.DrawWireCube(net.Shap.position.ToVector3(), new Vector3(net.Width.ToFloat(), 1, net.Height.ToFloat()));
+            Gizmos.DrawWireCube(net.Shap.position.ToVector3(), new Vector3(net.Width.ToFloat(), 0, net.Height.ToFloat()));
+            for (int i = 0; i < net.Shap.PointsCount; i++)
+            
+            {
+                Gizmos.DrawCube((net.Shap.GetPoint(i)+ net.Position).ToVector3(), Vector3.one*0.1f);
+            }
         }
     }
     [System.Serializable]
@@ -33,6 +39,7 @@ namespace IDG.FightClient
         public string name;
         private V2 _position=new V2();
         private V2 _lastPos=new V2();
+        private Ratio _lastRota = new Ratio();
         public Ratio Width
         {
             get
@@ -48,6 +55,36 @@ namespace IDG.FightClient
             }
         }
         public List<Tree4> trees = new List<Tree4>();
+        private Ratio _rotation = new Ratio();
+        public V2 Position
+        {
+            get
+            {
+                return _position;
+            }
+            set
+            {
+                if (Shap == null)
+                {
+                    _position = value;
+                    _lastPos = _position;
+                }
+                else
+                {
+                    _position = value;
+                    if (!ShapPhysics.Check(this))
+                    {
+                        _lastPos = _position;
+                        Tree4.Move(this);
+                    }
+                    else
+                    {
+                        _position = _lastPos;
+                    }
+                }
+
+            }
+        }
         //public Ratio Left
         //{
         //    get
@@ -76,41 +113,32 @@ namespace IDG.FightClient
         //        return _shap.down + _previewPos.y;
         //    }
         //}
-        public V2 Position
+        public Ratio Rotation
         {
             get
             {
-                if (Shap == null)
-                {
-                    return _position;
-                }
-                else
-                {
-                    return Shap.position;
-                }
-                
+                    return _rotation;
             }
             set
             {
                 if (Shap==null)
                 {
-                    _position = value;
-                    _lastPos = _position;
+                    _rotation = value % 360;
+                    _lastRota = _rotation;
                 }
                 else
                 {
-                    Shap.position = value;
+                    _rotation = value;
                     if (!ShapPhysics.Check(this))
                     {
-                         _lastPos= Shap.position;
-                        
-                         Tree4 .Move(this);
-                        
+                        _lastRota = _rotation;
+                        Shap.ResetSize();
+                       // Debug.Log("rotation" + _rotation);
+                        Tree4 .Move(this);  
                     }
                     else
                     {
-                        
-                        Shap.position =_lastPos ;
+                        _rotation = _lastRota ;
                     }
                 }
                
@@ -128,20 +156,23 @@ namespace IDG.FightClient
             {
                 //ShapPhysics.Add(this);
                 //_shap = new BoxShap(new Ratio(1, 2));
-                
-                
+
+                if (_shap != null)
+                {
+                    ShapPhysics.Remove(this);
+                }
                 if (value != null)
                 {
-                   
+                    
                     _shap = value;
-                    _shap.position = _position;
+                    _shap.netinfo = this;
                     ShapPhysics.Add(this);
                     
                 }
                 else
                 {
                     _shap = value;
-                    // ShapPhysics.remove(this);
+                    
                 }
                 
             }
@@ -169,7 +200,7 @@ namespace IDG.FightClient
 
         public TestShap(bool isA)
         {
-            position = new V2(0, 0);
+           
             V2[] v2s;
             if (isA)
             {
@@ -209,6 +240,11 @@ namespace IDG.FightClient
         {
             shaps.Add(obj);
             tree.Add(obj);
+        }
+        public static void Remove(NetInfo obj)
+        {
+            shaps.Remove(obj);
+            Tree4.Remove(obj);
         }
         public static bool Check(NetInfo a)
         {
@@ -340,13 +376,13 @@ namespace IDG.FightClient
     public class BoxShap:ShapBase
     {
         
-        public BoxShap(Ratio r)
+        public BoxShap(Ratio x,Ratio y)
         {
             V2[] v2s = new V2[4];
-            v2s[0] = new V2(r, r);
-            v2s[1] = new V2(-r, r);
-            v2s[2] = new V2(r, -r);
-            v2s[3] = new V2(-r, -r);
+            v2s[0] = new V2(x/2, y/2);
+            v2s[1] = new V2(-x/2, y/2);
+            v2s[2] = new V2(x/2, -y/2);
+            v2s[3] = new V2(-x/2, -y/2);
             Points = v2s;
         }
        
@@ -360,60 +396,71 @@ namespace IDG.FightClient
         public Ratio height;// { get { return Ratio.AbsMax(up,down); } }
         public Ratio width;// { get { return Ratio.AbsMax(left, right); } }
         private V2[] _points;
-        public V2 position;
-        public V2[] Points
+        public NetInfo netinfo;
+        public V2 position { get { if (netinfo != null) { return netinfo.Position; } else { return V2.zero; } } }
+        public Ratio rotation { get { if (netinfo != null) { return netinfo.Rotation; } else { return new Ratio(); } } }
+
+        public V2 GetPoint(int index){
+            return _points[index].Rotate(rotation);
+        }
+        public int PointsCount
         {
-            //get
-            //{
-            //    return _points;
-            //}
+            get
+            {
+                return _points.Length;
+            }
+        }
+        protected V2[] Points
+        {
             set
             {
                 _points = value;
-                left = value[0].x;
-                right = value[0].x;
-                up = value[0].y;
-                down = value[0].y;
-                for (int i = 0; i < value.Length; i++)
-                {
-                    if ( value[i].x < left)
-                    {
-                        left = value[i].x;
-                    }
-                    if (value[i].x > right)
-                    {
-                        right = value[i].x;
-                    }
-                    if (value[i].y < down)
-                    {
-                        down = value[i].y;
-                    }
-                    if (value[i].y > up)
-                    {
-                        up = value[i].y;
-                    }
-                }
-                width = Ratio.Max(left.Abs(), right.Abs())*2;
-                height = Ratio.Max(up.Abs(), down.Abs())*2;
-                
+
             }
         }
-
+        public void ResetSize()
+        {
+            left = _points[0].Rotate(rotation).x;
+            right = _points[0].Rotate(rotation).x;
+            up = _points[0].Rotate(rotation).y;
+            down = _points[0].Rotate(rotation).y;
+            for (int i = 0; i < _points.Length; i++)
+            {
+                if (_points[i].Rotate(rotation).x < left)
+                {
+                    left = _points[i].Rotate(rotation).x;
+                }
+                if (_points[i].Rotate(rotation).x > right)
+                {
+                    right = _points[i].Rotate(rotation).x;
+                }
+                if (_points[i].Rotate(rotation).y < down)
+                {
+                    down = _points[i].Rotate(rotation).y;
+                }
+                if (_points[i].Rotate(rotation).y > up)
+                {
+                    up = _points[i].Rotate(rotation).y;
+                }
+            }
+            width = Ratio.Max(left.Abs(), right.Abs()) * 2;
+            height = Ratio.Max(up.Abs(), down.Abs()) * 2;
+        }
         public V2 Support(V2 direction)
         {
             int index = 0;
             Ratio maxDot,t;
             V2 p;
-            p = _points[index];
+            p = GetPoint(index);
             maxDot=V2.Dot(p, direction);
-            for (; index < _points.Length; index++)
+            for (; index < PointsCount; index++)
             {
-                t = V2.Dot(_points[index], direction);
+                t = V2.Dot(GetPoint(index), direction);
                 //Debug.Log(_points[index] + "dot" + direction + "=" + t);
                 if (t > maxDot)
                 {
                     maxDot = t;
-                    p = _points[index];
+                    p = GetPoint(index);
                 }
             }
             return p+position;

@@ -25,7 +25,7 @@ public class Cube : NetObject {
         name = "cube" + cubuid++;
         //ShapPhysics.tree.Add(net);
         net.Position = new V2(transform.position.x, transform.position.z);
-        net.Shap = new BoxShap(new Ratio(1, 2));
+        if(net.Shap==null) net.Shap = new BoxShap(new Ratio(1),new Ratio(1));
         net.name = name;
         if (net.ClientId >= 0)
         {
@@ -47,13 +47,16 @@ public class Cube : NetObject {
         if (net.Input.GetKey(FrameKey.Up))
         {
             net.Position += (V2.up * net.deltaTime);
+            net.Rotation += new Ratio(10) * net.deltaTime;
         }
         if (net.Input.GetKey(FrameKey.Right))
         {
+            
             net.Position += (V2.right * net.deltaTime);
         }
         if (net.Input.GetKey(FrameKey.Down))
         {
+            net.Position -= (V2.up * net.deltaTime);
             net.Position += (V2.down * net.deltaTime);
         }
         //Debug.Log(net.Position);
