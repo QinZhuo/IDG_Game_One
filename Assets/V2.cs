@@ -17,7 +17,7 @@ namespace IDG
             get;
             private set;
         }
-        public static float rotateOffset = 2 * Mathf.PI / 360;
+       // public static float rotateOffset = 2 * Mathf.PI / 360;
 
         //public V3()
         //{
@@ -66,10 +66,10 @@ namespace IDG
         }
         public V2 Rotate(Ratio value)
         {
-            float f = value.ToFloat();
+            
             Ratio tx, ty;
-            tx = new Ratio(Mathf.Cos(rotateOffset * f) * x.ToFloat() - y.ToFloat() * Mathf.Sin(rotateOffset * f));
-            ty = new Ratio(Mathf.Cos(rotateOffset * f) * y.ToFloat() + x.ToFloat() * Mathf.Sin(rotateOffset * f));
+            tx = MathR.CosAngle(value) * x - y * MathR.SinAngle(value);
+            ty = MathR.CosAngle(value) * y + x * MathR.SinAngle(value);
            // Debug.Log("f:" + f + "sin90" + Mathf.Sin(90) + "cos90" + (Math.Cos(90)));
             //1,0   tx=1*0-0  ty
             return new V2(tx, ty);

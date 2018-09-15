@@ -18,8 +18,12 @@ public class Test : MonoBehaviour {
         client = new FightClient();
         client.Connect("127.0.0.1", 12345,10);
         V2 v2 = new V2(1, 0);
-      
-        Debug.Log(v2.Rotate(new Ratio(90)));
+        for (int i =0; i <= 360; i+=30)
+        {
+            Debug.Log("sin"+i+":"+MathR.SinAngle(new Ratio(i)).ToFloat());
+            Debug.Log("cos" + i + ":" + MathR.CosAngle(new Ratio(i)).ToFloat());
+        }
+        
        // InputCenter.Instance.framUpdate += FrameUpdate;
 
     }

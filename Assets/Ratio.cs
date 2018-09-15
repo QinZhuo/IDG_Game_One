@@ -8,7 +8,7 @@ namespace IDG
     public struct Ratio
     {
 
-        private static readonly int precision = 100;
+        private static readonly int precision = 1000;
         private int _ratio;
 
         public static Ratio Max(Ratio a,Ratio b)
@@ -20,26 +20,29 @@ namespace IDG
         {
             return new Ratio(Math.Abs(_ratio));
         }
-
+        public static Ratio Lerp(Ratio a, Ratio b, Ratio t)
+        {
+            return a + (b - a) * t;
+        }
         public Ratio(int up, int down)
         {
             _ratio = (up * precision) / down;
-
+        }
+        public int ToInt()
+        {
+            return _ratio / precision;
         }
         public Ratio(float up)
         {
             _ratio = UnityEngine.Mathf.FloorToInt(up * precision);
-
+            
         }
         private Ratio(int precisionRatio)
         {
             _ratio = precisionRatio;
 
         }
-        public override string ToString()
-        {
-            return (_ratio * 1.0f / precision).ToString();
-        }
+        
 
         public static Ratio operator +(Ratio a, Ratio b)
         {
@@ -63,11 +66,13 @@ namespace IDG
         }
         public static Ratio operator *(Ratio a, int b)
         {
+           
             return new Ratio(a._ratio * b );
         }
 
         public static Ratio operator /(Ratio a, Ratio b)
         {
+          
             return new Ratio(a._ratio * precision / b._ratio);
         }
         //public static Ratio operator *(Ratio a, float b)
@@ -76,6 +81,7 @@ namespace IDG
         //}
         public static Ratio operator /(Ratio a, int b)
         {
+           // UnityEngine.Debug.Log("[Ratio] " + a.ToString() + "/ [int] " + b + "=" + new Ratio(a._ratio / b));
             return new Ratio(a._ratio/ b);
         }
         public static Ratio operator %(Ratio a, int b)
@@ -98,6 +104,14 @@ namespace IDG
         {
             return a._ratio > b * precision;
         }
+        public static bool operator <=(Ratio a, int b)
+        {
+            return a._ratio <= b * precision;
+        }
+        public static bool operator >=(Ratio a, int b)
+        {
+            return a._ratio >= b * precision;
+        }
         public static bool operator >=(Ratio a, Ratio b)
         {
             return a._ratio >= b._ratio;
@@ -110,7 +124,14 @@ namespace IDG
         {
             return a._ratio == b._ratio;
         }
-
+        //public static bool operator ==(Ratio a, int b)
+        //{
+        //    return a._ratio ==b*precision;
+        //}
+        //public static bool operator !=(Ratio a, int b)
+        //{
+        //    return a._ratio != b * precision;
+        //}
         public static bool operator !=(Ratio a, Ratio b)
         {
             return a._ratio != b._ratio;
@@ -124,11 +145,15 @@ namespace IDG
             return _ratio * 1.0f / precision;
         }
 
-    
-    public override int GetHashCode()
+        public override string ToString()
+        {
+            return ToFloat().ToString();
+        }
+        public override int GetHashCode()
         {
             return base.GetHashCode();
         }
+    
         public override bool Equals(object obj)
         {
             return base.Equals(obj);
