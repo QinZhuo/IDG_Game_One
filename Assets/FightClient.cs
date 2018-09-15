@@ -4,7 +4,7 @@ using UnityEngine;
 using IDG;
 using System.Net.Sockets;
 using System;
-
+using System.Linq;
 namespace IDG.FightClient
 {
     public class FightClient 
@@ -20,7 +20,7 @@ namespace IDG.FightClient
                 }
             }
         }
-        public Stack<ProtocolBase> MessageList
+        public Queue<ProtocolBase> MessageList
         {
             get
             {
@@ -31,7 +31,7 @@ namespace IDG.FightClient
             }
         }
         private Connection _serverCon;
-        private Stack<ProtocolBase> _messageList=new Stack<ProtocolBase>();
+        private Queue<ProtocolBase> _messageList=new Queue<ProtocolBase>();
         public void Connect(string serverIP,int serverPort,int maxUserCount)
         {
             _serverCon = new Connection();
@@ -42,36 +42,89 @@ namespace IDG.FightClient
             ServerCon.socket.BeginReceive(ServerCon.readBuff, 0, Connection.buffer_size, SocketFlags.None, ReceiveCallBack, ServerCon);
             InputCenter.Instance.Init(this, maxUserCount);
         }
+        Dictionary<Connection, byte[]> lastBytesList = new Dictionary<Connection, byte[]>();
         protected void ReceiveCallBack(IAsyncResult ar)
         {
             
                 Connection con = (Connection)ar.AsyncState;
             
                
-                con.length = con.socket.EndReceive(ar);
-                ProtocolBase message = new ByteProtocol();
-                message.InitMessage(con.ReceiveBytes);
-           
-                MessageList.Push(message);
-            
-            
-            //Debug.Log("receive"+con.length);
-            //con.socket.BeginSend(con.readBuff, 0, con.length, SocketFlags.None, null, null);
-            con.socket.BeginReceive(con.readBuff, 0, Connection.buffer_size, SocketFlags.None, ReceiveCallBack, con);
+                int length= con.socket.EndReceive(ar);
+            con.length += length;
+            Debug.Log(DateTime.Now.ToString()+":"+DateTime.Now.Millisecond+ "receive:" + length);
+            ProcessData(con);
+            con.socket.BeginReceive(con.readBuff, con.length, Connection.buffer_size, SocketFlags.None, ReceiveCallBack, con);
             
         }
-        public void Send(ProtocolBase message)
+
+        private void ProcessData(Connection connection)
         {
 
-            ServerCon.socket.BeginSend(message.GetByteStream(), 0, message.Length, SocketFlags.None, null, null);
+            if (connection.length < sizeof(Int32))
+            {
+                Debug.Log("获取不到信息大小重新接包解析：" + connection.length.ToString());
+                return;
+            }
+            Array.Copy(connection.readBuff, connection.lenBytes, sizeof(Int32));
+            connection.msgLength = BitConverter.ToInt32(connection.lenBytes, 0);
+           
+            if (connection.length < connection.msgLength + sizeof(Int32))
+            {
+                Debug.Log("信息大小不匹配重新接包解析：" + connection.msgLength.ToString());
+                return;
+            }
+            //ServerDebug.Log("接收信息大小：" + connection.msgLength.ToString(), 1);
+            // string str = Encoding.UTF8.GetString(connection.readBuff, sizeof(Int32), connection.length);
             
-            
+            ProtocolBase message = new ByteProtocol();
+            Debug.Log(DateTime.Now.ToString() + ":" + DateTime.Now.Millisecond+"接收消息大小:" + connection.msgLength);
+            message.InitMessage(connection.ReceiveBytes);
+            MessageList.Enqueue(message);
+
+            //Send(connection, str);
+            int count = connection.length - connection.msgLength - sizeof(Int32);
+            Array.Copy(connection.readBuff, sizeof(Int32) + connection.msgLength, connection.readBuff, 0, count);
+            connection.length = count;
+            if (connection.length > 0)
+            {
+                ProcessData(connection);
+            }
+        }
+        public void Send(byte[] bytes)
+        {
+
+            byte[] length = BitConverter.GetBytes(bytes.Length);
+            byte[] temp = length.Concat(bytes).ToArray();
+            Debug.Log("send" + temp.Length);
+            ServerCon.socket.BeginSend(temp, 0, temp.Length, SocketFlags.None, null, null);
         }
         public void Stop()
         {
             InputCenter.Instance.Stop();
         }
+        public void ParseMessage(ProtocolBase protocol)
+        {
+            byte t = protocol.getByte();
+            Debug.Log(DateTime.Now.ToString() + ":" + DateTime.Now.Millisecond+"MessageType: " + (MessageType)t);
+            switch ((MessageType)t)
+            {
 
+                case MessageType.Init:
+                    ServerCon.clientId = protocol.getByte();
+                    Debug.Log("clientID:" + ServerCon.clientId);
+                    break;
+                case MessageType.Frame:
+                    InputCenter.Instance.ReceiveStep(protocol);
+                    break;
+                default:
+                    return;
+            }
+            if (protocol.Length > 0)
+            {
+                Debug.Log("剩余未解析" + protocol.Length);
+                ParseMessage(protocol);
+            }
+        }
     }
     public enum MessageType : byte
     {

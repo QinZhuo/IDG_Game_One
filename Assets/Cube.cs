@@ -10,7 +10,7 @@ public class Cube : NetObject {
     private void Awake()
     {
         ShapPhysics.Init();
-        Debug.Log("init");
+        //Debug.Log("init");
        // ShapBase a = new TestShap(true);
        // ShapBase b = new TestShap(false);
         //Debug.Log("testShap Sport:" + ShapBase.Support(a, b, new V2(1, 0)));

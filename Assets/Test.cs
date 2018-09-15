@@ -20,8 +20,8 @@ public class Test : MonoBehaviour {
         V2 v2 = new V2(1, 0);
         for (int i =0; i <= 360; i+=30)
         {
-            Debug.Log("sin"+i+":"+MathR.SinAngle(new Ratio(i)).ToFloat());
-            Debug.Log("cos" + i + ":" + MathR.CosAngle(new Ratio(i)).ToFloat());
+           // Debug.Log("sin"+i+":"+MathR.SinAngle(new Ratio(i)).ToFloat());
+           // Debug.Log("cos" + i + ":" + MathR.CosAngle(new Ratio(i)).ToFloat());
         }
         
        // InputCenter.Instance.framUpdate += FrameUpdate;
@@ -36,25 +36,7 @@ public class Test : MonoBehaviour {
         
             if (client.MessageList.Count > 0)
             {
-                ProtocolBase protocol = client.MessageList.Pop();
-                byte t = protocol.getByte();
-                //Debug.Log("receiveMessage" + t);
-                switch ((MessageType)t)
-                {
-
-                    case MessageType.Init:
-                        client.ServerCon.clientId = protocol.getByte();
-                        Debug.Log("clientID:" + client.ServerCon.clientId);
-
-                        break;
-                    case MessageType.Frame:
-                        InputCenter.Instance.ReceiveStep(protocol);
-                        break;
-                    default:
-                        break;
-                }
-
-
+                client.ParseMessage(client.MessageList.Dequeue());
             }
         
         CommitKey();

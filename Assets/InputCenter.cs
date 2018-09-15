@@ -19,7 +19,7 @@ namespace IDG.FightClient {
         protected int _m_clientStep;
         public int ClientStepIndex { get { return _m_clientStep %MaxFramBufferCount; } }
         public int ServerStepIndex { get { return _m_serverStep % MaxFramBufferCount; } }
-        public readonly static int MaxFramBufferCount = 10;
+        public readonly static int MaxFramBufferCount = 1000000;
         public InputUnit[] inputs;
         public static InputCenter Instance {
             get { if (instance == null) { instance = new InputCenter(); }
@@ -33,7 +33,7 @@ namespace IDG.FightClient {
             //int clientId= protocol.getByte();
             
             _m_serverStep++;
-            
+            Debug.Log("当前帧：[" + _m_serverStep + "]");
             for (int i = 0; i < length; i++)
             {
                 inputs[i].ReceiveStep(protocol.getByte());
@@ -48,6 +48,7 @@ namespace IDG.FightClient {
                 }
                 
             }
+            //Debug.Log("当前帧：[" + _m_clientStep + "]");
         }
         public void Init(FightClient client,int maxClient)
         {
@@ -76,7 +77,7 @@ namespace IDG.FightClient {
             protocol.push((byte)MessageType.Frame);
             protocol.push((byte)client.ServerCon.clientId);
             protocol.push((byte)sendKey);
-            client.Send(protocol);
+            client.Send(protocol.GetByteStream());
             
             sendKey = 0;
         }
