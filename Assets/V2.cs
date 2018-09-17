@@ -74,6 +74,36 @@ namespace IDG
             //1,0   tx=1*0-0  ty
             return new V2(tx, ty);
         }
+        
+        public Ratio ToRotation()
+        {
+            if (x == 0 && y == 0)
+            {
+                return new Ratio();
+            }
+            Ratio sin = this.normalized.y;
+            if (this.x > 0)
+            {
+                return MathR.Asin(sin)/MathR.PI*180;
+            }
+            else
+            {
+                return MathR.Asin(-sin) / MathR.PI * 180+180;
+            }
+        }
+        public V2 normalized
+        {
+
+            get {
+                if (x == 0 && y == 0)
+                {
+                    return new V2();
+                }
+                Ratio n = ((x *x) + (y * y)).Sqrt();
+                return new V2(x/n,y/n);
+
+            }
+        }
         //public static V2 operator *(Ratio a, V2 b)
         //{
         //    return new V2(a*b.x,  a* b.y);

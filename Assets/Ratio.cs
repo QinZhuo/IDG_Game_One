@@ -124,14 +124,14 @@ namespace IDG
         {
             return a._ratio == b._ratio;
         }
-        //public static bool operator ==(Ratio a, int b)
-        //{
-        //    return a._ratio ==b*precision;
-        //}
-        //public static bool operator !=(Ratio a, int b)
-        //{
-        //    return a._ratio != b * precision;
-        //}
+        public static bool operator ==(Ratio a, int b)
+        {
+            return a._ratio == b * precision;
+        }
+        public static bool operator !=(Ratio a, int b)
+        {
+            return a._ratio != b * precision;
+        }
         public static bool operator !=(Ratio a, Ratio b)
         {
             return a._ratio != b._ratio;
@@ -157,6 +157,20 @@ namespace IDG
         public override bool Equals(object obj)
         {
             return base.Equals(obj);
+        }
+        public Ratio Sqrt()
+        {
+            return SQR(this);
+        }
+        Ratio SQR(Ratio a)
+        {
+            Ratio x = a, y = new Ratio(0f), z = new Ratio(1);
+            while (MathR.Abs(x - y) > z)
+            {
+                y = x;
+                x = new Ratio(1,2) * (x + a / x);
+            }
+            return x;
         }
 
     }

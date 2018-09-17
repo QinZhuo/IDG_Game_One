@@ -128,7 +128,7 @@ namespace IDG.FightClient
                 }
                 else
                 {
-                    _rotation = value;
+                    _rotation = value % 360;
                     if (!ShapPhysics.Check(this))
                     {
                         _lastRota = _rotation;

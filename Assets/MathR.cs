@@ -26,6 +26,28 @@ namespace IDG
             }
             
         }
+        public static Ratio GetAsinTab(Ratio sin)
+        {
+            MathR math = Instance;
+            //UnityEngine.Debug.Log("GetAsinTab");
+            for (int i = _m_SinTab.Count-1; i >=0; i--)
+            {
+               
+                if (sin > _m_SinTab[i])
+                {
+                    if (i == _m_SinTab.Count-1)
+                    {
+                        return new Ratio(i) / (tabCount / 4) * (PI / 2);
+                    }
+                    else
+                    {
+                        //return new Ratio(i);
+                        return Ratio.Lerp(new Ratio(i), new Ratio(i + 1), (sin-_m_SinTab[i])/(_m_SinTab[i+1] - _m_SinTab[i])) / (tabCount / 4) * (PI / 2);
+                    }
+                }
+            }
+            return new Ratio();
+        }
         protected static MathR Instance
         {
             get
@@ -70,7 +92,22 @@ namespace IDG
                
             }
         }
-        
+        public static Ratio PiToAngel(Ratio pi)
+        {
+            return pi / PI * 180;
+        }
+        public static Ratio Asin(Ratio sin)
+        {
+            if (sin < -1 || sin > 1) { return new Ratio(); }
+            if (sin >= 0)
+            {
+                return GetAsinTab(sin);
+            }
+            else
+            {
+                return -GetAsinTab(-sin);
+            }
+        }
         public static Ratio Sin(Ratio r)
         {
            
@@ -109,6 +146,15 @@ namespace IDG
             
             return result;
         }
+        public static Ratio Abs(Ratio ratio)
+        {
+            return ratio.Abs();
+        }
+        public static Ratio Sqrt(Ratio r)
+        {
+            return r.Sqrt();
+        }
+        
         public static Ratio Cos(Ratio r)
         {
             return Sin(r + PI / 2);

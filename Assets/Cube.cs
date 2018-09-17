@@ -38,26 +38,34 @@ public class Cube : NetObject {
     //float last;
     protected void FrameUpdate()
     {
-       // Debug.Log("frameTime:" + Time.time);
-       // last = Time.time;
+        // Debug.Log("frameTime:" + Time.time);
+        // last = Time.time;
+        V2 move = new V2();
         if (net.Input.GetKey(FrameKey.Left))
-        {
-            net.Position+= (V2.left*net.deltaTime);
+        {  
+           move += (V2.left);
         }
         if (net.Input.GetKey(FrameKey.Up))
         {
-            net.Position += (V2.up * net.deltaTime);
-            net.Rotation += new Ratio(10) * net.deltaTime;
+            
+            move += (V2.up );
+           // net.Rotation += new Ratio(10) ;
         }
         if (net.Input.GetKey(FrameKey.Right))
         {
-            
-            net.Position += (V2.right * net.deltaTime);
+           
+            move += (V2.right );
         }
         if (net.Input.GetKey(FrameKey.Down))
         {
-            net.Position -= (V2.up * net.deltaTime);
-            net.Position += (V2.down * net.deltaTime);
+            //net.Position -= (V2.up * net.deltaTime);
+            move += (V2.down );
+        }
+       
+        net.Position += move * net.deltaTime;
+        if (move.x != 0 || move.y != 0)
+        {
+            net.Rotation = move.ToRotation();
         }
         //Debug.Log(net.Position);
     }

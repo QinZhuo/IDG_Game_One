@@ -39,7 +39,7 @@ namespace IDG.FightClient
             ServerCon.socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             ServerCon.socket.NoDelay=true;
             ServerCon.socket.Connect(serverIP, serverPort);
-            ServerCon.socket.BeginReceive(ServerCon.readBuff, 0, Connection.buffer_size, SocketFlags.None, ReceiveCallBack, ServerCon);
+            ServerCon.socket.BeginReceive(ServerCon.readBuff,0, ServerCon.BuffRemain, SocketFlags.None, ReceiveCallBack, ServerCon);
             InputCenter.Instance.Init(this, maxUserCount);
         }
         Dictionary<Connection, byte[]> lastBytesList = new Dictionary<Connection, byte[]>();
@@ -51,9 +51,10 @@ namespace IDG.FightClient
                
                 int length= con.socket.EndReceive(ar);
             con.length += length;
-            Debug.Log(DateTime.Now.ToString()+":"+DateTime.Now.Millisecond+ "receive:" + length);
+            Debug.Log("receive");
+            //  Debug.Log(DateTime.Now.ToString()+":"+DateTime.Now.Millisecond+ "receive:" + length);
             ProcessData(con);
-            con.socket.BeginReceive(con.readBuff, con.length, Connection.buffer_size, SocketFlags.None, ReceiveCallBack, con);
+            con.socket.BeginReceive(con.readBuff, con.length, con.BuffRemain, SocketFlags.None, ReceiveCallBack, con);
             
         }
 
@@ -70,17 +71,17 @@ namespace IDG.FightClient
            
             if (connection.length < connection.msgLength + sizeof(Int32))
             {
-                Debug.Log("信息大小不匹配重新接包解析：" + connection.msgLength.ToString());
+                Debug.Log("信息大小不匹配重新接包解析：" + connection.length + ":" +(connection.msgLength+4).ToString());
                 return;
             }
             //ServerDebug.Log("接收信息大小：" + connection.msgLength.ToString(), 1);
             // string str = Encoding.UTF8.GetString(connection.readBuff, sizeof(Int32), connection.length);
             
             ProtocolBase message = new ByteProtocol();
-            Debug.Log(DateTime.Now.ToString() + ":" + DateTime.Now.Millisecond+"接收消息大小:" + connection.msgLength);
+           // Debug.Log(DateTime.Now.ToString() + ":" + DateTime.Now.Millisecond+"接收消息大小:" + connection.msgLength);
             message.InitMessage(connection.ReceiveBytes);
             MessageList.Enqueue(message);
-
+            Debug.Log("ProcessDataOver");
             //Send(connection, str);
             int count = connection.length - connection.msgLength - sizeof(Int32);
             Array.Copy(connection.readBuff, sizeof(Int32) + connection.msgLength, connection.readBuff, 0, count);
@@ -105,7 +106,8 @@ namespace IDG.FightClient
         public void ParseMessage(ProtocolBase protocol)
         {
             byte t = protocol.getByte();
-            Debug.Log(DateTime.Now.ToString() + ":" + DateTime.Now.Millisecond+"MessageType: " + (MessageType)t);
+            Debug.Log("parseMessage" + t);
+            //Debug.Log(DateTime.Now.ToString() + ":" + DateTime.Now.Millisecond+"MessageType: " + (MessageType)t);
             switch ((MessageType)t)
             {
 
@@ -117,6 +119,7 @@ namespace IDG.FightClient
                     InputCenter.Instance.ReceiveStep(protocol);
                     break;
                 default:
+                    Debug.LogError("消息解析错误 未解析类型" + t);
                     return;
             }
             if (protocol.Length > 0)

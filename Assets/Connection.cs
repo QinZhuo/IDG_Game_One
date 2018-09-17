@@ -8,7 +8,7 @@ namespace IDG
     public class Connection
     {
         public int clientId=-1;
-        public readonly static int buffer_size = 1024*8;
+        public readonly static int buffer_size = 1024;
         public byte[] readBuff = new byte[buffer_size];
         public byte[] lenBytes = new byte[4];
         public int msgLength = 0;
