@@ -10,7 +10,14 @@ namespace IDG
 
         private static readonly int precision = 1000;
         private int _ratio;
-
+        public int ToPrecisionInt()
+        {
+            return _ratio;
+        }
+        public void SetPrecisionInt(int r)
+        {
+            _ratio = r; 
+        }
         public static Ratio Max(Ratio a,Ratio b)
         {
             return a > b ? a : b;
@@ -160,9 +167,9 @@ namespace IDG
         }
         public Ratio Sqrt()
         {
-            return SQR(this);
+            return new Ratio(UnityEngine.Mathf.Sqrt(ToFloat()));
         }
-        Ratio SQR(Ratio a)
+        public Ratio SQR(Ratio a)
         {
             Ratio x = a, y = new Ratio(0f), z = new Ratio(1);
             while (MathR.Abs(x - y) > z)
@@ -172,6 +179,7 @@ namespace IDG
             }
             return x;
         }
+        
 
     }
 

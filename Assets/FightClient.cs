@@ -51,7 +51,7 @@ namespace IDG.FightClient
                
                 int length= con.socket.EndReceive(ar);
             con.length += length;
-            Debug.Log("receive");
+            Debug.Log("receive: "+length);
             //  Debug.Log(DateTime.Now.ToString()+":"+DateTime.Now.Millisecond+ "receive:" + length);
             ProcessData(con);
             con.socket.BeginReceive(con.readBuff, con.length, con.BuffRemain, SocketFlags.None, ReceiveCallBack, con);
@@ -81,7 +81,7 @@ namespace IDG.FightClient
            // Debug.Log(DateTime.Now.ToString() + ":" + DateTime.Now.Millisecond+"接收消息大小:" + connection.msgLength);
             message.InitMessage(connection.ReceiveBytes);
             MessageList.Enqueue(message);
-            Debug.Log("ProcessDataOver");
+        //    Debug.Log("ProcessDataOver");
             //Send(connection, str);
             int count = connection.length - connection.msgLength - sizeof(Int32);
             Array.Copy(connection.readBuff, sizeof(Int32) + connection.msgLength, connection.readBuff, 0, count);
@@ -96,7 +96,7 @@ namespace IDG.FightClient
 
             byte[] length = BitConverter.GetBytes(bytes.Length);
             byte[] temp = length.Concat(bytes).ToArray();
-            Debug.Log("send" + temp.Length);
+         //   Debug.Log("send" + temp.Length);
             ServerCon.socket.BeginSend(temp, 0, temp.Length, SocketFlags.None, null, null);
         }
         public void Stop()
@@ -106,7 +106,7 @@ namespace IDG.FightClient
         public void ParseMessage(ProtocolBase protocol)
         {
             byte t = protocol.getByte();
-            Debug.Log("parseMessage" + t);
+  //          Debug.Log("parseMessage" + t);
             //Debug.Log(DateTime.Now.ToString() + ":" + DateTime.Now.Millisecond+"MessageType: " + (MessageType)t);
             switch ((MessageType)t)
             {
@@ -125,7 +125,7 @@ namespace IDG.FightClient
             if (protocol.Length > 0)
             {
                 Debug.Log("剩余未解析" + protocol.Length);
-                ParseMessage(protocol);
+                //ParseMessage(protocol);
             }
         }
     }

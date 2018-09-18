@@ -15,6 +15,30 @@ namespace IDG.FightClient {
         private static InputCenter instance;
         protected FightClient client;
         protected FrameKey sendKey;
+        protected V2[] sendV2;
+        protected Dictionary<FrameKey, int> JoyIndex;
+        public void ResetKey()
+        {
+             FrameKey key=0;
+             
+             foreach (var keyFunc in frameKeys)
+             { 
+             key |= keyFunc();
+             }
+            for (int i = 0; i < joySticks.Count; i++)
+            {
+                sendV2[i] = joySticks[i].direction();
+                key |= joySticks[i].frameKey();
+                
+            }
+            sendKey = key;
+        }
+        public int JoyStickIndex(FrameKey frameKey)
+        {
+            return JoyIndex[frameKey];
+        }
+        protected List<Func<FrameKey>> frameKeys;
+        protected List<JoyStickKey> joySticks;
         protected int _m_serverStep;
         protected int _m_clientStep;
         public int ClientStepIndex { get { return _m_clientStep %MaxFramBufferCount; } }
@@ -27,19 +51,21 @@ namespace IDG.FightClient {
             }
            
         }
+       
         public void ReceiveStep(ProtocolBase protocol)
         {
             int length = protocol.getByte();
             //int clientId= protocol.getByte();
             
             _m_serverStep++;
-           
+            Debug.Log("分布解析:" + protocol.Length);
             for (int i = 0; i < length; i++)
             {
-                inputs[i].ReceiveStep(protocol.getByte());
+                
+                inputs[i].ReceiveStep(protocol,joySticks.Count);
                 
             }
-            Debug.Log("当前帧：[" + _m_clientStep + "]" );
+         //   Debug.Log("当前帧：[" + _m_clientStep + "]" );
             for (; _m_clientStep < _m_serverStep; _m_clientStep++)
             {
                 for (int i = 0; i < length; i++)
@@ -54,22 +80,36 @@ namespace IDG.FightClient {
         public void Init(FightClient client,int maxClient)
         {
             this.client = client;
-            timer = new Timer(100);
+            timer = new Timer(50);
             timer.AutoReset = true;
             timer.Elapsed += SendClientFrame;
             timer.Enabled = true;
             _m_serverStep = 0;
             _m_clientStep = 0;
             inputs = new InputUnit[maxClient];
+            frameKeys = new List<Func<FrameKey>>();
+            JoyIndex = new Dictionary<FrameKey, int>();
+            joySticks = new List<JoyStickKey>();
+            sendV2 =null;
             for (int i = 0; i < maxClient; i++)
             {
                 inputs[i] = new InputUnit();
                 inputs[i].Init();
             }
         }
-        public void SetKey(FrameKey key)
+        //public void SetKey(FrameKey key)
+        //{
+        //    sendKey|= key;
+        //}
+        public void AddKey(Func<FrameKey> func)
         {
-            sendKey|= key;
+            frameKeys.Add(func);
+        }
+        public void AddJoyStick(FrameKey key, JoyStickKey func)
+        {
+            JoyIndex.Add(key, joySticks.Count);
+            joySticks.Add(func);
+            sendV2 = new V2[joySticks.Count];
         }
         protected void SendClientFrame(object sender, ElapsedEventArgs e)
         {
@@ -78,9 +118,14 @@ namespace IDG.FightClient {
             protocol.push((byte)MessageType.Frame);
             protocol.push((byte)client.ServerCon.clientId);
             protocol.push((byte)sendKey);
+            if (sendV2!=null)
+            {
+                foreach (var direction in sendV2)
+                {
+                    protocol.push(direction);
+                }
+            }
             client.Send(protocol.GetByteStream());
-            
-            sendKey = 0;
         }
         public void Stop()
         {
@@ -93,21 +138,47 @@ namespace IDG.FightClient {
 
         
         private FrameKey[] keyList;
-        
+        V2[] directions;
         public void Init()
         {
             keyList = new FrameKey[InputCenter.MaxFramBufferCount];
-           
+            directions = new V2[0];
+
+
         }
-        public void ReceiveStep(byte value)
+        public void ReceiveStep(ProtocolBase message,int length)
         {
-            keyList[InputCenter.Instance.ServerStepIndex] = (FrameKey)value;
+            keyList[InputCenter.Instance.ServerStepIndex] = (FrameKey)message.getByte();
+            //Debug.Log(keyList[InputCenter.Instance.ServerStepIndex]);
+            lock (directions)
+            {
+                directions = new V2[length];
+
+                for (int n = 0; n < length; n++)
+                {
+
+                    directions[n] = message.getV2();
+
+
+                }
+            }
+
         }
         public bool GetKey(FrameKey key)
         {
             return (keyList[InputCenter.Instance.ClientStepIndex] & key) == key;
         }
-
+        public bool GetJoyStick(FrameKey key)
+        {
+            return (keyList[InputCenter.Instance.ClientStepIndex] & key) == key;
+        }
+        public V2 GetJoyStickDirection(FrameKey key)
+        {
+            lock (directions)
+            {
+                return directions[InputCenter.Instance.JoyStickIndex(key)];
+            }
+        }
         private void InitFrame()
         {
             keyList[InputCenter.Instance.ClientStepIndex] = 0;

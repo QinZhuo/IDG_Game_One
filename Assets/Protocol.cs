@@ -14,9 +14,12 @@ namespace IDG
         public abstract void push(Int64 int64);
         public abstract void push(UInt16 uint16);
         public abstract void push(Byte uint8);
+      
         public abstract void push(Boolean boolean);
         public abstract void push(Ratio ratio);
+        public abstract void push(V2 v2);
         public abstract void push(String str);
+        public abstract void push(Byte[] bytes);
         //public abstract bool InitNext(byte[] bytes);
 
 
@@ -26,7 +29,9 @@ namespace IDG
         public abstract Byte getByte();
         public abstract Boolean getBoolean();
         public abstract Ratio getRatio();
+        public abstract V2 getV2();
         public abstract String getString();
+        public abstract Byte[] getLastBytes();
     }
     public class ByteProtocol : ProtocolBase
     {
@@ -63,7 +68,9 @@ namespace IDG
 
         public override Ratio getRatio()
         {
-            return new Ratio(getInt32(), getInt32());
+            Ratio r = new Ratio();
+            r.SetPrecisionInt(getInt32());
+            return r;
         }
 
         public override string getString()
@@ -140,10 +147,33 @@ namespace IDG
 
         public override void push(Ratio ratio)
         {
-            //push(ratio.u);
-            //push(ratio.d);
+            push(ratio.ToPrecisionInt());
+          
+        }
+        public override void push(V2 v2)
+        {
+            push(v2.x.ToPrecisionInt());
+            push(v2.y.ToPrecisionInt());
         }
 
+        public override V2 getV2()
+        {
+            Ratio r1 = getRatio(), r2 = getRatio();
+            return new V2(r1, r2);
+        }
 
+        public override void push(byte[] bytes)
+        {
+            byteList.AddRange(bytes);
+        }
+
+        public override byte[] getLastBytes()
+        {
+            index += lastOffset;
+            lastOffset = bytes.Length - index;
+            byte[] temp = new byte[lastOffset];
+            Array.Copy(bytes, index, temp, 0, lastOffset);
+            return temp;
+        }
     }
 }
