@@ -6,7 +6,7 @@ namespace IDG
 {
     public class ShowSplitTree : MonoBehaviour
     {
-
+        
         // Use this for initialization
         void Start()
         {
@@ -20,7 +20,7 @@ namespace IDG
         }
         private void OnDrawGizmos()
         {
-           
+            if (!enabled) return;
             //Gizmos.DrawCube(new Vector3(), new Vector3(100, 1, 100));
             //return;
             if (ShapPhysics.tree!=null)

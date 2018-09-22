@@ -31,17 +31,17 @@ namespace IDG
         //}
         public V3(int x=0, int y=0,int z=0)
         {
-            this.x = new Ratio(x, 1);
-            this.y = new Ratio(y, 1);
-            this.z = new Ratio(z, 1);
+            this.x = new Ratio(x);
+            this.y = new Ratio(y);
+            this.z = new Ratio(z);
 
         }
         public V3(float x, float y,float z)
         {
 
-            this.x = new Ratio((int)x, 1);
-            this.y = new Ratio((int)y, 1);
-            this.z = new Ratio((int)z, 1);
+            this.x = new Ratio(x);
+            this.y = new Ratio(y);
+            this.z = new Ratio(z);
 
         }
         public V3(Ratio x, Ratio y ,Ratio z)

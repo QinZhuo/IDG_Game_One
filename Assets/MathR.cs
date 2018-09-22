@@ -17,12 +17,12 @@ namespace IDG
             //UnityEngine.Debug.Log(i.ToInt());
             if (i.ToInt() == _m_SinTab.Count-1)
             {
-                return _m_SinTab[i.ToInt()];
+                return _m_SinTab[(int)i.ToInt()];
             }
             else
             {
                // UnityEngine.Debug.Log(i.ToInt()+":"+ _m_SinTab[i.ToInt()]+":"+ Ratio.Lerp(_m_SinTab[i.ToInt()], _m_SinTab[(i + 1).ToInt()], r - i));
-                return Ratio.Lerp(_m_SinTab[i.ToInt()], _m_SinTab[(i+1).ToInt()], r - i);
+                return Ratio.Lerp(_m_SinTab[(int)i.ToInt()], _m_SinTab[(int)(i+1).ToInt()], r - i);
             }
             
         }
@@ -148,11 +148,11 @@ namespace IDG
         }
         public static Ratio Abs(Ratio ratio)
         {
-            return ratio.Abs();
+            return Ratio.Abs( ratio);
         }
         public static Ratio Sqrt(Ratio r)
         {
-            return r.Sqrt();
+            return Ratio.Sqrt(r);
         }
         
         public static Ratio Cos(Ratio r)

@@ -24,7 +24,7 @@ namespace IDG
             objs = new List<NetInfo>(SplitSize+1);
             root = this;
             //size = MaxSize;
-            border = new Tree4Border(new V2(0,0), new Ratio(MaxSize,1));
+            border = new Tree4Border(new V2(0,0), new Ratio(MaxSize));
             brother = new Tree4Brother();
             depth = 0;
         }
@@ -88,9 +88,9 @@ namespace IDG
         }
         public static bool BoxCheck(NetInfo objA,NetInfo objB)
         {
-            if ((objA.Position.x-objB.Position.x).Abs()<(objA.Width+objB.Width)/2
+            if (Ratio.Abs( (objA.Position.x-objB.Position.x))<(objA.Width+objB.Width)/2
                 &&
-                (objA.Position.y - objB.Position.y).Abs() < (objA.Height + objB.Height) / 2
+                Ratio.Abs((objA.Position.y - objB.Position.y)) < (objA.Height + objB.Height) / 2
                 )
             {
                 return true;
@@ -117,7 +117,7 @@ namespace IDG
         }
         public bool IsIn(NetInfo obj)
         {
-            if(((border.center.x-obj.Position.x).Abs()<=(border.size+obj.Width/2))
+            if(( (border.center.x-obj.Position.x).Abs()<=(border.size+obj.Width/2))
                 &&
                 ((border.center.y - obj.Position.y).Abs() <= (border.size + obj.Height/2))
                 )

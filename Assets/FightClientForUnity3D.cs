@@ -24,6 +24,7 @@ public class FightClientForUnity3D : MonoBehaviour {
         {
             InputCenter.Instance.AddJoyStick(joyStick.frameKey,joyStick.GetInfo());
         }
+        ShapPhysics.Init();
         //V2 v2 = new V2(1, 0);
         //for (int i =0; i <= 360; i+=30)
         //{
@@ -39,7 +40,11 @@ public class FightClientForUnity3D : MonoBehaviour {
         //Ratio r = new Ratio(16);
         //Debug.Log(r.SQR(r));
         //Debug.Log(r.InvSqrt(16));
-       
+
+        // V2 v2 = new V2(-5, 99);
+        // Debug.Log("(-5, 99)" + v2.x * v2.x + "," + v2.y * v2.y);
+        //  Debug.Log("normalized"+v2.normalized);
+
     }
 	
 
@@ -59,22 +64,26 @@ public class FightClientForUnity3D : MonoBehaviour {
     public FrameKey GetKey()
     {
         FrameKey key=0;
-        if (Input.GetKey(KeyCode.A))
+        if (Input.GetKey(KeyCode.J))
         {
-            key|=FrameKey.Left;
+            key |= FrameKey.Attack;
         }
-        if (Input.GetKey(KeyCode.D))
-        {
-            key |= FrameKey.Right;
-        }
-        if (Input.GetKey(KeyCode.S))
-        {
-            key |= FrameKey.Down;
-        }
-        if (Input.GetKey(KeyCode.W))
-        {
-            key |= FrameKey.Up;
-        }
+        //if (Input.GetKey(KeyCode.A))
+        //{
+        //    key|=FrameKey.Left;
+        //}
+        //if (Input.GetKey(KeyCode.D))
+        //{
+        //    key |= FrameKey.Right;
+        //}
+        //if (Input.GetKey(KeyCode.S))
+        //{
+        //    key |= FrameKey.Down;
+        //}
+        //if (Input.GetKey(KeyCode.W))
+        //{
+        //    key |= FrameKey.Up;
+        //}
         return key;
     }
     public void OnDestroy()

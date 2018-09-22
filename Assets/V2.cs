@@ -25,17 +25,13 @@ namespace IDG
         //    this.y = new Ratio(0);
         //    this.z = new Ratio(0);
         //}
-        public V2(int x=0, int y=0)
-        {
-            this.x = new Ratio(x, 1);
-            this.y = new Ratio(y, 1);
-
-        }
+        
+        
         public V2(float x, float y)
         {
 
-            this.x = new Ratio((int)x, 1);
-            this.y = new Ratio((int)y, 1);
+            this.x = new Ratio(x);
+            this.y = new Ratio(y);
 
         }
         public V2(Ratio x, Ratio y)
@@ -82,7 +78,7 @@ namespace IDG
                 return new Ratio();
             }
             Ratio sin = this.normalized.y;
-            if (this.x > 0)
+            if (this.x >= 0)
             {
                 return MathR.Asin(sin)/MathR.PI*180;
             }
@@ -90,6 +86,10 @@ namespace IDG
             {
                 return MathR.Asin(-sin) / MathR.PI * 180+180;
             }
+        }
+        public static V2 Parse(Ratio ratio)
+        {
+            return new V2(MathR.CosAngle(ratio), MathR.SinAngle(ratio) );
         }
         public V2 normalized
         {
@@ -99,7 +99,8 @@ namespace IDG
                 {
                     return new V2();
                 }
-                Ratio n = ((x *x) + (y * y)).Sqrt();
+                Ratio n =((x *x) + (y * y)).Sqrt();
+             //   Debug.Log("N" + ((x * x) + (y * y)).Sqrt());
                 return new V2(x/n,y/n);
 
             }

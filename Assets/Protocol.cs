@@ -18,6 +18,7 @@ namespace IDG
         public abstract void push(Boolean boolean);
         public abstract void push(Ratio ratio);
         public abstract void push(V2 v2);
+
         public abstract void push(String str);
         public abstract void push(Byte[] bytes);
         //public abstract bool InitNext(byte[] bytes);
@@ -69,7 +70,7 @@ namespace IDG
         public override Ratio getRatio()
         {
             Ratio r = new Ratio();
-            r.SetPrecisionInt(getInt32());
+            r.SetValue(getInt64());
             return r;
         }
 
@@ -147,13 +148,13 @@ namespace IDG
 
         public override void push(Ratio ratio)
         {
-            push(ratio.ToPrecisionInt());
+            push(ratio.GetValue());
           
         }
         public override void push(V2 v2)
         {
-            push(v2.x.ToPrecisionInt());
-            push(v2.y.ToPrecisionInt());
+            push(v2.x.GetValue());
+            push(v2.y.GetValue());
         }
 
         public override V2 getV2()

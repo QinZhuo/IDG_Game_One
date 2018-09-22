@@ -9,7 +9,7 @@ namespace IDG.FightClient
 {
     public class FightClient 
     {
-        public readonly static Ratio deltaTime = new Ratio(1,10);
+        public readonly static Ratio deltaTime = new Ratio(0.1f);
         public Connection ServerCon
         {
             get

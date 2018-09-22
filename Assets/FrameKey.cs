@@ -10,6 +10,7 @@ namespace IDG{
         Up = 8, //w  0b
         Down = 16,//s
         MoveKey=32,
+        Attack=64,
     }
     public struct JoyStickKey
     {

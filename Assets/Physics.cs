@@ -28,13 +28,14 @@ namespace IDG
             shaps.Remove(obj);
             Tree4.Remove(obj);
         }
-        public static bool Check(NetInfo a)
+        public static bool CheckCollision(NetInfo a)
         {
             foreach (Tree4 tree in a.trees)
             {
                 foreach (var item in tree.objs)
                 {
-                    if (item != a && Check(a, item))
+                    
+                    if (!item.isTrigger&& item != a && Check(a, item))
                     {
 
                         return true;
@@ -230,8 +231,8 @@ namespace IDG
                     up = _points[i].Rotate(rotation).y;
                 }
             }
-            width = Ratio.Max(left.Abs(), right.Abs()) * 2;
-            height = Ratio.Max(up.Abs(), down.Abs()) * 2;
+            width = Ratio.Max(Ratio.Abs( left), Ratio.Abs(right)) * 2;
+            height = Ratio.Max(Ratio.Abs(up), Ratio.Abs(down)) * 2;
         }
         public V2 Support(V2 direction)
         {

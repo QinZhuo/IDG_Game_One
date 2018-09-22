@@ -4,12 +4,27 @@ using UnityEngine;
 using IDG;
 namespace IDG.FightClient
 {
-    public class NetObject : MonoBehaviour
+    abstract public class NetObject : MonoBehaviour, PoolObject
     {
         
+        public static void Instantiate(NetObject netObject,V2 position,Ratio rotation)
+        {
+            //NetInfo netinfo = Instantiate(netObject.gameObject, position.ToVector3(), rotation.ToUnityRotation()).GetComponent<NetObject>().net;
+
+            //netinfo.Init( position,rotation);
+            UnityGameObjectPool.instance.Get(netObject, position, rotation);
+        }
         public NetInfo net;
         // Use this for initialization
 
+        protected void Start()
+        {
+            
+            net.Input.framUpdate += FrameUpdate;
+            net.Position = new V2(transform.position.x, transform.position.z);
+           // net.Rotation =new Ratio( transform.rotation.y);
+            Debug.Log("net.Input.framUpdate += FrameUpdate;");
+        }
         
         protected void LerpNetPos(float timer)
         {
@@ -17,20 +32,40 @@ namespace IDG.FightClient
             transform.rotation = Quaternion.Euler(0, -net.Rotation.ToFloat(), 0);
         }
         // Update is called once per frame
-        void Update()
+        protected void Update()
         {
             LerpNetPos(Time.deltaTime*10);
         }
+
+        protected abstract void FrameUpdate();
         private void OnDrawGizmos()
         {
             if (net.Shap == null) return;
             Gizmos.color = Color.white;
             Gizmos.DrawWireCube(net.Shap.position.ToVector3(), new Vector3(net.Width.ToFloat(), 0, net.Height.ToFloat()));
             for (int i = 0; i < net.Shap.PointsCount; i++)
-            
+
             {
-                Gizmos.DrawCube((net.Shap.GetPoint(i)+ net.Position).ToVector3(), Vector3.one*0.1f);
+                Gizmos.DrawCube((net.Shap.GetPoint(i) + net.Position).ToVector3(), Vector3.one * 0.1f);
             }
+        }
+
+        public virtual PoolType GetPoolType()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public virtual void PoolReset(V2 position, Ratio rotation)
+        {
+            GetComponent<MeshRenderer>().enabled = true;
+            transform.position = position.ToVector3();
+            transform.rotation = rotation.ToUnityRotation();
+            net.Init(position, rotation);
+        }
+
+        public virtual void PoolRecover()
+        {
+            GetComponent<MeshRenderer>().enabled = false;
         }
     }
     [System.Serializable]
@@ -40,6 +75,8 @@ namespace IDG.FightClient
         private V2 _position=new V2();
         private V2 _lastPos=new V2();
         private Ratio _lastRota = new Ratio();
+        
+
         public Ratio Width
         {
             get
@@ -55,7 +92,22 @@ namespace IDG.FightClient
             }
         }
         public List<Tree4> trees = new List<Tree4>();
+        public bool isTrigger=false;
         private Ratio _rotation = new Ratio();
+        public void Init(V2 position,Ratio rotation)
+        {
+            _position = position;
+            _rotation = rotation;
+           
+        }
+        public V2 forward
+        {
+            get
+            {
+            //      Debug.Log(_rotation);
+                return V2.Parse(_rotation);
+            }
+        }
         public V2 Position
         {
             get
@@ -72,7 +124,7 @@ namespace IDG.FightClient
                 else
                 {
                     _position = value;
-                    if (!ShapPhysics.Check(this))
+                    if (isTrigger||!ShapPhysics.CheckCollision(this))
                     {
                         _lastPos = _position;
                         Tree4.Move(this);
@@ -129,7 +181,7 @@ namespace IDG.FightClient
                 else
                 {
                     _rotation = value % 360;
-                    if (!ShapPhysics.Check(this))
+                    if (!ShapPhysics.CheckCollision(this)||isTrigger)
                     {
                         _lastRota = _rotation;
                         Shap.ResetSize();
@@ -188,7 +240,7 @@ namespace IDG.FightClient
         {
             get
             {
-                return InputCenter.Instance.inputs[this.ClientId];
+                return InputCenter.Instance[this.ClientId];
             }
         }
        

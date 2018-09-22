@@ -44,7 +44,21 @@ namespace IDG.FightClient {
         public int ClientStepIndex { get { return _m_clientStep %MaxFramBufferCount; } }
         public int ServerStepIndex { get { return _m_serverStep % MaxFramBufferCount; } }
         public readonly static int MaxFramBufferCount = 10;
-        public InputUnit[] inputs;
+        protected InputUnit[] _m_inputs;
+        public InputUnit this[int index]
+        {
+            get
+            {
+                if (index < 0)
+                {
+                    return this._m_inputs[this._m_inputs.Length - 1];
+                }
+                else
+                {
+                    return _m_inputs[index];
+                }
+            }
+        }
         public static InputCenter Instance {
             get { if (instance == null) { instance = new InputCenter(); }
                 return instance;
@@ -62,7 +76,7 @@ namespace IDG.FightClient {
             for (int i = 0; i < length; i++)
             {
                 
-                inputs[i].ReceiveStep(protocol,joySticks.Count);
+                _m_inputs[i].ReceiveStep(protocol,joySticks.Count);
                 
             }
          //   Debug.Log("当前帧：[" + _m_clientStep + "]" );
@@ -70,7 +84,7 @@ namespace IDG.FightClient {
             {
                 for (int i = 0; i < length; i++)
                 {
-                    inputs[i].NextFrame();
+                    _m_inputs[i].NextFrame();
                 }
                 
             }
@@ -86,15 +100,15 @@ namespace IDG.FightClient {
             timer.Enabled = true;
             _m_serverStep = 0;
             _m_clientStep = 0;
-            inputs = new InputUnit[maxClient];
+            _m_inputs = new InputUnit[maxClient+1];
             frameKeys = new List<Func<FrameKey>>();
             JoyIndex = new Dictionary<FrameKey, int>();
             joySticks = new List<JoyStickKey>();
             sendV2 =null;
-            for (int i = 0; i < maxClient; i++)
+            for (int i = 0; i < maxClient+1; i++)
             {
-                inputs[i] = new InputUnit();
-                inputs[i].Init();
+                _m_inputs[i] = new InputUnit();
+                _m_inputs[i].Init();
             }
         }
         //public void SetKey(FrameKey key)
