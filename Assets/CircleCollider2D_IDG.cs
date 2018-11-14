@@ -4,24 +4,30 @@ using UnityEngine;
 namespace IDG.FightClient
 {
 
-
-    [RequireComponent(typeof(NetObject))]
-    public class CircleCollider2D_IDG : MonoBehaviour
+    public abstract class Collider2DBase_IDG:MonoBehaviour
+    {
+        public abstract ShapBase GetShap();
+    }
+  
+    public class CircleCollider2D_IDG : Collider2DBase_IDG
     {
 
         public float r=1;
         public int num=8;
-        // Use this for initialization
-        void Start()
+
+        public override ShapBase GetShap()
         {
-            GetComponent<NetObject>().net.Shap = new CircleShap(new Ratio(r), num);
+            return new CircleShap(new Ratio(r), num);
         }
+
+        // Use this for initialization
+        //void Start()
+        //{
+        //    GetComponent<NetObjectShow>().data.Shap = new CircleShap(new Ratio(r), num);
+        //}
 
         // Update is called once per frame
-        void Update()
-        {
 
-        }
         public class CircleShap : ShapBase
         {
 

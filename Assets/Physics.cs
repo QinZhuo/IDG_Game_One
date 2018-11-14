@@ -3,49 +3,136 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using IDG.FightClient;
+
 namespace IDG
 {
+    public class CollisonInfo
+    {
+
+        Ratio lastCheckTime = new Ratio(-1000);
+        Dictionary<NetData, List<NetData>> checkList=new Dictionary<NetData, List<NetData>>();
+        Dictionary<NetData, List<NetData>> lastList = new Dictionary<NetData, List<NetData>>();
+        //List<NetData> others = new List<NetData>();
+        //public void Start()
+        //{
+
+        //    //others.Clear();
+        //}
+        public Dictionary<NetData, List<NetData>> Check(Tree4 tree)
+        {
+            if (InputCenter.Time <= lastCheckTime) return checkList;
+            checkList.Clear();
+            int count = tree.objs.Count;
+            var objs = tree.objs;
+            for (int i = 0; i < count; i++)
+            {
+                for (int j = i + 1; j < count; j++)
+                {
+                    if (objs[i] != objs[j] && ShapPhysics.Check(objs[i], objs[j]))
+                    {
+                        if (checkList.ContainsKey(objs[i]))
+                        {
+                            checkList[objs[i]].Add(objs[j]);
+                        }
+                        else
+                        {
+                            checkList.Add(objs[i], new List<NetData>());
+                            checkList[objs[i]].Add(objs[j]);
+                        }
+                        if (checkList.ContainsKey(objs[j]))
+                        {
+                            checkList[objs[j]].Add(objs[i]);
+                        }
+                        else
+                        {
+                            checkList.Add(objs[j], new List<NetData>());
+                            checkList[objs[j]].Add(objs[i]);
+                        }
+                        
+                    }
+                }
+
+            }
+            
+            return checkList;
+        }
+        //    foreach (var obj1 in tree.objs)
+        //    {
+        //        foreach (var obj2 in tree.objs)
+        //        {
+        //            if (obj1 != obj2 && ShapPhysics.Check(obj1, obj2))
+        //            {
+
+
+        //            }
+        //        }
+
+        //    }
+        //}
+       
+
+    }
     public class ShapPhysics
     {
-        private static List<NetInfo> shaps = null;
+        private static List<NetData> shaps = null;
         public static Tree4 tree = null;
         public static void Init()
         {
             if (shaps == null && tree == null)
             {
-                shaps = new List<NetInfo>();
+                shaps = new List<NetData>();
                 tree = new Tree4();
 
             }
         }
-        public static void Add(NetInfo obj)
+        public static void Add(NetData obj)
         {
             shaps.Add(obj);
             tree.Add(obj);
         }
-        public static void Remove(NetInfo obj)
+        public static void Remove(NetData obj)
         {
             shaps.Remove(obj);
             Tree4.Remove(obj);
         }
-        public static bool CheckCollision(NetInfo a)
+        //public static bool CheckCollision(NetData a)
+        //{
+        //   foreach (var item in CheckAll(a))
+        //        {
+                    
+        //            if (!item.isTrigger)
+        //            {
+        //                return true;
+        //            }
+        //        }
+                
+           
+        //    return false;
+        //}
+        public static List<NetData> CheckAll(NetData a)
         {
+            List<NetData> others = new List<NetData>();
             foreach (Tree4 tree in a.trees)
             {
-                foreach (var item in tree.objs)
+                //if (tree == null) UnityEngine.Debug.LogError("tree Is Null");
+                //if (tree.collisonInfo == null) UnityEngine.Debug.LogError("collisonInfo Is Null");
+                var objs = tree.collisonInfo.Check(tree);
+                if (objs.ContainsKey(a))
                 {
-                    
-                    if (!item.isTrigger&& item != a && Check(a, item))
+                    foreach (var obj in tree.collisonInfo.Check(tree)[a])
                     {
-
-                        return true;
+                        if (!others.Contains(obj))
+                        {
+                            others.Add(obj);
+                        }
                     }
+                    //others.AddRange(tree.collisonInfo.Check(tree)[a]);
                 }
                 
             }
-            return false;
+            return others;
         }
-        protected static bool Check(NetInfo a, NetInfo b)
+        public static bool Check(NetData a, NetData b)
         {
 
             return Tree4.BoxCheck(a, b)&&GJKCheck(a.Shap, b.Shap);//;// xB&&yB;
@@ -159,20 +246,7 @@ namespace IDG
         }
 
     }
-    public class BoxShap : ShapBase
-    {
-
-        public BoxShap(Ratio x, Ratio y)
-        {
-            V2[] v2s = new V2[4];
-            v2s[0] = new V2(x / 2, y / 2);
-            v2s[1] = new V2(-x / 2, y / 2);
-            v2s[2] = new V2(x / 2, -y / 2);
-            v2s[3] = new V2(-x / 2, -y / 2);
-            Points = v2s;
-        }
-
-    }
+   
     public abstract class ShapBase
     {
         private Ratio left;
@@ -182,7 +256,7 @@ namespace IDG
         public Ratio height;// { get { return Ratio.AbsMax(up,down); } }
         public Ratio width;// { get { return Ratio.AbsMax(left, right); } }
         private V2[] _points;
-        public NetInfo netinfo;
+        public NetData netinfo;
         public V2 position { get { if (netinfo != null) { return netinfo.Position; } else { return V2.zero; } } }
         public Ratio rotation { get { if (netinfo != null) { return netinfo.Rotation; } else { return new Ratio(); } } }
 
@@ -262,4 +336,25 @@ namespace IDG
         }
 
     }
+
+    //public class TwoWayDictionary<T>
+    //{
+    //    bool[,] map;
+    //    Dictionary<T,int> index;
+    //    public TwoWayDictionary(){
+    //        index = new Dictionary<T, int>();
+    //    }
+    //    public void Reset(List<T> objs)
+    //    {
+    //        map = new bool[objs.Count, objs.Count];
+    //        index.Clear();
+    //        int i = 0;
+    //        foreach (var obj in objs)
+    //        {
+    //            index.Add(obj, i);
+    //            i++;
+    //        }
+    //    }
+        
+    //}
 }

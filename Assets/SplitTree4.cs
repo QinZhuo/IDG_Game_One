@@ -14,24 +14,27 @@ namespace IDG
         public Tree4Child child;
         public Tree4Border border;
         public Tree4Brother brother;
-        public List<NetInfo> objs;
+        public List<NetData> objs;
         public static Tree4 root;
+        public CollisonInfo collisonInfo;
         public int depth;
         //bool isLeaf = false;
        // public int size;
         public Tree4()
         {
-            objs = new List<NetInfo>(SplitSize+1);
+            objs = new List<NetData>(SplitSize+1);
             root = this;
             //size = MaxSize;
             border = new Tree4Border(new V2(0,0), new Ratio(MaxSize));
             brother = new Tree4Brother();
+            collisonInfo = new CollisonInfo();
             depth = 0;
         }
         public Tree4(int depth, Tree4Border border)
         {
             this.depth = depth;
-            objs = new List<NetInfo>(SplitSize + 1);
+            objs = new List<NetData>(SplitSize + 1);
+            collisonInfo = new CollisonInfo();
             this.border = border;
         }
         public void Split()
@@ -45,7 +48,7 @@ namespace IDG
             }
             //Debug.Log(1);
         }
-        public void Add(NetInfo obj)
+        public void Add(NetData obj)
         {
             if (!IsIn(obj)) return;
             if (objs.Contains(obj)) return;
@@ -62,12 +65,12 @@ namespace IDG
                 child.Add(obj);
             }
         }
-        private void Link(NetInfo obj)
+        private void Link(NetData obj)
         {
             objs.Add(obj);
             obj.trees.Add(this);
         }
-        public static void Remove(NetInfo obj)
+        public static void Remove(NetData obj)
         {
             Tree4[] trees = obj.trees.ToArray();
             foreach (var item in trees)
@@ -75,7 +78,7 @@ namespace IDG
                 item.DisLink(obj);
             }
         }
-        private void DisLink(NetInfo obj)
+        private void DisLink(NetData obj)
         {
             if (objs.Contains(obj))
             {
@@ -86,7 +89,7 @@ namespace IDG
                 obj.trees.Remove(this);
             }
         }
-        public static bool BoxCheck(NetInfo objA,NetInfo objB)
+        public static bool BoxCheck(NetData objA,NetData objB)
         {
             if (Ratio.Abs( (objA.Position.x-objB.Position.x))<(objA.Width+objB.Width)/2
                 &&
@@ -97,7 +100,7 @@ namespace IDG
             }
             return false;
         }
-        public static void Move(NetInfo obj)
+        public static void Move(NetData obj)
         {
             Tree4[] trees = obj.trees.ToArray();
             foreach (var item in trees)
@@ -106,7 +109,7 @@ namespace IDG
                 
             }
         }
-        public void SubMove(NetInfo obj)
+        public void SubMove(NetData obj)
         {
             if (!IsIn(obj))
             {
@@ -115,7 +118,7 @@ namespace IDG
             brother.Add(obj);
             //root.Add(obj);
         }
-        public bool IsIn(NetInfo obj)
+        public bool IsIn(NetData obj)
         {
             if(( (border.center.x-obj.Position.x).Abs()<=(border.size+obj.Width/2))
                 &&
@@ -192,7 +195,7 @@ namespace IDG
             trees[(int)Pos.RightUp].brother = new Tree4Brother(LeftUp, brother.Right, brother.Up, RightDown);
             trees[(int)Pos.RightDown].brother = new Tree4Brother(LeftDown, brother.Right, RightUp, brother.Down);
         }
-        public void Add(NetInfo obj)
+        public void Add(NetData obj)
         {
             for (int i = 0; i < 4; i++)
             {
@@ -229,7 +232,7 @@ namespace IDG
             brothers[(int)Dir.Up] = up;
             brothers[(int)Dir.Down] = down;
         }
-        public void Add(NetInfo obj)
+        public void Add(NetData obj)
         {
             for (int i = 0; i < 4; i++)
             {

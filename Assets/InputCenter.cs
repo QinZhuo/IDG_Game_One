@@ -13,10 +13,16 @@ namespace IDG.FightClient {
         protected Timer timer;
         
         private static InputCenter instance;
+        protected Ratio _time;
         protected FightClient client;
         protected FrameKey sendKey;
         protected V2[] sendV2;
         protected Dictionary<FrameKey, int> JoyIndex;
+        public Action frameUpdate;
+        public static Ratio Time
+        {
+            get { return instance. _time; }
+        }
         public void ResetKey()
         {
              FrameKey key=0;
@@ -79,18 +85,23 @@ namespace IDG.FightClient {
                 _m_inputs[i].ReceiveStep(protocol,joySticks.Count);
                 
             }
-         //   Debug.Log("当前帧：[" + _m_clientStep + "]" );
+           
+           
+            //   Debug.Log("当前帧：[" + _m_clientStep + "]" );
             for (; _m_clientStep < _m_serverStep; _m_clientStep++)
             {
+                if (frameUpdate != null) frameUpdate();
                 for (int i = 0; i < length; i++)
                 {
-                    _m_inputs[i].NextFrame();
+                    _m_inputs[i].InitFrame();
+                    this._time += FightClient.deltaTime;
                 }
-                
+
             }
           
             //Debug.Log("当前帧：[" + _m_clientStep + "]");
         }
+      
         public void Init(FightClient client,int maxClient)
         {
             this.client = client;
@@ -193,16 +204,21 @@ namespace IDG.FightClient {
                 return directions[InputCenter.Instance.JoyStickIndex(key)];
             }
         }
-        private void InitFrame()
+        public void InitFrame()
         {
             keyList[InputCenter.Instance.ClientStepIndex] = 0;
         }
-        public void NextFrame()
+       
+        public Action framUpdate
         {
-            if (framUpdate != null) framUpdate();
-            InitFrame();
+            set {
+                InputCenter.Instance.frameUpdate=value;
+            }
+            get
+            {
+                return InputCenter.Instance.frameUpdate;
+            }
         }
-        public event FrameUpdate framUpdate;
     }
-    public delegate void FrameUpdate();
+    //public delegate void FrameUpdate();
 }
