@@ -8,7 +8,25 @@ namespace IDG.FightClient
     {
         public abstract ShapBase GetShap();
     }
-  
+    public class CircleShap : ShapBase
+    {
+
+        public CircleShap(Ratio r, int num)
+        {
+
+            Ratio t360 = new Ratio(360);
+            Ratio tmp = t360 / num;
+            V2[] v2s = new V2[num];
+            int i = 0;
+            for (Ratio tr = new Ratio(0); tr < t360 && i < num; tr += tmp, i++)
+            {
+                v2s[i] = V2.Parse(tr) * r;
+            }
+
+            Points = v2s;
+        }
+
+    }
     public class CircleCollider2D_IDG : Collider2DBase_IDG
     {
 
@@ -28,24 +46,6 @@ namespace IDG.FightClient
 
         // Update is called once per frame
 
-        public class CircleShap : ShapBase
-        {
-
-            public CircleShap(Ratio r,int num)
-            {
-               
-                Ratio t360 = new Ratio(360);
-                Ratio tmp = t360 / num;
-                V2[] v2s = new V2[num];
-                int i = 0;
-                for (Ratio tr = new Ratio(0) ; tr < t360&&i<num; tr += tmp,i++)
-                {
-                    v2s[i] = V2.Parse(tr)*r;
-                }
-               
-                Points = v2s;
-            }
-
-        }
+        
     }
 }

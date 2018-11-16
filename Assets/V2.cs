@@ -135,6 +135,14 @@ namespace IDG
         {
             return new V3(new Ratio(),new Ratio(),  a.x * b.y - a.y * b.x);
         }
+        public static bool operator ==(V2 a, V2 b)
+        {
+            return a.x == b.x && a.y == b.y;
+        }
+        public static bool operator !=(V2 a, V2 b)
+        {
+            return a.x != b.x || a.y != b.y;
+        }
         public override string ToString()
         {
             return "{" + x.ToString() + "," + y.ToString() + "}";// + ":" + ToVector3().ToString();

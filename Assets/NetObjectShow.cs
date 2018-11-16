@@ -114,10 +114,11 @@ namespace IDG.FightClient
         private V2 _position=new V2();
         private V2 _lastPos=new V2();
         private Ratio _lastRota = new Ratio();
-        public bool usePhysicsCheck=true;
+        public bool usePhysicsCheck=false;
         // public CollisonInfo collisonInfo = new CollisonInfo();
         protected List<NetData> lastCollisonDatas = new List<NetData>();
         protected List<NetData> collisonDatas=new List<NetData>();
+        public NetData parent;
         public MonoBehaviour show;
         public Ratio Width
         {
@@ -142,22 +143,25 @@ namespace IDG.FightClient
         {
             if (!active) return;
             //this.collisonInfo.Start();
-            foreach (var other in this.collisonDatas)
+            if (usePhysicsCheck)
             {
-                if (!lastCollisonDatas.Contains(other))
+                foreach (var other in this.collisonDatas)
                 {
-                    OnPhysicsCheckEnter(other);
+                    if (!lastCollisonDatas.Contains(other))
+                    {
+                        OnPhysicsCheckEnter(other);
+                    }
+                    else
+                    {
+                        lastCollisonDatas.Remove(other);
+                    }
+                    //Debug.Log("1 "+this.collisonDatas+" "+this.collisonDatas.Count);
+                    OnPhysicsCheckStay(other);
                 }
-                else
+                foreach (var other in lastCollisonDatas)
                 {
-                    lastCollisonDatas.Remove(other);
+                    OnPhysicsCheckExit(other);
                 }
-                //Debug.Log("1 "+this.collisonDatas+" "+this.collisonDatas.Count);
-                OnPhysicsCheckStay(other);
-            }
-            foreach (var other in lastCollisonDatas)
-            {
-                OnPhysicsCheckExit(other);
             }
             lastCollisonDatas.Clear();
             lastCollisonDatas.AddRange(collisonDatas);
@@ -246,6 +250,10 @@ namespace IDG.FightClient
         {
             get
             {
+                if (parent != null)
+                {
+                    return parent.Position;
+                }
                 return _position;
             }
             set
@@ -268,10 +276,14 @@ namespace IDG.FightClient
             if (Shap == null) return;
             if (isTrigger || !CheckCollision(this))
             {
-                _lastPos = _position;
-                _lastRota = _rotation;
-                Shap.ResetSize();
-                Tree4.Move(this);
+                if (_position != _lastPos || _rotation != _lastRota)
+                {
+                    _lastPos = _position;
+                    _lastRota = _rotation;
+                    Shap.ResetSize();
+
+                    Tree4.Move(this);
+                }
             }
             else
             {

@@ -32,7 +32,30 @@ public class PlayerShow : NetObjectShow<PlayerData> {
         anim.SetFloat("Speed", speed);
     }
 }
-public class PlayerData:NetData
+public abstract class HealthData : NetData
+{
+    protected Ratio _m_Hp=new Ratio(100);
+    protected bool isDead=false;
+    public virtual void GetHurt(Ratio atk)
+    {
+        if (!isDead)
+        {
+            _m_Hp -= atk;
+            Debug.Log(this.name + " GetHurt "+atk+" Hp:"+_m_Hp);
+            if (_m_Hp <= 0)
+            {
+                Die();
+            }
+        }
+        
+    }
+    protected virtual void Die()
+    {
+        isDead = true;
+        Debug.Log(this.name + "dead!!!");
+    }
+}
+public class PlayerData: HealthData
 {
     protected GunBase gun;
     public override void Start()

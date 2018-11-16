@@ -18,6 +18,7 @@ namespace IDG
         public static Tree4 root;
         public CollisonInfo collisonInfo;
         public int depth;
+      
         //bool isLeaf = false;
        // public int size;
         public Tree4()
@@ -67,6 +68,7 @@ namespace IDG
         }
         private void Link(NetData obj)
         {
+            
             objs.Add(obj);
             obj.trees.Add(this);
         }
@@ -102,11 +104,12 @@ namespace IDG
         }
         public static void Move(NetData obj)
         {
+            
             Tree4[] trees = obj.trees.ToArray();
             foreach (var item in trees)
             {
                 item.SubMove(obj);
-                
+                item.collisonInfo.active = true;
             }
         }
         public void SubMove(NetData obj)
@@ -234,12 +237,14 @@ namespace IDG
         }
         public void Add(NetData obj)
         {
+         
             for (int i = 0; i < 4; i++)
             {
                 if (brothers[i] != null)
                 {
                     brothers[i].Add(obj);
                 }
+             
                 
             }
         }

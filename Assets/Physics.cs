@@ -8,8 +8,8 @@ namespace IDG
 {
     public class CollisonInfo
     {
-
-        Ratio lastCheckTime = new Ratio(-1000);
+        public bool active = true;
+       // Ratio lastCheckTime = new Ratio(-1000);
         Dictionary<NetData, List<NetData>> checkList=new Dictionary<NetData, List<NetData>>();
         Dictionary<NetData, List<NetData>> lastList = new Dictionary<NetData, List<NetData>>();
         //List<NetData> others = new List<NetData>();
@@ -20,7 +20,7 @@ namespace IDG
         //}
         public Dictionary<NetData, List<NetData>> Check(Tree4 tree)
         {
-            if (InputCenter.Time <= lastCheckTime) return checkList;
+            if (!active ) return checkList;
             checkList.Clear();
             int count = tree.objs.Count;
             var objs = tree.objs;
@@ -53,7 +53,7 @@ namespace IDG
                 }
 
             }
-            
+            active = false;
             return checkList;
         }
         //    foreach (var obj1 in tree.objs)

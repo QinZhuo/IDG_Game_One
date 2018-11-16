@@ -20,17 +20,23 @@ public class BulletShow : NetObjectShow<Bullet> {
 public class Bullet : NetData
 {
     public NetData user;
-    
+    public Ratio startTime;
     public override void Init()
     {
         base.Init();
+        usePhysicsCheck = true;
         isTrigger = true;
+        startTime = InputCenter.Time;
     }
     protected override void FrameUpdate()
     {
         
         Position += forward * (deltaTime * 10f);
-       // Debug.Log("bullet" + Position);
+        // Debug.Log("bullet" + Position);
+        if (InputCenter.Time - startTime > 5)
+        {
+            Destory<Bullet>(this.show);
+        }
     }
     public override void OnPhysicsCheckStay(NetData other)
     {
@@ -47,6 +53,7 @@ public class Bullet : NetData
         {
             UnityEngine.Debug.Log("Enter触发Bullet！！！！");
             Destory<Bullet>(this.show);
+            (other as HealthData).GetHurt(new Ratio(10));
         }
     }
     public override void OnPhysicsCheckExit(NetData other)
