@@ -117,7 +117,7 @@ namespace IDG.FightClient
         public bool usePhysicsCheck=false;
         // public CollisonInfo collisonInfo = new CollisonInfo();
         protected List<NetData> lastCollisonDatas = new List<NetData>();
-        protected List<NetData> collisonDatas=new List<NetData>();
+        public List<NetData> collisonDatas=new List<NetData>();
         public NetData parent;
         public MonoBehaviour show;
         public Ratio Width
@@ -142,6 +142,8 @@ namespace IDG.FightClient
         protected void DataFrameUpdate()
         {
             if (!active) return;
+            PhysicsEffect();
+            FrameUpdate();
             //this.collisonInfo.Start();
             if (usePhysicsCheck)
             {
@@ -165,10 +167,11 @@ namespace IDG.FightClient
             }
             lastCollisonDatas.Clear();
             lastCollisonDatas.AddRange(collisonDatas);
-            FrameUpdate();
-            collisonDatas = ShapPhysics.CheckAll(this);
-            PhysicsEffect();
+
+            //  collisonDatas = ShapPhysics.CheckAll(this);
            
+            
+            collisonDatas.Clear();
         }
         public virtual void Init()
         {
@@ -262,11 +265,13 @@ namespace IDG.FightClient
                 {
                     _position = value;
                     _lastPos = _position;
+                   
                 }
                 else
                 {
                     _position = value;
-                    
+                    Tree4.SetActive(this);
+
                 }
 
             }

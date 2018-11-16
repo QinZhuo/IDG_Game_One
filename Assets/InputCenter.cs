@@ -90,7 +90,12 @@ namespace IDG.FightClient {
             //   Debug.Log("当前帧：[" + _m_clientStep + "]" );
             for (; _m_clientStep < _m_serverStep; _m_clientStep++)
             {
-                if (frameUpdate != null) frameUpdate();
+                if (frameUpdate != null)
+                {
+                   
+                    frameUpdate();
+                    Tree4.CheckTree();
+                }
                 for (int i = 0; i < length; i++)
                 {
                     _m_inputs[i].InitFrame();

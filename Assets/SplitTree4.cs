@@ -18,9 +18,41 @@ namespace IDG
         public static Tree4 root;
         public CollisonInfo collisonInfo;
         public int depth;
-      
+        public static List<Tree4> activeTreeList=new List<Tree4>();
         //bool isLeaf = false;
        // public int size;
+        public static void CheckTree()
+        {
+            foreach (var tree in activeTreeList)
+            {
+                Check(tree);
+            }
+        }
+
+        public static void Check(Tree4 tree)
+        {
+            if (!tree.collisonInfo.active ) return ;
+            
+            int count = tree.objs.Count;
+            var objs = tree.objs;
+            for (int i = 0; i < count; i++)
+            {
+                for (int j = i + 1; j < count; j++)
+                {
+                    if (objs[i] != objs[j] && ShapPhysics.Check(objs[i], objs[j]))
+                    {
+                        objs[i].collisonDatas.Add(objs[j]);
+                        objs[j].collisonDatas.Add(objs[i]);
+                    }
+                }
+
+            }
+            //lastCheckTime = InputCenter.Time;
+            tree.collisonInfo.active = false;
+           
+        }
+
+
         public Tree4()
         {
             objs = new List<NetData>(SplitSize+1);
@@ -102,6 +134,14 @@ namespace IDG
             }
             return false;
         }
+        public static void SetActive(NetData obj)
+        {
+            foreach (var item in obj.trees)
+            {
+                item.collisonInfo.active = true;
+                activeTreeList.Add(item);
+            }
+        }
         public static void Move(NetData obj)
         {
             
@@ -109,7 +149,7 @@ namespace IDG
             foreach (var item in trees)
             {
                 item.SubMove(obj);
-                item.collisonInfo.active = true;
+               
             }
         }
         public void SubMove(NetData obj)
