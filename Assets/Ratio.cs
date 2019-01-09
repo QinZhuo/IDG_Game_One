@@ -8,6 +8,7 @@ using IDG;
 
 namespace IDG
 {
+    
     public struct Ratio
     {
         public static int Fix_Fracbits = 16;

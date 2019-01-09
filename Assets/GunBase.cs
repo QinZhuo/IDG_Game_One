@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
 using IDG;
 
 namespace IDG.FightClient
@@ -9,19 +10,32 @@ namespace IDG.FightClient
     {   
         protected Ratio firingInterval;
         protected Ratio lastTime;
-       
+        protected GunSetting gunSetting;
+        protected Ratio timer;
         public void Init(float firingRate,NetData User)
         {
             this.firingInterval = new Ratio(1/firingRate);
-            lastTime = new Ratio(-1000);
+            lastTime = Ratio.Zero;
+            gunSetting = DataManager.Instance.gunManager.gun;
             this.user = User;
+            timer = Ratio.Zero;
         }
         public void Fire(V2 position, Ratio rotation)
         {
-            if(InputCenter.Time> lastTime + firingInterval)
+            var t = InputCenter.Time - lastTime;
+            if (t > gunSetting.fireRate)
             {
+
+
+                timer+= (gunSetting.recoilTime+gunSetting.fireRate - t);
+                if (timer <= 0)
+                {
+                    timer =new Ratio(0);
+                }
+                Ratio rote =new Ratio( gunSetting.recoilFrouceCurve.Evaluate(timer.ToFloat() )-1)*gunSetting.recoilScale;
+                
                 lastTime = InputCenter.Time;
-                ShootBullet(position,rotation);
+                ShootBullet(position,rotation+ rote);
             }
             else
             {

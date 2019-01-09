@@ -33,7 +33,7 @@ public class Bullet : NetData
         
         Position += forward * (deltaTime * 10f);
         // Debug.Log("bullet" + Position);
-        if (InputCenter.Time - startTime > 5)
+        if (InputCenter.Time - startTime > 3)
         {
             Destory<Bullet>(this.show);
         }

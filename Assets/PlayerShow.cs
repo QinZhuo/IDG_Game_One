@@ -62,7 +62,7 @@ public class PlayerData: HealthData
     {
         this.tag = "Player";
         gun = new GunBase();
-        gun.Init(2,this);
+        gun.Init(20,this);
     }
     protected override void FrameUpdate()
     {

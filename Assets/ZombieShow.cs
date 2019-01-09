@@ -66,7 +66,12 @@ public class ZombieData : HealthData
         
         // Debug.Log("FrameUpdate"+ Position+":"+ Input.GetJoyStickDirection(FrameKey.MoveKey));
     }
-
+    protected override void Die()
+    {
+        base.Die();
+        target.Destory();
+        Destory<ZombieData>(show);
+    }
     protected override string PrefabPath()
     {
         return "Prefabs/Player";

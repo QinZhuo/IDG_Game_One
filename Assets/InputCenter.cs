@@ -96,10 +96,11 @@ namespace IDG.FightClient {
                     frameUpdate();
                     Tree4.CheckTree();
                 }
+                this._time += FightClient.deltaTime;
                 for (int i = 0; i < length; i++)
                 {
                     _m_inputs[i].InitFrame();
-                    this._time += FightClient.deltaTime;
+                  
                 }
 
             }

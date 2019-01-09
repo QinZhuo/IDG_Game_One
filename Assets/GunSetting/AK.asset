@@ -1,0 +1,52 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c94b1547b7217e4bb85bd4ff47b27d5, type: 3}
+  m_Name: AK
+  m_EditorClassIdentifier: 
+  fireRate: 0.05
+  recoilTime: 0.3
+  recoilScale: 10
+  recoilFrouceCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 0.2941699
+      value: 0.808136
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 0.49895394
+      value: 1.2797194
+      inSlope: -0.013113022
+      outSlope: -0.013113022
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 0.7351565
+      value: 0.62320745
+      inSlope: 0.043213367
+      outSlope: 0.043213367
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 0.9985962
+      value: 1.998898
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 0
+    m_RotationOrder: 0

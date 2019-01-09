@@ -8,21 +8,15 @@ namespace IDG.FightClient
    
     public class BoxCollider2D_IDG : Collider2DBase_IDG
     {
-        public int x;
-        public int y;
+        public float x;
+        public float y;
 
         public override ShapBase GetShap()
         {
             return new BoxShap(new Ratio(x), new Ratio(y));
         }
         
-       
-
-        // Update is called once per frame
-        void Update()
-        {
-
-        }
+     
     }
     public class BoxShap : ShapBase
     {

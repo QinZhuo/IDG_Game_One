@@ -236,7 +236,7 @@ namespace IDG.FightClient
             (show as NetObjectShow<T>).data.Destory();
             GameObject.Destroy(show.gameObject);
         }
-        private void Destory()
+        public void Destory()
         {
             this.active = false;
             ShapPhysics.Remove(this);
