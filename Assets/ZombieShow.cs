@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using IDG;
-using IDG.FightClient;
+using IDG.FSClient;
 public class ZombieShow : NetObjectShow<ZombieData> {
     
 }
@@ -17,7 +17,7 @@ public class EnemyTarget : NetData
             return _m_enemy;
         }
     }
-    public void SetTargetFindMode(Ratio r)
+    public void SetTargetFindMode(FixedNumber r)
     {
         Shap = new CircleShap(r,8);
         usePhysicsCheck = true;
@@ -51,7 +51,7 @@ public class ZombieData : HealthData
         
         target = new EnemyTarget();
         target.parent = this;
-        target.SetTargetFindMode(new Ratio(3));
+        target.SetTargetFindMode(new FixedNumber(3));
        // gun = new GunBase();
        // gun.Init(2, this);
     }
@@ -60,7 +60,7 @@ public class ZombieData : HealthData
         if (target.Enemy != null)
         {
             var dir = target.Enemy.Position - Position;
-            Position += dir * deltaTime*new Ratio(0.3f);
+            Position += dir * deltaTime*new FixedNumber(0.3f);
            // Debug.Log("zombiePos" + Position+"dir"+dir);
         }
         

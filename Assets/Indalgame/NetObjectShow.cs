@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using IDG;
-namespace IDG.FightClient
+namespace IDG.FSClient
 {
     //
     abstract public class NetObjectShow<T> : MonoBehaviour where T:NetData,new()
@@ -36,7 +36,7 @@ namespace IDG.FightClient
                 data.show = this;
                 data.Init();
                
-                data.Position = new V2(transform.position.x, transform.position.z);
+                data.Position = new Fixed2(transform.position.x, transform.position.z);
                 data.Start();
             }
         }
@@ -84,7 +84,7 @@ namespace IDG.FightClient
 
      
 
-        public virtual void PoolReset(V2 position, Ratio rotation)
+        public virtual void PoolReset(Fixed2 position, FixedNumber rotation)
         {
             GetComponent<MeshRenderer>().enabled = true;
             transform.position = position.ToVector3();
@@ -111,23 +111,23 @@ namespace IDG.FightClient
         public string tag;
         public string name;
         public bool active=true;
-        private V2 _position=new V2();
-        private V2 _lastPos=new V2();
-        private Ratio _lastRota = new Ratio();
+        private Fixed2 _position=new Fixed2();
+        private Fixed2 _lastPos=new Fixed2();
+        private FixedNumber _lastRota = new FixedNumber();
         public bool usePhysicsCheck=false;
         // public CollisonInfo collisonInfo = new CollisonInfo();
         protected List<NetData> lastCollisonDatas = new List<NetData>();
         public List<NetData> collisonDatas=new List<NetData>();
         public NetData parent;
         public MonoBehaviour show;
-        public Ratio Width
+        public FixedNumber Width
         {
             get
             {
                 return Shap.width;
             }
         }
-        public Ratio Height
+        public FixedNumber Height
         {
             get
             {
@@ -136,7 +136,7 @@ namespace IDG.FightClient
         }
         public List<Tree4> trees = new List<Tree4>();
         public bool isTrigger=false;
-        private Ratio _rotation = new Ratio();
+        private FixedNumber _rotation = new FixedNumber();
         protected abstract string PrefabPath();
         protected abstract void FrameUpdate();
         protected void DataFrameUpdate()
@@ -210,7 +210,7 @@ namespace IDG.FightClient
         {
             // UnityEngine.Debug.Log("Exit触发");
         }
-        public void Reset(V2 position,Ratio rotation)
+        public void Reset(Fixed2 position,FixedNumber rotation)
         {
             _position = position;
             _rotation = rotation;
@@ -241,15 +241,15 @@ namespace IDG.FightClient
             this.active = false;
             ShapPhysics.Remove(this);
         }
-        public V2 forward
+        public Fixed2 forward
         {
             get
             {
             //      Debug.Log(_rotation);
-                return V2.Parse(_rotation);
+                return Fixed2.Parse(_rotation);
             }
         }
-        public V2 Position
+        public Fixed2 Position
         {
             get
             {
@@ -324,7 +324,7 @@ namespace IDG.FightClient
         //        return _shap.down + _previewPos.y;
         //    }
         //}
-        public Ratio Rotation
+        public FixedNumber Rotation
         {
             get
             {
@@ -378,11 +378,11 @@ namespace IDG.FightClient
                 
             }
         }
-        public Ratio deltaTime
+        public FixedNumber deltaTime
         {
             get
             {
-                return FightClient.deltaTime;
+                return FSClient.deltaTime;
             }
         }
         public InputUnit Input

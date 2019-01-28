@@ -7,7 +7,9 @@ using IDG;
 namespace IDG.MobileInput
 {
 
-    
+    /// <summary>
+    /// 摇杆UI实现
+    /// </summary>
     public class JoyStick : MonoBehaviour,IDragHandler,IEndDragHandler,IBeginDragHandler
     {
         public RectTransform moveObj;
@@ -15,10 +17,10 @@ namespace IDG.MobileInput
         float maxScale;
         Coroutine coroutine;
         bool isDown;
-        public FrameKey frameKey;
+        public KeyNum key;
         public Action BeginMove;
-        public Action<V2> OnMove;
-        public Action<V2> EndMove;
+        public Action<Fixed2> OnMove;
+        public Action<Fixed2> EndMove;
         public bool useKey=false;
         public KeyCode up;
         public KeyCode down;
@@ -46,22 +48,22 @@ namespace IDG.MobileInput
             }
             moveObj.transform.position = transform.position + pos.normalized * maxScale;
         }
-        public V2 Direction()
+        public Fixed2 Direction()
         {
             //Debug.Log("position " + (moveObj.position - transform.position) + ":" + direction.normalized);
             // Debug.Log("normalized " + +":"+direction.normalized);
             Vector3 tmp = (moveObj.position - transform.position).normalized;
-            return new V2(tmp.x,tmp.y);
+            return new Fixed2(tmp.x,tmp.y);
         }
-        public FrameKey key()
+        protected KeyNum KeyValue()
         {
             
-            return isDown ? frameKey :0 ;
+            return isDown ? key :0 ;
             
         }
         public JoyStickKey GetInfo()
         {
-            return new JoyStickKey(key, Direction);
+            return new JoyStickKey(KeyValue(), Direction());
         }
         public void OnBeginDrag(PointerEventData eventData)
         {

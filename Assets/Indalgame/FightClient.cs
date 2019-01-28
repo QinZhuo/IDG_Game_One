@@ -5,11 +5,20 @@ using IDG;
 using System.Net.Sockets;
 using System;
 using System.Linq;
-namespace IDG.FightClient
+namespace IDG.FSClient
 {
-    public class FightClient 
+    /// <summary>
+    /// 【帧同步客户端】负责与【帧同步服务器】连接
+    /// </summary>
+    public class FSClient 
     {
-        public readonly static Ratio deltaTime = new Ratio(0.1f);
+        /// <summary>
+        /// 帧同步时间间隔
+        /// </summary>
+        public readonly static FixedNumber deltaTime = new FixedNumber(0.1f);
+        /// <summary>
+        /// 服务器连接
+        /// </summary>
         public Connection ServerCon
         {
             get
@@ -20,6 +29,9 @@ namespace IDG.FightClient
                 }
             }
         }
+        /// <summary>
+        /// 消息队列
+        /// </summary>
         public Queue<ProtocolBase> MessageList
         {
             get
@@ -32,10 +44,15 @@ namespace IDG.FightClient
         }
         private Connection _serverCon;
         private Queue<ProtocolBase> _messageList=new Queue<ProtocolBase>();
+        /// <summary>
+        /// 连接服务器函数
+        /// </summary>
+        /// <param name="serverIP">服务器IP地址</param>
+        /// <param name="serverPort">服务器端口</param>
+        /// <param name="maxUserCount">最大玩家数</param>
         public void Connect(string serverIP,int serverPort,int maxUserCount)
         {
             _serverCon = new Connection();
-
             ServerCon.socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             ServerCon.socket.NoDelay=true;
             ServerCon.socket.Connect(serverIP, serverPort);
@@ -43,6 +60,9 @@ namespace IDG.FightClient
             InputCenter.Instance.Init(this, maxUserCount);
         }
         Dictionary<Connection, byte[]> lastBytesList = new Dictionary<Connection, byte[]>();
+        /// <summary>
+        /// 数据接受回调函数
+        /// </summary>
         protected void ReceiveCallBack(IAsyncResult ar)
         {
             
@@ -57,7 +77,10 @@ namespace IDG.FightClient
             con.socket.BeginReceive(con.readBuff, con.length, con.BuffRemain, SocketFlags.None, ReceiveCallBack, con);
             
         }
-
+        /// <summary>
+        /// 解析字节数据
+        /// </summary>
+        /// <param name="connection">要解析数据的连接</param>
         private void ProcessData(Connection connection)
         {
 
@@ -91,6 +114,10 @@ namespace IDG.FightClient
                 ProcessData(connection);
             }
         }
+        /// <summary>
+        /// 发送字节
+        /// </summary>
+        /// <param name="bytes">发送内容</param>
         public void Send(byte[] bytes)
         {
 
@@ -99,10 +126,17 @@ namespace IDG.FightClient
          //   Debug.Log("send" + temp.Length);
             ServerCon.socket.BeginSend(temp, 0, temp.Length, SocketFlags.None, null, null);
         }
+        /// <summary>
+        /// 停止
+        /// </summary>
         public void Stop()
         {
             InputCenter.Instance.Stop();
         }
+        /// <summary>
+        /// 解析消息并进行消息分发
+        /// </summary>
+        /// <param name="protocol">要解析的消息</param>
         public void ParseMessage(ProtocolBase protocol)
         {
             byte t = protocol.getByte();
@@ -113,6 +147,7 @@ namespace IDG.FightClient
 
                 case MessageType.Init:
                     ServerCon.clientId = protocol.getByte();
+                
                     Debug.Log("clientID:" + ServerCon.clientId);
                     break;
                 case MessageType.Frame:

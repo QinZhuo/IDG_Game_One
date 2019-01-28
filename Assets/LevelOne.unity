@@ -592,7 +592,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveObj: {fileID: 521418536}
-  frameKey: 32
+  key: 32
   useKey: 1
   up: 119
   down: 115
@@ -1209,7 +1209,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveObj: {fileID: 1540893263}
-  frameKey: 0
+  key: 0
   useKey: 0
   up: 119
   down: 115
@@ -1408,6 +1408,7 @@ GameObject:
   - component: {fileID: 1076490063}
   - component: {fileID: 1076490064}
   - component: {fileID: 1076490065}
+  - component: {fileID: 1076490066}
   m_Layer: 0
   m_Name: FightClient
   m_TagString: Untagged
@@ -1447,11 +1448,23 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1076490062}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 19a1f7fe38eb63240b4dd29fd20e1429, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1076490066
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1076490062}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7cb782bd19874484e9f70a4debca6c61, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  updateInterval: 0.5
 --- !u!1001 &1110209781
 Prefab:
   m_ObjectHideFlags: 0

@@ -4,23 +4,23 @@ using UnityEngine;
 
 using IDG;
 
-namespace IDG.FightClient
+namespace IDG.FSClient
 {
     public class GunBase:ItemBase
     {   
-        protected Ratio firingInterval;
-        protected Ratio lastTime;
+        protected FixedNumber firingInterval;
+        protected FixedNumber lastTime;
         protected GunSetting gunSetting;
-        protected Ratio timer;
+        protected FixedNumber timer;
         public void Init(float firingRate,NetData User)
         {
-            this.firingInterval = new Ratio(1/firingRate);
-            lastTime = Ratio.Zero;
+            this.firingInterval = new FixedNumber(1/firingRate);
+            lastTime = FixedNumber.Zero;
             gunSetting = DataManager.Instance.gunManager.gun;
             this.user = User;
-            timer = Ratio.Zero;
+            timer = FixedNumber.Zero;
         }
-        public void Fire(V2 position, Ratio rotation)
+        public void Fire(Fixed2 position, FixedNumber rotation)
         {
             var t = InputCenter.Time - lastTime;
             if (t > gunSetting.fireRate)
@@ -30,9 +30,9 @@ namespace IDG.FightClient
                 timer+= (gunSetting.recoilTime+gunSetting.fireRate - t);
                 if (timer <= 0)
                 {
-                    timer =new Ratio(0);
+                    timer =new FixedNumber(0);
                 }
-                Ratio rote =new Ratio( gunSetting.recoilFrouceCurve.Evaluate(timer.ToFloat() )-1)*gunSetting.recoilScale;
+                FixedNumber rote =new FixedNumber( gunSetting.recoilFrouceCurve.Evaluate(timer.ToFloat() )-1)*gunSetting.recoilScale;
                 
                 lastTime = InputCenter.Time;
                 ShootBullet(position,rotation+ rote);
@@ -42,7 +42,7 @@ namespace IDG.FightClient
 
             }
         }
-        protected virtual void ShootBullet(V2 position, Ratio rotation)
+        protected virtual void ShootBullet(Fixed2 position, FixedNumber rotation)
         {
             Bullet data = new Bullet();
             data.user = this.user;

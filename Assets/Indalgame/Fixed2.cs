@@ -5,14 +5,14 @@ using System.Text;
 using UnityEngine;
 namespace IDG
 {
-    public struct V2
+    public struct Fixed2
     {
-        public Ratio x
+        public FixedNumber x
         {
             get;
             private set;
         }
-        public Ratio y
+        public FixedNumber y
         {
             get;
             private set;
@@ -27,14 +27,14 @@ namespace IDG
         //}
         
         
-        public V2(float x, float y)
+        public Fixed2(float x, float y)
         {
 
-            this.x = new Ratio(x);
-            this.y = new Ratio(y);
+            this.x = new FixedNumber(x);
+            this.y = new FixedNumber(y);
 
         }
-        public V2(Ratio x, Ratio y)
+        public Fixed2(FixedNumber x, FixedNumber y)
         {
             this.x = x;
             this.y = y;
@@ -44,40 +44,40 @@ namespace IDG
         {
             return new Vector3(x.ToFloat(), 0, y.ToFloat());
         }
-        public static V2 GetV2(Ratio x, Ratio y)
+        public static Fixed2 GetV2(FixedNumber x, FixedNumber y)
         {
-            return new V2(x, y);
+            return new Fixed2(x, y);
         }
-        public static V2 operator +(V2 a, V2 b)
+        public static Fixed2 operator +(Fixed2 a, Fixed2 b)
         {
-            return new V2(a.x + b.x, a.y + b.y);
+            return new Fixed2(a.x + b.x, a.y + b.y);
         }
-        public static V2 operator -(V2 a, V2 b)
+        public static Fixed2 operator -(Fixed2 a, Fixed2 b)
         {
-            return new V2(a.x - b.x, a.y - b.y);
+            return new Fixed2(a.x - b.x, a.y - b.y);
         }
-        public static V2 operator *(V2 a, Ratio b)
+        public static Fixed2 operator *(Fixed2 a, FixedNumber b)
         {
-            return new V2(a.x * b, a.y * b);
+            return new Fixed2(a.x * b, a.y * b);
         }
-        public V2 Rotate(Ratio value)
+        public Fixed2 Rotate(FixedNumber value)
         {
             
-            Ratio tx, ty;
+            FixedNumber tx, ty;
             tx = MathR.CosAngle(value) * x - y * MathR.SinAngle(value);
             ty = MathR.CosAngle(value) * y + x * MathR.SinAngle(value);
            // Debug.Log("f:" + f + "sin90" + Mathf.Sin(90) + "cos90" + (Math.Cos(90)));
             //1,0   tx=1*0-0  ty
-            return new V2(tx, ty);
+            return new Fixed2(tx, ty);
         }
         
-        public Ratio ToRotation()
+        public FixedNumber ToRotation()
         {
             if (x == 0 && y == 0)
             {
-                return new Ratio();
+                return new FixedNumber();
             }
-            Ratio sin = this.normalized.y;
+            FixedNumber sin = this.normalized.y;
             if (this.x >= 0)
             {
                 return MathR.Asin(sin)/MathR.PI*180;
@@ -87,21 +87,21 @@ namespace IDG
                 return MathR.Asin(-sin) / MathR.PI * 180+180;
             }
         }
-        public static V2 Parse(Ratio ratio)
+        public static Fixed2 Parse(FixedNumber ratio)
         {
-            return new V2(MathR.CosAngle(ratio), MathR.SinAngle(ratio) );
+            return new Fixed2(MathR.CosAngle(ratio), MathR.SinAngle(ratio) );
         }
-        public V2 normalized
+        public Fixed2 normalized
         {
 
             get {
                 if (x == 0 && y == 0)
                 {
-                    return new V2();
+                    return new Fixed2();
                 }
-                Ratio n =((x *x) + (y * y)).Sqrt();
+                FixedNumber n =((x *x) + (y * y)).Sqrt();
              //   Debug.Log("N" + ((x * x) + (y * y)).Sqrt());
-                return new V2(x/n,y/n);
+                return new Fixed2(x/n,y/n);
 
             }
         }
@@ -109,37 +109,37 @@ namespace IDG
         //{
         //    return new V2(a*b.x,  a* b.y);
         //}
-        public static V2 left = new V2(-1, 0);
-        public static V2 right = new V2(1, 0);
-        public static V2 up = new V2(0, 1);
-        public static V2 down = new V2(0, -1);
-        public static V2 zero = new V2(0, 0);
+        public static Fixed2 left = new Fixed2(-1, 0);
+        public static Fixed2 right = new Fixed2(1, 0);
+        public static Fixed2 up = new Fixed2(0, 1);
+        public static Fixed2 down = new Fixed2(0, -1);
+        public static Fixed2 zero = new Fixed2(0, 0);
         //public static V3 operator +(V3 v3,Ratio ratio)
         //{
 
         //}
-        public Ratio Dot(V2 b)
+        public FixedNumber Dot(Fixed2 b)
         {
             return Dot(this, b);
         }
-        public static Ratio Dot(V2 a,V2 b)
+        public static FixedNumber Dot(Fixed2 a,Fixed2 b)
         {
             return a.x*b.x+b.y*a.y;
         }
 
-        public static V2 operator -(V2 a)
+        public static Fixed2 operator -(Fixed2 a)
         {
-            return new V2(-a.x, -a.y);
+            return new Fixed2(-a.x, -a.y);
         }
-        public static V3 operator *(V2 a, V2 b)
+        public static Fixed3 operator *(Fixed2 a, Fixed2 b)
         {
-            return new V3(new Ratio(),new Ratio(),  a.x * b.y - a.y * b.x);
+            return new Fixed3(new FixedNumber(),new FixedNumber(),  a.x * b.y - a.y * b.x);
         }
-        public static bool operator ==(V2 a, V2 b)
+        public static bool operator ==(Fixed2 a, Fixed2 b)
         {
             return a.x == b.x && a.y == b.y;
         }
-        public static bool operator !=(V2 a, V2 b)
+        public static bool operator !=(Fixed2 a, Fixed2 b)
         {
             return a.x != b.x || a.y != b.y;
         }

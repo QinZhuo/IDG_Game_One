@@ -5,19 +5,19 @@ using System.Text;
 using UnityEngine;
 namespace IDG
 {
-    public struct V3
+    public struct Fixed3
     {
-        public Ratio x
+        public FixedNumber x
         {
             get;
             private set;
         }
-        public Ratio y
+        public FixedNumber y
         {
             get;
             private set;
         }
-        public Ratio z
+        public FixedNumber z
         {
             get;
             private set;
@@ -29,22 +29,22 @@ namespace IDG
         //    this.y = new Ratio(0);
         //    this.z = new Ratio(0);
         //}
-        public V3(int x=0, int y=0,int z=0)
+        public Fixed3(int x=0, int y=0,int z=0)
         {
-            this.x = new Ratio(x);
-            this.y = new Ratio(y);
-            this.z = new Ratio(z);
+            this.x = new FixedNumber(x);
+            this.y = new FixedNumber(y);
+            this.z = new FixedNumber(z);
 
         }
-        public V3(float x, float y,float z)
+        public Fixed3(float x, float y,float z)
         {
 
-            this.x = new Ratio(x);
-            this.y = new Ratio(y);
-            this.z = new Ratio(z);
+            this.x = new FixedNumber(x);
+            this.y = new FixedNumber(y);
+            this.z = new FixedNumber(z);
 
         }
-        public V3(Ratio x, Ratio y ,Ratio z)
+        public Fixed3(FixedNumber x, FixedNumber y ,FixedNumber z)
         {
             this.x = x;
             this.y = y;
@@ -58,13 +58,13 @@ namespace IDG
         //{
         //    return new V3(x, y);
         //}
-        public static V3 operator +(V3 a, V3 b)
+        public static Fixed3 operator +(Fixed3 a, Fixed3 b)
         {
-            return new V3(a.x + b.x, a.y + b.y,a.z+b.z);
+            return new Fixed3(a.x + b.x, a.y + b.y,a.z+b.z);
         }
-        public static V3 operator -(V3 a, V3 b)
+        public static Fixed3 operator -(Fixed3 a, Fixed3 b)
         {
-            return new V3(a.x - b.x, a.y - b.y, a.z - b.z);
+            return new Fixed3(a.x - b.x, a.y - b.y, a.z - b.z);
         }
         //public static V3 operator *(V3 a, Ratio b)
         //{
@@ -74,31 +74,31 @@ namespace IDG
         //{
         //    return new V3(a*b.x,  a* b.y, a * b.z);
         //}
-        public static V3 left = new V3(-1, 0);
-        public static V3 right = new V3(1, 0);
-        public static V3 up = new V3(0, 1);
-        public static V3 down = new V3(0, -1);
-        public static V3 zero = new V3(0, 0);
+        public static Fixed3 left = new Fixed3(-1, 0);
+        public static Fixed3 right = new Fixed3(1, 0);
+        public static Fixed3 up = new Fixed3(0, 1);
+        public static Fixed3 down = new Fixed3(0, -1);
+        public static Fixed3 zero = new Fixed3(0, 0);
         //public static V3 operator +(V3 v3,Ratio ratio)
         //{
 
         //}
-        public Ratio Dot(V3 b)
+        public FixedNumber Dot(Fixed3 b)
         {
             return Dot(this, b);
         }
-        public static Ratio Dot(V3 a,V3 b)
+        public static FixedNumber Dot(Fixed3 a,Fixed3 b)
         {
             return a.x*b.x+b.y*a.y;
         }
 
-        public static V3 operator -(V3 a)
+        public static Fixed3 operator -(Fixed3 a)
         {
-            return new V3(-a.x, -a.y,-a.z);
+            return new Fixed3(-a.x, -a.y,-a.z);
         }
-        public static V2 operator *(V3 a, V2 b)
+        public static Fixed2 operator *(Fixed3 a, Fixed2 b)
         {
-            return new V2(-a.z * b.y, a.z * b.x);
+            return new Fixed2(-a.z * b.y, a.z * b.x);
         }
         public override string ToString()
         {

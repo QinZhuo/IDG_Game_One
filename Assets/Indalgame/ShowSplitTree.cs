@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using IDG.FightClient;
+using IDG.FSClient;
 namespace IDG
 {
     public class ShowSplitTree : MonoBehaviour

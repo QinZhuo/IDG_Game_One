@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-namespace IDG.FightClient
+namespace IDG.FSClient
 {
 
 
@@ -13,7 +13,7 @@ namespace IDG.FightClient
 
         public override ShapBase GetShap()
         {
-            return new BoxShap(new Ratio(x), new Ratio(y));
+            return new BoxShap(new FixedNumber(x), new FixedNumber(y));
         }
         
      
@@ -21,13 +21,13 @@ namespace IDG.FightClient
     public class BoxShap : ShapBase
     {
 
-        public BoxShap(Ratio x, Ratio y)
+        public BoxShap(FixedNumber x, FixedNumber y)
         {
-            V2[] v2s = new V2[4];
-            v2s[0] = new V2(x / 2, y / 2);
-            v2s[1] = new V2(-x / 2, y / 2);
-            v2s[2] = new V2(x / 2, -y / 2);
-            v2s[3] = new V2(-x / 2, -y / 2);
+            Fixed2[] v2s = new Fixed2[4];
+            v2s[0] = new Fixed2(x / 2, y / 2);
+            v2s[1] = new Fixed2(-x / 2, y / 2);
+            v2s[2] = new Fixed2(x / 2, -y / 2);
+            v2s[3] = new Fixed2(-x / 2, -y / 2);
             Points = v2s;
         }
     }

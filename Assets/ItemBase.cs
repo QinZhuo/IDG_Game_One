@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using IDG;
 
-namespace IDG.FightClient
+namespace IDG.FSClient
 {
     public class ItemBase
     {

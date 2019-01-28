@@ -3,21 +3,54 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
-using IDG.FightClient;
+using IDG.FSClient;
 namespace IDG
 {
+    /// <summary>
+    /// 四叉树 用于空间分割 优化2D碰撞检测速度
+    /// </summary>
     public class Tree4
     {
         public static int MaxSize = 100;
+        /// <summary>
+        /// 四叉树最大深度
+        /// </summary>
         public static int MaxDepth=5;
+        /// <summary>
+        /// 空间中物体数多余该值时进行空间分割
+        /// </summary>
         public static int SplitSize = 5;
+        /// <summary>
+        /// 孩子节点
+        /// </summary>
         public Tree4Child child;
+        /// <summary>
+        /// 边界
+        /// </summary>
         public Tree4Border border;
+        /// <summary>
+        /// 邻居节点
+        /// </summary>
         public Tree4Brother brother;
+        /// <summary>
+        /// 空间中物体列表
+        /// </summary>
         public List<NetData> objs;
+        /// <summary>
+        /// 树根
+        /// </summary>
         public static Tree4 root;
+        /// <summary>
+        /// 碰撞信息
+        /// </summary>
         public CollisonInfo collisonInfo;
+        /// <summary>
+        /// 当前节点深度
+        /// </summary>
         public int depth;
+        /// <summary>
+        /// 被激活的树节点列表
+        /// </summary>
         public static List<Tree4> activeTreeList=new List<Tree4>();
         //bool isLeaf = false;
        // public int size;
@@ -58,7 +91,7 @@ namespace IDG
             objs = new List<NetData>(SplitSize+1);
             root = this;
             //size = MaxSize;
-            border = new Tree4Border(new V2(0,0), new Ratio(MaxSize));
+            border = new Tree4Border(new Fixed2(0,0), new FixedNumber(MaxSize));
             brother = new Tree4Brother();
             collisonInfo = new CollisonInfo();
             depth = 0;
@@ -125,9 +158,9 @@ namespace IDG
         }
         public static bool BoxCheck(NetData objA,NetData objB)
         {
-            if (Ratio.Abs( (objA.Position.x-objB.Position.x))<(objA.Width+objB.Width)/2
+            if (FixedNumber.Abs( (objA.Position.x-objB.Position.x))<(objA.Width+objB.Width)/2
                 &&
-                Ratio.Abs((objA.Position.y - objB.Position.y)) < (objA.Height + objB.Height) / 2
+                FixedNumber.Abs((objA.Position.y - objB.Position.y)) < (objA.Height + objB.Height) / 2
                 )
             {
                 return true;
@@ -310,11 +343,11 @@ namespace IDG
         //public Ratio Up { get { return borders[(int)Dir.Up]; } }
         //public Ratio Down { get { return borders[(int)Dir.Down]; } }
 
-        public Ratio size;
-        public V2 center;
+        public FixedNumber size;
+        public Fixed2 center;
         
         //Ratio[] borders;
-        public Tree4Border(V2 center,Ratio size)
+        public Tree4Border(Fixed2 center,FixedNumber size)
         {
             //borders = new Ratio[4];
             this.center = center;
@@ -337,10 +370,10 @@ namespace IDG
         public Tree4Border[] Split()
         {
             Tree4Border[] bs = new Tree4Border[4];
-            bs[(int)Pos.LeftUp] = new Tree4Border(new V2(center.x-size / 2 , size/2+center.y),size/2);
-            bs[(int)Pos.LeftDown] = new Tree4Border(new V2(center.x - size / 2,  center.y- size / 2), size / 2);
-            bs[(int)Pos.RightUp] = new Tree4Border(new V2(center.x + size / 2, center.y + size / 2), size / 2);
-            bs[(int)Pos.RightDown] = new Tree4Border(new V2(center.x + size / 2, center.y - size / 2), size / 2);
+            bs[(int)Pos.LeftUp] = new Tree4Border(new Fixed2(center.x-size / 2 , size/2+center.y),size/2);
+            bs[(int)Pos.LeftDown] = new Tree4Border(new Fixed2(center.x - size / 2,  center.y- size / 2), size / 2);
+            bs[(int)Pos.RightUp] = new Tree4Border(new Fixed2(center.x + size / 2, center.y + size / 2), size / 2);
+            bs[(int)Pos.RightDown] = new Tree4Border(new Fixed2(center.x + size / 2, center.y - size / 2), size / 2);
             return bs;
         }
     }

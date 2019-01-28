@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using IDG;
-using IDG.FightClient;
+using IDG.FSClient;
 public class BulletShow : NetObjectShow<Bullet> {
     public static int id=0;
 
@@ -20,7 +20,7 @@ public class BulletShow : NetObjectShow<Bullet> {
 public class Bullet : NetData
 {
     public NetData user;
-    public Ratio startTime;
+    public FixedNumber startTime;
     public override void Init()
     {
         base.Init();
@@ -53,7 +53,7 @@ public class Bullet : NetData
         {
             UnityEngine.Debug.Log("Enter触发Bullet！！！！");
             Destory<Bullet>(this.show);
-            (other as HealthData).GetHurt(new Ratio(10));
+            (other as HealthData).GetHurt(new FixedNumber(10));
         }
     }
     public override void OnPhysicsCheckExit(NetData other)

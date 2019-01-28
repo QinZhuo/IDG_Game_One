@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using IDG;
-using IDG.FightClient;
+using IDG.FSClient;
 public class PlayerShow : NetObjectShow<PlayerData> {
     // public NetInfo net;
     public int clientId = -1;
@@ -34,9 +34,9 @@ public class PlayerShow : NetObjectShow<PlayerData> {
 }
 public abstract class HealthData : NetData
 {
-    protected Ratio _m_Hp=new Ratio(100);
+    protected FixedNumber _m_Hp=new FixedNumber(100);
     protected bool isDead=false;
-    public virtual void GetHurt(Ratio atk)
+    public virtual void GetHurt(FixedNumber atk)
     {
         if (!isDead)
         {
@@ -66,22 +66,20 @@ public class PlayerData: HealthData
     }
     protected override void FrameUpdate()
     {
-        
-        V2 move = Input.GetJoyStickDirection(FrameKey.MoveKey);
+
+       Fixed2 move = Input.GetJoyStickDirection(IDG.KeyNum.MoveKey);
 
         Position += move * deltaTime;
         if (move.x != 0 || move.y != 0)
         {
             Rotation = move.ToRotation();
         }
-        if (Input.GetKey(FrameKey.Attack))
+        if (Input.GetKeyUp(IDG.KeyNum.Attack))
         {
             gun.Fire(Position + forward, Rotation);
-            //ClientShowManager.Instance.Instantiate<Bullet>(NetDataType.bullet, Position + forward, Rotation);
-            //Instantiate(netPrefab,Position + forward, Rotation);
-            //Instantiate(netPrefab.gameObject, transform.position + transform.forward,net.Rotation.ToUnityRotation());
+        
         }
-       // Debug.Log("FrameUpdate"+ Position+":"+ Input.GetJoyStickDirection(FrameKey.MoveKey));
+  
     }
 
     protected override string PrefabPath()

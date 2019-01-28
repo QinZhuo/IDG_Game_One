@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using IDG.FightClient;
+using IDG.FSClient;
 
 namespace IDG
 {
     public class CollisonInfo
     {
         public bool active = true;
-        Ratio lastCheckTime = new Ratio(-1000);
+        FixedNumber lastCheckTime = new FixedNumber(-1000);
         Dictionary<NetData, List<NetData>> checkList=new Dictionary<NetData, List<NetData>>();
         Dictionary<NetData, List<NetData>> lastList = new Dictionary<NetData, List<NetData>>();
 
@@ -140,7 +140,7 @@ namespace IDG
         
         public static bool GJKCheck(ShapBase a, ShapBase b)
         {
-            V2 direction = a.position - b.position;
+            Fixed2 direction = a.position - b.position;
             //V2 A = ;
             Simplex s = new Simplex();
             s.Push(ShapBase.Support(a, b, direction));
@@ -173,9 +173,9 @@ namespace IDG
     }
     class Simplex
     {
-        List<V2> points = new List<V2>();
-        private V2 d;
-        public void Push(V2 point)
+        List<Fixed2> points = new List<Fixed2>();
+        private Fixed2 d;
+        public void Push(Fixed2 point)
         {
             points.Add(point);
         }
@@ -189,31 +189,31 @@ namespace IDG
         //{
         //    return points[0];
         //}
-        public V2 GetA()
+        public Fixed2 GetA()
         {
             return points[points.Count - 1];
         }
-        public V2 GetB()
+        public Fixed2 GetB()
         {
             return points[points.Count - 2];
         }
-        public V2 GetC()
+        public Fixed2 GetC()
         {
             return points[points.Count - 3];
         }
         public bool ContainsOrigin()
         {
-            V2 A = GetA();
-            V2 AO = -A;
-            V2 B = GetB();
-            V2 AB = B - A;
+            Fixed2 A = GetA();
+            Fixed2 AO = -A;
+            Fixed2 B = GetB();
+            Fixed2 AB = B - A;
             if (points.Count == 3)
             {
-                V2 C = GetC();
+                Fixed2 C = GetC();
 
-                V2 AC = C - A;
-                V2 ABnormal = AC * AB * AB;
-                V2 ACnormal = AB * AC * AC;
+                Fixed2 AC = C - A;
+                Fixed2 ABnormal = AC * AB * AB;
+                Fixed2 ACnormal = AB * AC * AC;
                 // Debug.Log("A" + A + "B" + B + "C" + C);
                 if (ABnormal.Dot(AO) > 0)
                 {
@@ -240,7 +240,7 @@ namespace IDG
             }
             return false;
         }
-        public V2 GetDirection()
+        public Fixed2 GetDirection()
         {
             return d;
         }
@@ -249,18 +249,18 @@ namespace IDG
    
     public abstract class ShapBase
     {
-        private Ratio left;
-        private Ratio right;
-        private Ratio up;
-        private Ratio down;
-        public Ratio height;// { get { return Ratio.AbsMax(up,down); } }
-        public Ratio width;// { get { return Ratio.AbsMax(left, right); } }
-        private V2[] _points;
+        private FixedNumber left;
+        private FixedNumber right;
+        private FixedNumber up;
+        private FixedNumber down;
+        public FixedNumber height;// { get { return Ratio.AbsMax(up,down); } }
+        public FixedNumber width;// { get { return Ratio.AbsMax(left, right); } }
+        private Fixed2[] _points;
         public NetData netinfo;
-        public V2 position { get { if (netinfo != null) { return netinfo.Position; } else { return V2.zero; } } }
-        public Ratio rotation { get { if (netinfo != null) { return netinfo.Rotation; } else { return new Ratio(); } } }
+        public Fixed2 position { get { if (netinfo != null) { return netinfo.Position; } else { return Fixed2.zero; } } }
+        public FixedNumber rotation { get { if (netinfo != null) { return netinfo.Rotation; } else { return new FixedNumber(); } } }
 
-        public V2 GetPoint(int index)
+        public Fixed2 GetPoint(int index)
         {
             return _points[index].Rotate(rotation);
         }
@@ -271,7 +271,7 @@ namespace IDG
                 return _points.Length;
             }
         }
-        protected V2[] Points
+        protected Fixed2[] Points
         {
             set
             {
@@ -305,19 +305,19 @@ namespace IDG
                     up = _points[i].Rotate(rotation).y;
                 }
             }
-            width = Ratio.Max(Ratio.Abs( left), Ratio.Abs(right)) * 2;
-            height = Ratio.Max(Ratio.Abs(up), Ratio.Abs(down)) * 2;
+            width = FixedNumber.Max(FixedNumber.Abs( left), FixedNumber.Abs(right)) * 2;
+            height = FixedNumber.Max(FixedNumber.Abs(up), FixedNumber.Abs(down)) * 2;
         }
-        public V2 Support(V2 direction)
+        public Fixed2 Support(Fixed2 direction)
         {
             int index = 0;
-            Ratio maxDot, t;
-            V2 p;
+            FixedNumber maxDot, t;
+            Fixed2 p;
             p = GetPoint(index);
-            maxDot = V2.Dot(p, direction);
+            maxDot = Fixed2.Dot(p, direction);
             for (; index < PointsCount; index++)
             {
-                t = V2.Dot(GetPoint(index), direction);
+                t = Fixed2.Dot(GetPoint(index), direction);
                 //Debug.Log(_points[index] + "dot" + direction + "=" + t);
                 if (t > maxDot)
                 {
@@ -327,10 +327,10 @@ namespace IDG
             }
             return p + position;
         }
-        public static V2 Support(ShapBase a, ShapBase b, V2 direction)
+        public static Fixed2 Support(ShapBase a, ShapBase b, Fixed2 direction)
         {
-            V2 p1 = a.Support(direction);
-            V2 p2 = b.Support(-direction);
+            Fixed2 p1 = a.Support(direction);
+            Fixed2 p2 = b.Support(-direction);
             //Debug.Log("Support{ p1:" + p1 + "p2:" + p2 + "p3:" + (p1 - p2));
             return p1 - p2;
         }

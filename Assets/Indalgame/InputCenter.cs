@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,45 +6,30 @@ using System.Net.Sockets;
 using System.Net;
 using System.Timers;
 using UnityEngine;
-namespace IDG.FightClient {
+namespace IDG.FSClient {
 
     public class InputCenter 
     {
         protected Timer timer;
         
         private static InputCenter instance;
-        protected Ratio _time;
-        protected FightClient client;
+        protected FixedNumber _time;
+        protected FSClient client;
         protected FrameKey sendKey;
-        protected V2[] sendV2;
-        protected Dictionary<FrameKey, int> JoyIndex;
+      //  protected Fixed2[] sendFixed2;
+
         public Action frameUpdate;
-        public static Ratio Time
+        public static FixedNumber Time
         {
             get { return instance. _time; }
         }
-        public void ResetKey()
-        {
-             FrameKey key=0;
-             
-             foreach (var keyFunc in frameKeys)
-             { 
-             key |= keyFunc();
-             }
-            for (int i = 0; i < joySticks.Count; i++)
-            {
-                sendV2[i] = joySticks[i].direction();
-                key |= joySticks[i].frameKey();
-                
-            }
-            sendKey = key;
-        }
-        public int JoyStickIndex(FrameKey frameKey)
-        {
-            return JoyIndex[frameKey];
-        }
-        protected List<Func<FrameKey>> frameKeys;
-        protected List<JoyStickKey> joySticks;
+        // public void ResetKey()
+        // {
+        //     sendKey.Reset();   
+        // }
+       
+        //protected List<Func<FrameKey>> frameKeys;
+        protected Dictionary<KeyNum,JoyStickKey> joySticks;
         protected int _m_serverStep;
         protected int _m_clientStep;
         public int ClientStepIndex { get { return _m_clientStep %MaxFramBufferCount; } }
@@ -82,7 +67,7 @@ namespace IDG.FightClient {
             for (int i = 0; i < length; i++)
             {
                 
-                _m_inputs[i].ReceiveStep(protocol,joySticks.Count);
+                _m_inputs[i].ReceiveStep(protocol);
                 
             }
            
@@ -96,67 +81,82 @@ namespace IDG.FightClient {
                     frameUpdate();
                     Tree4.CheckTree();
                 }
-                this._time += FightClient.deltaTime;
-                for (int i = 0; i < length; i++)
-                {
-                    _m_inputs[i].InitFrame();
-                  
-                }
+                this._time += FSClient.deltaTime;
+                
 
             }
           
             //Debug.Log("当前帧：[" + _m_clientStep + "]");
         }
       
-        public void Init(FightClient client,int maxClient)
+        public void Init(FSClient client,int maxClient)
         {
             this.client = client;
-            timer = new Timer(50);
+            timer = new Timer(FSClient.deltaTime.ToFloat()*1000);
             timer.AutoReset = true;
             timer.Elapsed += SendClientFrame;
             timer.Enabled = true;
             _m_serverStep = 0;
             _m_clientStep = 0;
             _m_inputs = new InputUnit[maxClient+1];
-            frameKeys = new List<Func<FrameKey>>();
-            JoyIndex = new Dictionary<FrameKey, int>();
-            joySticks = new List<JoyStickKey>();
-            sendV2 =null;
+        
+            joySticks = new Dictionary<KeyNum,JoyStickKey>();
+           // sendFixed2 =null;
+            sendKey=new FrameKey();
             for (int i = 0; i < maxClient+1; i++)
             {
                 _m_inputs[i] = new InputUnit();
                 _m_inputs[i].Init();
             }
         }
-        //public void SetKey(FrameKey key)
-        //{
-        //    sendKey|= key;
-        //}
-        public void AddKey(Func<FrameKey> func)
+        public void SetKey(bool down,KeyNum mask)
         {
-            frameKeys.Add(func);
+           sendKey.SetKey(down,mask);
         }
-        public void AddJoyStick(FrameKey key, JoyStickKey func)
-        {
-            JoyIndex.Add(key, joySticks.Count);
-            joySticks.Add(func);
-            sendV2 = new V2[joySticks.Count];
+        public void SetJoyStick(KeyNum mask,JoyStickKey joy){
+            sendKey.SetKey(joy.key,mask);
+            if(joySticks.ContainsKey(mask)){
+                joySticks[mask]=joy;
+            }else
+            {
+                joySticks.Add(mask,joy);
+            }
         }
+        // public void AddKey(Func<FrameKey> func)
+        // {
+        //     frameKeys.Add(func);
+        // }
+        // public void AddJoyStick(FrameKey key, JoyStickKey func)
+        // {
+        //     JoyIndex.Add(key, joySticks.Count);
+        //     joySticks.Add(func);
+        //     sendFixed2 = new Fixed2[joySticks.Count];
+        // }
         protected void SendClientFrame(object sender, ElapsedEventArgs e)
         {
             if (client.ServerCon.clientId < 0) return;
             ProtocolBase protocol = new ByteProtocol();
             protocol.push((byte)MessageType.Frame);
             protocol.push((byte)client.ServerCon.clientId);
-            protocol.push((byte)sendKey);
-            if (sendV2!=null)
+           
+            foreach (var bt in sendKey.GetBytes())
             {
-                foreach (var direction in sendV2)
-                {
-                    protocol.push(direction);
-                }
+                  protocol.push(bt);
             }
+           
+           
+            
+            protocol.push((byte)joySticks.Count);
+                Debug.LogError("len"+joySticks.Count);
+            foreach (var joy in joySticks)
+            {
+              Debug.LogError("key"+joy.Key);
+                protocol.push((byte)joy.Key);
+                protocol.push(joy.Value.direction);
+            }
+            
             client.Send(protocol.GetByteStream());
+            
         }
         public void Stop()
         {
@@ -168,51 +168,64 @@ namespace IDG.FightClient {
     {
 
         
-        private FrameKey[] keyList;
-        V2[] directions;
+        private FrameKey keyList;
+        protected Dictionary<KeyNum,JoyStickKey> joySticks;
         public void Init()
         {
-            keyList = new FrameKey[InputCenter.MaxFramBufferCount];
-            directions = new V2[0];
+            keyList =new FrameKey();
+
+            joySticks = new Dictionary<KeyNum, JoyStickKey>();
 
 
         }
-        public void ReceiveStep(ProtocolBase message,int length)
+        public void ReceiveStep(ProtocolBase message)
         {
-            keyList[InputCenter.Instance.ServerStepIndex] = (FrameKey)message.getByte();
+            
+            keyList.Parse(message);
             //Debug.Log(keyList[InputCenter.Instance.ServerStepIndex]);
-            lock (directions)
-            {
-                directions = new V2[length];
+            byte len=message.getByte();
 
-                for (int n = 0; n < length; n++)
+        
+            for(byte i=0;i<len;i++){
+               
+                JoyStickKey joy=new JoyStickKey((KeyNum)message.getByte(),message.getV2()) ;
+                if(joySticks.ContainsKey(joy.key)){
+                    joySticks[joy.key]=joy;
+                }else
                 {
-
-                    directions[n] = message.getV2();
-
-
+                    joySticks.Add(joy.key,joy);
                 }
             }
 
         }
-        public bool GetKey(FrameKey key)
+        public bool GetKey(KeyNum key)
         {
-            return (keyList[InputCenter.Instance.ClientStepIndex] & key) == key;
+            return keyList.GetKey(key);
         }
-        public bool GetJoyStick(FrameKey key)
+        public bool GetKeyDown(KeyNum key)
         {
-            return (keyList[InputCenter.Instance.ClientStepIndex] & key) == key;
+            return keyList.GetKeyDown(key);
         }
-        public V2 GetJoyStickDirection(FrameKey key)
+        public bool GetKeyUp(KeyNum key)
         {
-            lock (directions)
+            return keyList.GetKeyUp(key);
+        }
+      
+        public Fixed2 GetJoyStickDirection(KeyNum key)
+        {
+            if(joySticks.ContainsKey(key)){
+                 return joySticks[key].direction;
+            }else
             {
-                return directions[InputCenter.Instance.JoyStickIndex(key)];
+                Debug.LogError("未同步的摇杆！！！");
+                return Fixed2.zero;
             }
+           
+            
         }
         public void InitFrame()
         {
-            keyList[InputCenter.Instance.ClientStepIndex] = 0;
+            //keyList[InputCenter.Instance.ClientStepIndex].Reset();
         }
        
         public Action framUpdate

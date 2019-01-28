@@ -5,6 +5,9 @@ using System.Text;
 
 namespace IDG
 {
+    /// <summary>
+    /// 传输协议基类
+    /// </summary>
     public abstract class ProtocolBase
     {
         public abstract ProtocolBase InitMessage(byte[] bytes);
@@ -16,8 +19,8 @@ namespace IDG
         public abstract void push(Byte uint8);
       
         public abstract void push(Boolean boolean);
-        public abstract void push(Ratio ratio);
-        public abstract void push(V2 v2);
+        public abstract void push(FixedNumber ratio);
+        public abstract void push(Fixed2 v2);
 
         public abstract void push(String str);
         public abstract void push(Byte[] bytes);
@@ -29,11 +32,14 @@ namespace IDG
         public abstract UInt16 getUInt16();
         public abstract Byte getByte();
         public abstract Boolean getBoolean();
-        public abstract Ratio getRatio();
-        public abstract V2 getV2();
+        public abstract FixedNumber getRatio();
+        public abstract Fixed2 getV2();
         public abstract String getString();
         public abstract Byte[] getLastBytes();
     }
+    /// <summary>
+    /// 字节流传输协议实现
+    /// </summary>
     public class ByteProtocol : ProtocolBase
     {
         protected List<Byte> byteList = new List<byte>();
@@ -67,9 +73,9 @@ namespace IDG
             return BitConverter.ToInt64(bytes, index);
         }
 
-        public override Ratio getRatio()
+        public override FixedNumber getRatio()
         {
-            Ratio r = new Ratio();
+            FixedNumber r = new FixedNumber();
             r.SetValue(getInt64());
             return r;
         }
@@ -146,21 +152,21 @@ namespace IDG
             byteList.AddRange(tempBytes);
         }
 
-        public override void push(Ratio ratio)
+        public override void push(FixedNumber ratio)
         {
             push(ratio.GetValue());
           
         }
-        public override void push(V2 v2)
+        public override void push(Fixed2 v2)
         {
             push(v2.x.GetValue());
             push(v2.y.GetValue());
         }
 
-        public override V2 getV2()
+        public override Fixed2 getV2()
         {
-            Ratio r1 = getRatio(), r2 = getRatio();
-            return new V2(r1, r2);
+            FixedNumber r1 = getRatio(), r2 = getRatio();
+            return new Fixed2(r1, r2);
         }
 
         public override void push(byte[] bytes)

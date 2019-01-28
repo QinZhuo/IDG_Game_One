@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 using IDG;
-using IDG.FightClient;
+using IDG.FSClient;
 using IDG.MobileInput;
 using UnityEngine.UI;
+/// <summary>
+/// 【战斗客户端Unity接口】管理【战斗客户端】并在每帧进行解析消息
+/// </summary>
 public class FightClientForUnity3D : MonoBehaviour {
     
-    protected FightClient client;
+    protected FSClient client;
     public static FightClientForUnity3D instance;
     public List<JoyStick> joySticks;
     public static FightClientForUnity3D Instance
@@ -17,13 +20,13 @@ public class FightClientForUnity3D : MonoBehaviour {
     // Use this for initialization
     void Awake () {
         if (instance == null) instance = this;
-        client = new FightClient();
+        client = new FSClient();
         client.Connect("127.0.0.1", 12345,10);
-        InputCenter.Instance.AddKey(GetKey);
-        foreach (JoyStick joyStick in joySticks)
-        {
-            InputCenter.Instance.AddJoyStick(joyStick.frameKey,joyStick.GetInfo());
-        }
+
+        // foreach (JoyStick joyStick in joySticks)
+        // {
+        //     InputCenter.Instance.AddJoyStick(joyStick.frameKey,joyStick.GetInfo());
+        // }
         ShapPhysics.Init();
         //V2 v2 = new V2(1, 0);
         //for (int i =0; i <= 360; i+=30)
@@ -57,34 +60,31 @@ public class FightClientForUnity3D : MonoBehaviour {
        {
            client.ParseMessage(client.MessageList.Dequeue());
        }
-        InputCenter.Instance.ResetKey();
+       
         
-        //CommitKey();
+        CommitKey();
     }
-    public FrameKey GetKey()
+    public void CommitKey()
     {
-        FrameKey key=0;
-        if (Input.GetKey(KeyCode.J))
+        
+        // if (Input.GetKey(UnityEngine.KeyCode.J))
+        // {
+        //     key |= IDG.KeyNum.Attack;
+        // }
+       // InputCenter.Instance.
+        InputCenter.Instance.SetKey(Input.GetKey(KeyCode.J),KeyNum.Attack);
+
+
+        foreach (var joy in joySticks)
         {
-            key |= FrameKey.Attack;
+             InputCenter.Instance.SetJoyStick(joy.key,joy.GetInfo());
         }
-        //if (Input.GetKey(KeyCode.A))
-        //{
-        //    key|=FrameKey.Left;
-        //}
-        //if (Input.GetKey(KeyCode.D))
-        //{
-        //    key |= FrameKey.Right;
-        //}
-        //if (Input.GetKey(KeyCode.S))
-        //{
-        //    key |= FrameKey.Down;
-        //}
-        //if (Input.GetKey(KeyCode.W))
-        //{
-        //    key |= FrameKey.Up;
-        //}
-        return key;
+       
+        // InputCenter.Instance.SetKey(Input.GetKey(KeyCode.A),KeyNum.Left);
+        // InputCenter.Instance.SetKey(Input.GetKey(KeyCode.D),KeyNum.Right);
+        // InputCenter.Instance.SetKey(Input.GetKey(KeyCode.W),KeyNum.Up);
+        // InputCenter.Instance.SetKey(Input.GetKey(KeyCode.S),KeyNum.Down);
+        
     }
     public void OnDestroy()
     {
