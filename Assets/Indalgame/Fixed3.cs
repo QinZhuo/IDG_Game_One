@@ -5,6 +5,9 @@ using System.Text;
 using UnityEngine;
 namespace IDG
 {
+    /// <summary>
+    /// 定点数三维向量
+    /// </summary>
     public struct Fixed3
     {
         public FixedNumber x

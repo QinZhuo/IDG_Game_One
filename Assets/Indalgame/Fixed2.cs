@@ -5,6 +5,9 @@ using System.Text;
 using UnityEngine;
 namespace IDG
 {
+    /// <summary>
+    /// 定点数二维向量
+    /// </summary>
     public struct Fixed2
     {
         public FixedNumber x
@@ -64,8 +67,8 @@ namespace IDG
         {
             
             FixedNumber tx, ty;
-            tx = MathR.CosAngle(value) * x - y * MathR.SinAngle(value);
-            ty = MathR.CosAngle(value) * y + x * MathR.SinAngle(value);
+            tx = MathFixed.CosAngle(value) * x - y * MathFixed.SinAngle(value);
+            ty = MathFixed.CosAngle(value) * y + x * MathFixed.SinAngle(value);
            // Debug.Log("f:" + f + "sin90" + Mathf.Sin(90) + "cos90" + (Math.Cos(90)));
             //1,0   tx=1*0-0  ty
             return new Fixed2(tx, ty);
@@ -80,16 +83,16 @@ namespace IDG
             FixedNumber sin = this.normalized.y;
             if (this.x >= 0)
             {
-                return MathR.Asin(sin)/MathR.PI*180;
+                return MathFixed.Asin(sin)/MathFixed.PI*180;
             }
             else
             {
-                return MathR.Asin(-sin) / MathR.PI * 180+180;
+                return MathFixed.Asin(-sin) / MathFixed.PI * 180+180;
             }
         }
         public static Fixed2 Parse(FixedNumber ratio)
         {
-            return new Fixed2(MathR.CosAngle(ratio), MathR.SinAngle(ratio) );
+            return new Fixed2(MathFixed.CosAngle(ratio), MathFixed.SinAngle(ratio) );
         }
         public Fixed2 normalized
         {

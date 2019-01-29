@@ -6,17 +6,28 @@ using IDG.FSClient;
 
 namespace IDG
 {
+    /// <summary>
+    /// 物理碰撞信息
+    /// </summary>
     public class CollisonInfo
     {
+        /// <summary>
+        /// 是否激活
+        /// </summary>
         public bool active = true;
+        /// <summary>
+        /// 上次碰撞检测时间
+        /// </summary>
         FixedNumber lastCheckTime = new FixedNumber(-1000);
+        /// <summary>
+        /// 碰撞列表
+        /// </summary>
         Dictionary<NetData, List<NetData>> checkList=new Dictionary<NetData, List<NetData>>();
-        Dictionary<NetData, List<NetData>> lastList = new Dictionary<NetData, List<NetData>>();
-
-      
-
-
-
+        /// <summary>
+        /// 碰撞检测
+        /// </summary>
+        /// <param name="tree">检测的节点</param>
+        /// <returns>碰撞的对象</returns>
         public Dictionary<NetData, List<NetData>> Check(Tree4 tree)
         {
             if (!active&&InputCenter.Time<=lastCheckTime ) return checkList;
@@ -56,25 +67,19 @@ namespace IDG
             active = false;
             return checkList;
         }
-        //    foreach (var obj1 in tree.objs)
-        //    {
-        //        foreach (var obj2 in tree.objs)
-        //        {
-        //            if (obj1 != obj2 && ShapPhysics.Check(obj1, obj2))
-        //            {
-
-
-        //            }
-        //        }
-
-        //    }
-        //}
-       
-
     }
+    /// <summary>
+    /// 物理检测
+    /// </summary>
     public class ShapPhysics
     {
+        /// <summary>
+        /// 图形列表
+        /// </summary>
         private static List<NetData> shaps = null;
+        /// <summary>
+        /// 空间分割四叉树对象
+        /// </summary>
         public static Tree4 tree = null;
         public static void Init()
         {
@@ -82,73 +87,77 @@ namespace IDG
             {
                 shaps = new List<NetData>();
                 tree = new Tree4();
-
             }
         }
+        /// <summary>
+        /// 添加对象
+        /// </summary>
+        /// <param name="obj">游戏对象</param>
         public static void Add(NetData obj)
         {
             shaps.Add(obj);
             tree.Add(obj);
         }
+        /// <summary>
+        /// 移除对象
+        /// </summary>
+        /// <param name="obj">游戏对象</param>
         public static void Remove(NetData obj)
         {
             shaps.Remove(obj);
             Tree4.Remove(obj);
         }
-        //public static bool CheckCollision(NetData a)
-        //{
-        //   foreach (var item in CheckAll(a))
-        //        {
-                    
-        //            if (!item.isTrigger)
-        //            {
-        //                return true;
-        //            }
-        //        }
-                
-           
-        //    return false;
-        //}
-        public static List<NetData> CheckAll(NetData a)
-        {
-            List<NetData> others = new List<NetData>();
-            foreach (Tree4 tree in a.trees)
-            {
-                //if (tree == null) UnityEngine.Debug.LogError("tree Is Null");
-                //if (tree.collisonInfo == null) UnityEngine.Debug.LogError("collisonInfo Is Null");
-                var objs = tree.collisonInfo.Check(tree);
-                if (objs.ContainsKey(a))
-                {
-                    foreach (var obj in tree.collisonInfo.Check(tree)[a])
-                    {
-                        if (!others.Contains(obj))
-                        {
-                            others.Add(obj);
-                        }
-                    }
-                    //others.AddRange(tree.collisonInfo.Check(tree)[a]);
-                }
-                
-            }
-            return others;
-        }
+
+        // public static List<NetData> CheckAll(NetData netObj)
+        // {
+        //     List<NetData> others = new List<NetData>();
+        //     foreach (Tree4 tree in netObj.trees)
+        //     {
+        //         var objs = tree.collisonInfo.Check(tree);
+        //         if (objs.ContainsKey(netObj))
+        //         {
+        //             foreach (var obj in tree.collisonInfo.Check(tree)[netObj])
+        //             {
+        //                 if (!others.Contains(obj))
+        //                 {
+        //                     others.Add(obj);
+        //                 }
+        //             }
+        //         }  
+        //     }
+        //     return others;
+        // }
+
+
+        //GJK算法原理
+        //两个物体进行明可夫斯基差操作 得到的新图形形状包含原点则这两个图形的是相交的
+        /// <summary>
+        /// 立即检测两个物体是否发生细节碰撞 
+        /// 先包围盒检测（粗略） 后GJK碰撞检测（细节）
+        /// </summary>
+        /// <param name="a">检测对象a</param>
+        /// <param name="b">检测对象b</param>
+        /// <returns>是否碰撞</returns>
         public static bool Check(NetData a, NetData b)
         {
-
             return Tree4.BoxCheck(a, b)&&GJKCheck(a.Shap, b.Shap);//;// xB&&yB;
         }
         
+        /// <summary>
+        /// GJK算法的多边形碰撞检测
+        /// </summary>
+        /// <param name="a">形状a</param>
+        /// <param name="b">形状b</param>
+        /// <returns>是否碰撞</returns>
         public static bool GJKCheck(ShapBase a, ShapBase b)
         {
             Fixed2 direction = a.position - b.position;
-            //V2 A = ;
+          
             Simplex s = new Simplex();
             s.Push(ShapBase.Support(a, b, direction));
             direction = -direction;
-
-            while (true)
+            while (true)        //迭代
             {
-
                 s.Push(ShapBase.Support(a, b, direction));
                 if (s.GetA().Dot(direction) < 0)
                 {
@@ -165,12 +174,17 @@ namespace IDG
                         direction = s.GetDirection();
                     }
                 }
-                //s.Push(A);
+             
 
             }
-            //return false;
         }
     }
+
+    /// <summary>
+    /// 单纯形（Simplex）
+    /// 2阶单纯形，2维空间，2 + 1 = 3个顶点
+    /// 所以就是一个平面（2维空间）上的一个三角形 
+    /// </summary>
     class Simplex
     {
         List<Fixed2> points = new List<Fixed2>();
@@ -179,16 +193,6 @@ namespace IDG
         {
             points.Add(point);
         }
-        //public V2 Pop()
-        //{
-        //    V2 point = points[0];
-        //    points.RemoveAt(0);
-        //    return point;
-        //}
-        //public V2 Peek()
-        //{
-        //    return points[0];
-        //}
         public Fixed2 GetA()
         {
             return points[points.Count - 1];
@@ -201,6 +205,10 @@ namespace IDG
         {
             return points[points.Count - 3];
         }
+        /// <summary>
+        /// 检测是否包含原点 包含原点就发生了碰撞
+        /// </summary>
+        /// <returns>是否包含原点</returns>
         public bool ContainsOrigin()
         {
             Fixed2 A = GetA();
@@ -214,7 +222,6 @@ namespace IDG
                 Fixed2 AC = C - A;
                 Fixed2 ABnormal = AC * AB * AB;
                 Fixed2 ACnormal = AB * AC * AC;
-                // Debug.Log("A" + A + "B" + B + "C" + C);
                 if (ABnormal.Dot(AO) > 0)
                 {
                     points.Remove(C);
@@ -235,18 +242,23 @@ namespace IDG
             }
             else
             {
-                //Debug.Log("A" + A + "B" + B);
                 d = AB * AO * AB;
             }
             return false;
         }
+        /// <summary>
+        /// 获取下一步迭代的方向
+        /// </summary>
+        /// <returns>迭代方向</returns>
         public Fixed2 GetDirection()
         {
             return d;
         }
 
     }
-   
+    /// <summary>
+    /// 形状基类
+    /// </summary>
     public abstract class ShapBase
     {
         private FixedNumber left;
@@ -259,7 +271,7 @@ namespace IDG
         public NetData netinfo;
         public Fixed2 position { get { if (netinfo != null) { return netinfo.Position; } else { return Fixed2.zero; } } }
         public FixedNumber rotation { get { if (netinfo != null) { return netinfo.Rotation; } else { return new FixedNumber(); } } }
-
+        
         public Fixed2 GetPoint(int index)
         {
             return _points[index].Rotate(rotation);
@@ -280,6 +292,9 @@ namespace IDG
 
             }
         }
+        /// <summary>
+        /// 根据旋转计算新的包围盒大小 与 点的位置
+        /// </summary>
         public void ResetSize()
         {
             left = _points[0].Rotate(rotation).x;
@@ -308,6 +323,11 @@ namespace IDG
             width = FixedNumber.Max(FixedNumber.Abs( left), FixedNumber.Abs(right)) * 2;
             height = FixedNumber.Max(FixedNumber.Abs(up), FixedNumber.Abs(down)) * 2;
         }
+        /// <summary>
+        /// 给定两个凸体 给定迭代方向 该函数返回这两个凸体明可夫斯基差形状中的一个点
+        /// </summary>
+        /// <param name="direction">迭代方向</param>
+        /// <returns>点</returns>
         public Fixed2 Support(Fixed2 direction)
         {
             int index = 0;
@@ -327,6 +347,13 @@ namespace IDG
             }
             return p + position;
         }
+        /// <summary>
+        /// 给定方向 给定两个凸体 该函数返回这两个凸体明可夫斯基差形状中的一个点
+        /// </summary>
+        /// <param name="a">形状a</param>
+        /// <param name="b">形状b</param>
+        /// <param name="direction">迭代方向</param>
+        /// <returns>指定方向内的一点</returns>
         public static Fixed2 Support(ShapBase a, ShapBase b, Fixed2 direction)
         {
             Fixed2 p1 = a.Support(direction);
@@ -337,24 +364,5 @@ namespace IDG
 
     }
 
-    //public class TwoWayDictionary<T>
-    //{
-    //    bool[,] map;
-    //    Dictionary<T,int> index;
-    //    public TwoWayDictionary(){
-    //        index = new Dictionary<T, int>();
-    //    }
-    //    public void Reset(List<T> objs)
-    //    {
-    //        map = new bool[objs.Count, objs.Count];
-    //        index.Clear();
-    //        int i = 0;
-    //        foreach (var obj in objs)
-    //        {
-    //            index.Add(obj, i);
-    //            i++;
-    //        }
-    //    }
-        
-    //}
+  
 }

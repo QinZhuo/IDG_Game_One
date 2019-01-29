@@ -52,8 +52,7 @@ namespace IDG
         /// 被激活的树节点列表
         /// </summary>
         public static List<Tree4> activeTreeList=new List<Tree4>();
-        //bool isLeaf = false;
-       // public int size;
+
         public static void CheckTree()
         {
             foreach (var tree in activeTreeList)
@@ -74,8 +73,8 @@ namespace IDG
                 {
                     if (objs[i] != objs[j] && ShapPhysics.Check(objs[i], objs[j]))
                     {
-                        objs[i].collisonDatas.Add(objs[j]);
-                        objs[j].collisonDatas.Add(objs[i]);
+                        objs[i].physics.collisonDatas.Add(objs[j]);
+                        objs[j].physics.collisonDatas.Add(objs[i]);
                     }
                 }
 
@@ -205,51 +204,10 @@ namespace IDG
             }
             return false;
         }
-        //public void AddChild(NetInfo obj)
-        //{
-        //    child.LeftUp.Add(obj);
-        //    child.LeftDown.Add(obj);
-        //    child.RightUp.Add(obj);
-        //    child.RightDown.Add(obj);
-        //    //if (obj.Left <= border.center.x)
-        //    //{
-        //    //    if (obj.Up >= border.center.y)
-        //    //    {
-        //    //        child.LeftUp.Add(obj);
-        //    //    }
-        //    //}
-
-        //    //if (obj.Left <= border.center.x)
-        //    //{
-        //    //    if (obj.Down <= border.center.y)
-        //    //    {
-        //    //        child.LeftDown.Add(obj);
-        //    //    }
-        //    //}
-        //    //if (obj.Right >= border.center.x)
-        //    //{
-        //    //    if (obj.Up >= border.center.y)
-        //    //    {
-        //    //        child.RightUp.Add(obj);
-        //    //    }
-        //    //}
-        //    //if (obj.Right >= border.center.x)
-        //    //{
-        //    //    if (obj.Down <= border.center.y)
-        //    //    {
-        //    //        child.RightDown.Add(obj);
-        //    //    }
-        //    //}
-
-
-
-        //}
-        //public Tree4()
-        //{
-        //    objs = new List<object>(SplitSize);
-        //}
-        // List<object>
     }
+    /// <summary>
+    /// 四叉树子节点类
+    /// </summary>
     public class Tree4Child
     {
         public Tree4 LeftUp{ get { return trees[(int)Pos.LeftUp]; } }
@@ -258,6 +216,12 @@ namespace IDG
         public Tree4 RightDown { get { return trees[(int)Pos.RightDown]; } }
 
         private Tree4[] trees;
+        /// <summary>
+        /// 初始化节点信息
+        /// </summary>
+        /// <param name="depth">当前深度</param>
+        /// <param name="border">边界类对象</param>
+        /// <param name="brother">邻居类对象</param>
         public Tree4Child(int depth,Tree4Border border,Tree4Brother brother)
         {
             trees = new Tree4[4];
@@ -271,6 +235,10 @@ namespace IDG
             trees[(int)Pos.RightUp].brother = new Tree4Brother(LeftUp, brother.Right, brother.Up, RightDown);
             trees[(int)Pos.RightDown].brother = new Tree4Brother(LeftDown, brother.Right, RightUp, brother.Down);
         }
+        /// <summary>
+        /// 向子节点添加对象
+        /// </summary>
+        /// <param name="obj">添加的对象</param>
         public void Add(NetData obj)
         {
             for (int i = 0; i < 4; i++)
@@ -280,6 +248,9 @@ namespace IDG
         }
         
     }
+    /// <summary>
+    /// 四叉树邻居类
+    /// </summary>
     public class Tree4Brother
     {
         public Tree4 Left { get { return brothers[(int)Dir.Left]; } }
@@ -287,15 +258,7 @@ namespace IDG
         public Tree4 Up { get { return brothers[(int)Dir.Up]; } }
         public Tree4 Down { get { return brothers[(int)Dir.Down]; } }
         private Tree4[] brothers;
-        public Tree4Brother[] Split()
-        {
-            Tree4Brother[] brothers = new Tree4Brother[4];
-            //foreach (var item in collection)
-            //{
 
-            //}
-            return brothers;
-        }
         public Tree4Brother()
         {
             brothers = new Tree4[4];
@@ -308,6 +271,10 @@ namespace IDG
             brothers[(int)Dir.Up] = up;
             brothers[(int)Dir.Down] = down;
         }
+        /// <summary>
+        /// 向邻居节点添加对象
+        /// </summary>
+        /// <param name="obj">移动的对象</param>
         public void Add(NetData obj)
         {
          
@@ -322,6 +289,9 @@ namespace IDG
             }
         }
     }
+    /// <summary>
+    /// 方向枚举
+    /// </summary>
     enum Dir:byte
     {
         Left=0,
@@ -329,6 +299,9 @@ namespace IDG
         Up=2,
         Down=3,
     }
+    /// <summary>
+    /// 方位枚举
+    /// </summary>
     enum Pos: byte
     {
         LeftUp=0,
@@ -336,37 +309,31 @@ namespace IDG
         RightUp=2,
         RightDown=3,
     }
+    /// <summary>
+    /// 四叉树边界类
+    /// </summary>
     public class Tree4Border
     {
-        //public Ratio Left { get { return borders[(int)Dir.Left]; } }
-        //public Ratio Right { get { return borders[(int)Dir.Right]; } }
-        //public Ratio Up { get { return borders[(int)Dir.Up]; } }
-        //public Ratio Down { get { return borders[(int)Dir.Down]; } }
-
+        /// <summary>
+        /// 正方形边长
+        /// </summary>
         public FixedNumber size;
+        /// <summary>
+        /// 中心点位置
+        /// </summary>
         public Fixed2 center;
-        
-        //Ratio[] borders;
+
         public Tree4Border(Fixed2 center,FixedNumber size)
         {
-            //borders = new Ratio[4];
             this.center = center;
             this.size = size;
-            //borders[(int)Dir.Left] = center.x - size;
-            //borders[(int)Dir.Right] = center.x + size;
-            //borders[(int)Dir.Up] = center.y + size;
-            //borders[(int)Dir.Down] = center.y - size;
         }
-        //public Tree4Border(Ratio left, Ratio right, Ratio up,Ratio down)
-        //{
-        //    borders = new Ratio[4];
-        //    borders[(int)Dir.Left] = left;
-        //    borders[(int)Dir.Right] = right;
-        //    borders[(int)Dir.Up] = up;
-        //    borders[(int)Dir.Down] = down;
-        //    center = new V2((left + right) / 2, (up+down) / 2);
-        //}
-        
+       
+
+        /// <summary>
+        /// 分裂节点 生成四个子节点
+        /// </summary>
+        /// <returns>四个子节点边界</returns>
         public Tree4Border[] Split()
         {
             Tree4Border[] bs = new Tree4Border[4];
@@ -377,9 +344,5 @@ namespace IDG
             return bs;
         }
     }
-    //enum Tree4NodeType
-    //{
-        
-    //}
     
 }

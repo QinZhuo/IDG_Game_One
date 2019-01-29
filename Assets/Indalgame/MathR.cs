@@ -5,9 +5,15 @@ using System.Text;
 
 namespace IDG
 {
-    class MathR
+    /// <summary>
+    /// 定点数数学类
+    /// </summary>
+    class MathFixed
     {
         protected static int tabCount = 18*4;
+        /// <summary>
+        /// sin值对应表
+        /// </summary>
         protected static readonly List<FixedNumber> _m_SinTab = new List<FixedNumber>();
         public static readonly FixedNumber PI = new FixedNumber(3.14159265f);
         protected static FixedNumber GetSinTab(FixedNumber r)
@@ -28,7 +34,7 @@ namespace IDG
         }
         public static FixedNumber GetAsinTab(FixedNumber sin)
         {
-            MathR math = Instance;
+            MathFixed math = Instance;
             //UnityEngine.Debug.Log("GetAsinTab");
             for (int i = _m_SinTab.Count-1; i >=0; i--)
             {
@@ -48,20 +54,20 @@ namespace IDG
             }
             return new FixedNumber();
         }
-        protected static MathR Instance
+        protected static MathFixed Instance
         {
             get
             {
                 if (_m_instance == null)
                 {
-                    _m_instance = new MathR();
+                    _m_instance = new MathFixed();
                     
                 }
                 return _m_instance;
             }
         }
-        protected static MathR _m_instance;
-        protected MathR()
+        protected static MathFixed _m_instance;
+        protected MathFixed()
         {
             if (_m_instance == null)
             {
@@ -111,7 +117,7 @@ namespace IDG
         public static FixedNumber Sin(FixedNumber r)
         {
            
-            MathR math= Instance;
+            MathFixed math= Instance;
             //int tabCount = SinTab.Count*4;
             FixedNumber result=new FixedNumber();
             r = (r * tabCount / 2 / PI);

@@ -15,7 +15,7 @@ public class PlayerShow : NetObjectShow<PlayerData> {
         data.ClientId = clientId;
         anim.SetInteger("WeaponType", 1);
     }
-
+    
     //float last;
 
 

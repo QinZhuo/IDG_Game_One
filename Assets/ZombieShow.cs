@@ -20,9 +20,10 @@ public class EnemyTarget : NetData
     public void SetTargetFindMode(FixedNumber r)
     {
         Shap = new CircleShap(r,8);
-        usePhysicsCheck = true;
+       
         isTrigger = true;
         base.Init();
+        physics.enable = true;
         base.Start();
     }
     protected override void FrameUpdate()

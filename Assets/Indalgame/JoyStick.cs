@@ -13,7 +13,6 @@ namespace IDG.MobileInput
     public class JoyStick : MonoBehaviour,IDragHandler,IEndDragHandler,IBeginDragHandler
     {
         public RectTransform moveObj;
-       // V2 direction;
         float maxScale;
         Coroutine coroutine;
         bool isDown;
@@ -50,8 +49,6 @@ namespace IDG.MobileInput
         }
         public Fixed2 Direction()
         {
-            //Debug.Log("position " + (moveObj.position - transform.position) + ":" + direction.normalized);
-            // Debug.Log("normalized " + +":"+direction.normalized);
             Vector3 tmp = (moveObj.position - transform.position).normalized;
             return new Fixed2(tmp.x,tmp.y);
         }
@@ -67,11 +64,6 @@ namespace IDG.MobileInput
         }
         public void OnBeginDrag(PointerEventData eventData)
         {
-            //if (coroutine != null)
-            //{
-            //    StopCoroutine(coroutine);
-            //    coroutine = null;
-            //}
             isDown = true;
             if (BeginMove != null)
             {

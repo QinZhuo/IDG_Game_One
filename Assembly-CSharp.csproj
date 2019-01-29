@@ -68,7 +68,9 @@
      <Compile Include="Assets\Indalgame\MathR.cs" />
      <Compile Include="Assets\Indalgame\NetObjectShow.cs" />
      <Compile Include="Assets\Indalgame\Physics.cs" />
+     <Compile Include="Assets\Indalgame\PhysicsComponent.cs" />
      <Compile Include="Assets\Indalgame\Protocol.cs" />
+     <Compile Include="Assets\Indalgame\Shap.cs" />
      <Compile Include="Assets\Indalgame\ShowSplitTree.cs" />
      <Compile Include="Assets\Indalgame\SplitTree4.cs" />
      <Compile Include="Assets\ItemBase.cs" />

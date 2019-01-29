@@ -24,7 +24,7 @@ public class Bullet : NetData
     public override void Init()
     {
         base.Init();
-        usePhysicsCheck = true;
+        physics.enable = true;
         isTrigger = true;
         startTime = InputCenter.Time;
     }

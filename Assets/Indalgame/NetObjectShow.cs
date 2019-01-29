@@ -114,12 +114,10 @@ namespace IDG.FSClient
         private Fixed2 _position=new Fixed2();
         private Fixed2 _lastPos=new Fixed2();
         private FixedNumber _lastRota = new FixedNumber();
-        public bool usePhysicsCheck=false;
-        // public CollisonInfo collisonInfo = new CollisonInfo();
-        protected List<NetData> lastCollisonDatas = new List<NetData>();
-        public List<NetData> collisonDatas=new List<NetData>();
         public NetData parent;
         public MonoBehaviour show;
+
+        public PhysicsComponent physics;
         public FixedNumber Width
         {
             get
@@ -134,6 +132,9 @@ namespace IDG.FSClient
                 return Shap.height;
             }
         }
+        /// <summary>
+        /// 当前对象所处的四叉树空间
+        /// </summary>
         public List<Tree4> trees = new List<Tree4>();
         public bool isTrigger=false;
         private FixedNumber _rotation = new FixedNumber();
@@ -144,58 +145,20 @@ namespace IDG.FSClient
             if (!active) return;
             PhysicsEffect();
             FrameUpdate();
-            //this.collisonInfo.Start();
-            if (usePhysicsCheck)
-            {
-                foreach (var other in this.collisonDatas)
-                {
-                    if (!lastCollisonDatas.Contains(other))
-                    {
-                        OnPhysicsCheckEnter(other);
-                    }
-                    else
-                    {
-                        lastCollisonDatas.Remove(other);
-                    }
-                    //Debug.Log("1 "+this.collisonDatas+" "+this.collisonDatas.Count);
-                    OnPhysicsCheckStay(other);
-                }
-                foreach (var other in lastCollisonDatas)
-                {
-                    OnPhysicsCheckExit(other);
-                }
-            }
-            lastCollisonDatas.Clear();
-            lastCollisonDatas.AddRange(collisonDatas);
-
-            //  collisonDatas = ShapPhysics.CheckAll(this);
+            physics.Update();
            
-            
-            collisonDatas.Clear();
         }
         public virtual void Init()
         {
             Input.framUpdate += DataFrameUpdate;
-           
+            physics=new PhysicsComponent();
+            physics.Init(OnPhysicsCheckEnter,OnPhysicsCheckStay,OnPhysicsCheckExit);
             Debug.Log(name+"init");
         }
-        public bool CheckCollision(NetData a)
-        {
-           
-            foreach (var item in collisonDatas)
-            {
-
-                if (!item.isTrigger)
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
+       
         public virtual void Start()
         {
-
+            
         }
 
         public virtual void OnPhysicsCheckStay(NetData other)
@@ -231,7 +194,6 @@ namespace IDG.FSClient
         }
         public static void Destory<T>(MonoBehaviour show) where T : NetData, new()
         {
-            //if (show == null) return;
             if (show == null) { Debug.Log("show is Null"); }
             (show as NetObjectShow<T>).data.Destory();
             GameObject.Destroy(show.gameObject);
@@ -245,7 +207,6 @@ namespace IDG.FSClient
         {
             get
             {
-            //      Debug.Log(_rotation);
                 return Fixed2.Parse(_rotation);
             }
         }
@@ -279,7 +240,7 @@ namespace IDG.FSClient
         protected void PhysicsEffect()
         {
             if (Shap == null) return;
-            if (isTrigger || !CheckCollision(this))
+            if (isTrigger || !physics.CheckCollision(this))
             {
                 if (_position != _lastPos || _rotation != _lastRota)
                 {
@@ -296,34 +257,7 @@ namespace IDG.FSClient
                 _position = _lastPos;
             }
         }
-        //public Ratio Left
-        //{
-        //    get
-        //    {
-        //        return  _shap.left + _previewPos.x;
-        //    }
-        //}
-        //public Ratio Right
-        //{
-        //    get
-        //    {
-        //        return _shap.right + _previewPos.x;
-        //    }
-        //}
-        //public Ratio Up
-        //{
-        //    get
-        //    {
-        //        return _shap.up + _previewPos.y;
-        //    }
-        //}
-        //public Ratio Down
-        //{
-        //    get
-        //    {
-        //        return _shap.down + _previewPos.y;
-        //    }
-        //}
+
         public FixedNumber Rotation
         {
             get
@@ -346,7 +280,7 @@ namespace IDG.FSClient
             }
         }
         public int ClientId=-1;
-        private ShapBase _shap;//=new BoxShap(new Ratio(1,2));
+        private ShapBase _shap;
         public ShapBase Shap
         {
             get
@@ -355,8 +289,6 @@ namespace IDG.FSClient
             }
             set
             {
-                //ShapPhysics.Add(this);
-                //_shap = new BoxShap(new Ratio(1, 2));
 
                 if (_shap != null)
                 {
@@ -394,36 +326,4 @@ namespace IDG.FSClient
         }
        
     }
-    //[System.Serializable]
-
-    //public class TestShap : ShapBase
-    //{
-
-    //    public TestShap(bool isA)
-    //    {
-           
-    //        V2[] v2s;
-    //        if (isA)
-    //        {
-               
-    //            v2s = new V2[3];
-    //            v2s[0] = new V2(4, 5);
-    //            v2s[1] = new V2(4, 11);
-    //            v2s[2] = new V2(9, 9);
-    //        }
-    //        else
-    //        {
-    //            v2s = new V2[4];
-    //            v2s[0] = new V2(7, 3);
-    //            v2s[1] = new V2(5, 7);
-    //            v2s[2] = new V2(12, 7);
-    //            v2s[3] = new V2(10, 2);
-    //        }
-            
-    //        Points = v2s;
-    //    }
-
-    //}
-    
-    
 }
