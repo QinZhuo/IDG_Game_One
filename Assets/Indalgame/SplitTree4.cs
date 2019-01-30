@@ -157,9 +157,9 @@ namespace IDG
         }
         public static bool BoxCheck(NetData objA,NetData objB)
         {
-            if (FixedNumber.Abs( (objA.Position.x-objB.Position.x))<(objA.Width+objB.Width)/2
+            if (FixedNumber.Abs( (objA.transform.Position.x-objB.transform.Position.x))<(objA.Width+objB.Width)/2
                 &&
-                FixedNumber.Abs((objA.Position.y - objB.Position.y)) < (objA.Height + objB.Height) / 2
+                FixedNumber.Abs((objA.transform.Position.y - objB.transform.Position.y)) < (objA.Height + objB.Height) / 2
                 )
             {
                 return true;
@@ -195,9 +195,9 @@ namespace IDG
         }
         public bool IsIn(NetData obj)
         {
-            if(( (border.center.x-obj.Position.x).Abs()<=(border.size+obj.Width/2))
+            if(( (border.center.x-obj.transform.Position.x).Abs()<=(border.size+obj.Width/2))
                 &&
-                ((border.center.y - obj.Position.y).Abs() <= (border.size + obj.Height/2))
+                ((border.center.y - obj.transform.Position.y).Abs() <= (border.size + obj.Height/2))
                 )
             {
                 return true;

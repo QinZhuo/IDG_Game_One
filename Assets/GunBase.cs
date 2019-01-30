@@ -48,7 +48,7 @@ namespace IDG.FSClient
             data.user = this.user;
             data.Init();
             data.Reset(position, rotation);
-            NetData.Instantiate<Bullet>(data);
+            NetObjectManager.Instantiate<Bullet>(data);
         } 
     }
 }

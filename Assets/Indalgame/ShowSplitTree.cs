@@ -58,7 +58,7 @@ namespace IDG
                     Gizmos.color = c;
                     foreach (var item in node.objs)
                     {
-                        Gizmos.DrawSphere(item.Position.ToVector3()+Vector3.up*(i+2), 1);
+                        Gizmos.DrawSphere(item.transform.Position.ToVector3()+Vector3.up*(i+2), 1);
                     }
                     if (node.child != null)
                     {

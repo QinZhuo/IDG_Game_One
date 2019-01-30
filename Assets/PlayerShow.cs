@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using IDG;
 using IDG.FSClient;
-public class PlayerShow : NetObjectShow<PlayerData> {
+public class PlayerShow : NetObjectView<PlayerData> {
     // public NetInfo net;
     public int clientId = -1;
     static int playerUnitId = 1;
-    public NetObjectShow<PlayerData> netPrefab;
+    public NetObjectView<PlayerData> netPrefab;
     public Animator anim;
     private new void Start()
     {
@@ -27,10 +27,6 @@ public class PlayerShow : NetObjectShow<PlayerData> {
     //void Update () {
 
     //}
-    protected override void MoveSpeed(float speed)
-    {
-        anim.SetFloat("Speed", speed);
-    }
 }
 public abstract class HealthData : NetData
 {
@@ -69,20 +65,20 @@ public class PlayerData: HealthData
 
        Fixed2 move = Input.GetJoyStickDirection(IDG.KeyNum.MoveKey);
 
-        Position += move * deltaTime;
+        transform.Position += move * deltaTime;
         if (move.x != 0 || move.y != 0)
         {
-            Rotation = move.ToRotation();
+            transform.Rotation = move.ToRotation();
         }
         if (Input.GetKeyUp(IDG.KeyNum.Attack))
         {
-            gun.Fire(Position + forward, Rotation);
+            gun.Fire(transform.Position + transform.forward, transform.Rotation);
         
         }
   
     }
 
-    protected override string PrefabPath()
+    public override string PrefabPath()
     {
         return "Prefabs/Player";
     }

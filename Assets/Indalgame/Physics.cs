@@ -268,9 +268,9 @@ namespace IDG
         public FixedNumber height;// { get { return Ratio.AbsMax(up,down); } }
         public FixedNumber width;// { get { return Ratio.AbsMax(left, right); } }
         private Fixed2[] _points;
-        public NetData netinfo;
-        public Fixed2 position { get { if (netinfo != null) { return netinfo.Position; } else { return Fixed2.zero; } } }
-        public FixedNumber rotation { get { if (netinfo != null) { return netinfo.Rotation; } else { return new FixedNumber(); } } }
+        public NetData data;
+        public Fixed2 position { get { if (data != null) { return data.transform.Position; } else { return Fixed2.zero; } } }
+        public FixedNumber rotation { get { if (data != null) { return data.transform.Rotation; } else { return new FixedNumber(); } } }
         
         public Fixed2 GetPoint(int index)
         {

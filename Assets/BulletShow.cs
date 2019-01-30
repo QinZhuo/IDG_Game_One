@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using IDG;
 using IDG.FSClient;
-public class BulletShow : NetObjectShow<Bullet> {
+public class BulletShow : NetObjectView<Bullet> {
     public static int id=0;
 
     
@@ -31,11 +31,11 @@ public class Bullet : NetData
     protected override void FrameUpdate()
     {
         
-        Position += forward * (deltaTime * 10f);
+        transform.Position += transform.forward * (deltaTime * 10f);
         // Debug.Log("bullet" + Position);
         if (InputCenter.Time - startTime > 3)
         {
-            Destory<Bullet>(this.show);
+            NetObjectManager.Destory<Bullet>(this.show);
         }
     }
     public override void OnPhysicsCheckStay(NetData other)
@@ -52,7 +52,7 @@ public class Bullet : NetData
         if (other.tag == "Player" && other != user)
         {
             UnityEngine.Debug.Log("Enter触发Bullet！！！！");
-            Destory<Bullet>(this.show);
+            NetObjectManager.Destory<Bullet>(this.show);
             (other as HealthData).GetHurt(new FixedNumber(10));
         }
     }
@@ -64,7 +64,7 @@ public class Bullet : NetData
             //Destory<Bullet>(this.show);
         }
     }
-    protected override string PrefabPath()
+    public override string PrefabPath()
     {
         return "Prefabs/Bullet";
     }
