@@ -34,11 +34,11 @@ namespace IDG.FSClient
             {
                
                 data = new T();
-                data.show = this;
+                data.view = this;
                 data.Init();
                
                 data.transform.Position = new Fixed2(transform.position.x, transform.position.z);
-                data.Start();
+             
             }
         }
         /// <summary>
@@ -85,7 +85,8 @@ namespace IDG.FSClient
             }
         }
 
-     
+        
+
 
 
     }
@@ -102,10 +103,19 @@ namespace IDG.FSClient
         
         public int ClientId=-1;
         private ShapBase _shap;
-   
-        public MonoBehaviour show;
+         
+        public MonoBehaviour view;
+       
         public TransformComponent transform;
         public PhysicsComponent physics;
+        public List<ComponentBase> comList;
+        public bool IsLocalPlayer
+        {
+            get
+            {
+                return InputCenter.IsLocalId(ClientId);
+            }
+        }
         public FixedNumber Width
         {
             get
@@ -128,24 +138,39 @@ namespace IDG.FSClient
         
         public abstract string PrefabPath();
         protected abstract void FrameUpdate();
+
+        bool start = false;
         protected void DataFrameUpdate()
         {
             if (!active) return;
+            if (!start) { Start(); start = true; }
             transform.PhysicsEffect();
             FrameUpdate();
+            foreach (var item in comList)
+            {
+                item.Update();
+            }
             physics.Update();
            
         }
         public virtual void Init()
         {
+           
             Input.framUpdate += DataFrameUpdate;
-            physics=new PhysicsComponent();
+            comList = new List<ComponentBase>();
+            physics =new PhysicsComponent();
             physics.Init(OnPhysicsCheckEnter,OnPhysicsCheckStay,OnPhysicsCheckExit);
             transform=new TransformComponent();
             transform.Init(this);
             Debug.Log(name+"init");
         }
-       
+        public T AddCommponent<T>() where T :IDG.ComponentBase ,new()
+        {
+            T cm = new T();
+            cm.InitNetData(this);
+            this.comList.Add(cm);
+            return cm ;
+        }
         public virtual void Start()
         {
             
@@ -175,6 +200,7 @@ namespace IDG.FSClient
         public void Destory()
         {
             this.active = false;
+            Input.framUpdate -= DataFrameUpdate;
             ShapPhysics.Remove(this);
         }
        

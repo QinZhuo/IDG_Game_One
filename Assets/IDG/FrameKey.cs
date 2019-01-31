@@ -8,12 +8,14 @@ namespace IDG{
     /// </summary>
     public enum KeyNum : byte
     {
-        Left = 2,//a 0b01
-        Right = 4,//d 0b10
-        Up = 8, //w  0b
+        Skill1 = 2,//a 0b01
+        Skill2 = 4,//d 0b10
+        Skill3 = 8, //w  0b
         Down = 16,//s
         MoveKey=32,
         Attack=64,
+        k1=128,
+  
     }
     /// <summary>
     /// 帧按键信息处理类
@@ -95,15 +97,17 @@ namespace IDG{
             var r= new byte[]{(byte)midKey,(byte)finalKey};
             Reset();
             return r;
-        } 
+        }
         /// <summary>
         /// 解析byte信息为按键数据
         /// </summary>
         /// <param name="message">消息</param>
-        public void Parse(ProtocolBase message){
+        public void Parse(ProtocolBase message) {
             Reset();
-            midKey=(KeyNum) message.getByte();
-            finalKey=(KeyNum) message.getByte();
+
+            midKey = (KeyNum)message.getByte();
+            finalKey = (KeyNum)message.getByte();
+           // UnityEngine.Debug.LogError("last[" + lastKey + "] mid[" + midKey + "] final[" + finalKey + "]");
         }
     }
     /// <summary>

@@ -29,7 +29,7 @@ public class ZombieData : HealthData
     protected override void Die()
     {
         base.Die();
-        NetObjectManager.Destory<ZombieData>(show);
+        NetObjectManager.Destory<ZombieData>(view);
     }
     public override string PrefabPath()
     {

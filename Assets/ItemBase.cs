@@ -16,6 +16,6 @@ namespace IDG.FSClient
             itemId = ITEM_ID_NUM++;
             itemName = "物体" + itemId;
         }
-        
+       
     }
 }

@@ -16,6 +16,7 @@ namespace IDG.FSClient
         /// 帧同步时间间隔
         /// </summary>
         public readonly static FixedNumber deltaTime = new FixedNumber(0.1f);
+        
         /// <summary>
         /// 服务器连接
         /// </summary>

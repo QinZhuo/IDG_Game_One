@@ -16,6 +16,7 @@ namespace IDG.MobileInput
         float maxScale;
         Coroutine coroutine;
         bool isDown;
+        Fixed2 dir = Fixed2.zero;
         public KeyNum key;
         public Action BeginMove;
         public Action<Fixed2> OnMove;
@@ -46,11 +47,17 @@ namespace IDG.MobileInput
                 pos.y += 1;
             }
             moveObj.transform.position = transform.position + pos.normalized * maxScale;
+            Vector3 tmp = GetVector3();
+            dir = new Fixed2(tmp.x, tmp.y);
         }
         public Fixed2 Direction()
         {
-            Vector3 tmp = (moveObj.position - transform.position).normalized;
-            return new Fixed2(tmp.x,tmp.y);
+            return dir;
+         
+        }
+        public Vector3 GetVector3()
+        {
+            return (moveObj.position - transform.position).normalized;
         }
         protected KeyNum KeyValue()
         {
@@ -65,6 +72,8 @@ namespace IDG.MobileInput
         public void OnBeginDrag(PointerEventData eventData)
         {
             isDown = true;
+            Vector3 tmp = GetVector3();
+            dir=new Fixed2(tmp.x, tmp.y);
             if (BeginMove != null)
             {
                 BeginMove();
@@ -87,8 +96,10 @@ namespace IDG.MobileInput
                 
             }
             moveObj.position = transform.position + movePos;
-           
-           // direction = new V2(movePos.x, movePos.y);
+
+            // direction = new V2(movePos.x, movePos.y);
+            Vector3 tmp = GetVector3();
+            dir = new Fixed2(tmp.x, tmp.y);
             if (OnMove!=null)
             {
                 OnMove(Direction());

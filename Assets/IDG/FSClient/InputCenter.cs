@@ -57,6 +57,11 @@ namespace IDG.FSClient {
         /// 多个客户端输入分配
         /// </summary>
         protected InputUnit[] _m_inputs;
+
+        public static bool IsLocalId(int id)
+        {
+            return id == Instance.client.ServerCon.clientId;
+        }
         public InputUnit this[int index]
         {
             get

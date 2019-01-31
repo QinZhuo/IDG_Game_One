@@ -3,40 +3,27 @@ using System.Collections.Generic;
 using UnityEngine;
 using IDG;
 using IDG.FSClient;
-public class BulletShow : NetObjectView<Bullet> {
-    public static int id=0;
-
-    
-
-  
- 
-
-    
+public class ItemView : NetObjectView<ItemData> { 
     // Update is called once per frame
     //   void Update () {
 
     //}
 }
-public class Bullet : NetData
+public class ItemData : NetData
 {
     public NetData user;
-    public FixedNumber startTime;
+
     public override void Init()
     {
         base.Init();
         physics.enable = true;
         isTrigger = true;
-        startTime = InputCenter.Time;
+
     }
     protected override void FrameUpdate()
     {
         
-        transform.Position += transform.forward * (deltaTime * 10f);
-        // Debug.Log("bullet" + Position);
-        if (InputCenter.Time - startTime > 3)
-        {
-            NetObjectManager.Destory<Bullet>(this.view);
-        }
+        
     }
     public override void OnPhysicsCheckStay(NetData other)
     {
@@ -44,7 +31,7 @@ public class Bullet : NetData
         if (other.tag == "Player" && other != user)
         {
             UnityEngine.Debug.Log("Stay触发Bullet！！！！");
-            //Destory<Bullet>(this.show);
+        
         }
     }
     public override void OnPhysicsCheckEnter(NetData other)
@@ -52,8 +39,14 @@ public class Bullet : NetData
         if (other.tag == "Player" && other != user)
         {
             UnityEngine.Debug.Log("Enter触发Bullet！！！！");
-            NetObjectManager.Destory<Bullet>(this.view);
-            (other as HealthData).GetHurt(new FixedNumber(10));
+            NetObjectManager.Destory<ItemData>(this.view);
+            //var gun = new GunBase();
+            //gun.Init(20, this);
+            //(other as PlayerData).AddGun(gun);
+            var skill = new SkillShoots(); 
+          
+            (other as PlayerData).skillList.AddSkill(skill);
+
         }
     }
     public override void OnPhysicsCheckExit(NetData other)
@@ -66,6 +59,6 @@ public class Bullet : NetData
     }
     public override string PrefabPath()
     {
-        return "Prefabs/Bullet";
+        return "Prefabs/ItemView";
     }
 }

@@ -13,6 +13,7 @@ public class FightClientForUnity3D : MonoBehaviour {
     protected FSClient client;
     public static FightClientForUnity3D instance;
     public List<JoyStick> joySticks;
+    public PlayerData playerData;
     public static FightClientForUnity3D Instance
     {
         get { return instance; }
@@ -79,7 +80,7 @@ public class FightClientForUnity3D : MonoBehaviour {
         {
              InputCenter.Instance.SetJoyStick(joy.key,joy.GetInfo());
         }
-       
+        
         // InputCenter.Instance.SetKey(Input.GetKey(KeyCode.A),KeyNum.Left);
         // InputCenter.Instance.SetKey(Input.GetKey(KeyCode.D),KeyNum.Right);
         // InputCenter.Instance.SetKey(Input.GetKey(KeyCode.W),KeyNum.Up);

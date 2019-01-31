@@ -54,11 +54,20 @@ public abstract class HealthData : NetData
 public class PlayerData: HealthData
 {
     protected GunBase gun;
+    public SkillList skillList;
     public override void Start()
     {
         this.tag = "Player";
-        gun = new GunBase();
-        gun.Init(20,this);
+        skillList= AddCommponent<SkillList>();
+       
+        
+        
+     
+        if (IsLocalPlayer)
+        {
+            FightClientForUnity3D.Instance.playerData = this;
+        }
+
     }
     protected override void FrameUpdate()
     {
@@ -72,10 +81,14 @@ public class PlayerData: HealthData
         }
         if (Input.GetKeyUp(IDG.KeyNum.Attack))
         {
-            gun.Fire(transform.Position + transform.forward, transform.Rotation);
+           if(gun!=null)  gun.Fire(transform.Position + transform.forward, transform.Rotation);
         
         }
   
+    }
+    public void AddGun(GunBase gun)
+    {
+        this.gun = gun;
     }
 
     public override string PrefabPath()

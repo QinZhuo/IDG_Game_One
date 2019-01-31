@@ -10,7 +10,7 @@ namespace IDG
         {
             GameObject obj = GameObject.Instantiate(GetPrefab(data), data.transform.Position.ToVector3(), data.transform.Rotation.ToUnityRotation());
             obj.GetComponent<NetObjectView<T>>().data = data;
-            data.show = obj.GetComponent<NetObjectView<T>>();
+            data.view = obj.GetComponent<NetObjectView<T>>();
             return obj;
         }
         public static void Destory<T>(MonoBehaviour show) where T : NetData, new()
@@ -23,6 +23,9 @@ namespace IDG
         {
             return Resources.Load(data.PrefabPath())as GameObject;
         }
-        
+        public static GameObject GetPrefab(string PrefabPath)
+        {
+            return Resources.Load(PrefabPath) as GameObject;
+        }
     }
 }
