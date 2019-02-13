@@ -48,6 +48,7 @@ namespace IDG.MobileInput
             }
             moveObj.transform.position = transform.position + pos.normalized * maxScale;
             Vector3 tmp = GetVector3();
+          
             dir = new Fixed2(tmp.x, tmp.y);
         }
         public Fixed2 Direction()

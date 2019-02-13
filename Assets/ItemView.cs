@@ -8,6 +8,7 @@ public class ItemView : NetObjectView<ItemData> {
     //   void Update () {
 
     //}
+    public SkillId skillId;
 }
 public class ItemData : NetData
 {
@@ -43,9 +44,7 @@ public class ItemData : NetData
             //var gun = new GunBase();
             //gun.Init(20, this);
             //(other as PlayerData).AddGun(gun);
-            var skill = new SkillShoots(); 
-          
-            (other as PlayerData).skillList.AddSkill(skill);
+           (other as PlayerData).skillList.AddSkill(ItemManager.GetSkill((this.view as ItemView).skillId));
 
         }
     }

@@ -10,10 +10,14 @@ public class SkillBase:ComponentBase
     public KeyNum key;
     public FixedNumber timer;
     public FixedNumber time;
-    public virtual void Use()
+    public virtual void UseOver()
     {
         timer = time;
-        UnityEngine.Debug.LogError("skillUsed");
+        UnityEngine.Debug.LogError("UseOver");
+    }
+    public virtual void StayUse(){
+      //  timer = time;
+        UnityEngine.Debug.LogError("StayUse");
     }
     public override void Update()
     {
@@ -24,11 +28,13 @@ public class SkillBase:ComponentBase
         }
         else
         {
-          
+            if(data.Input.GetKey(key)){
+                StayUse();
+            }
             if (data.Input.GetKeyUp(key))
             {
                 
-                Use();
+                UseOver();
             }
         }
     }

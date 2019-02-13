@@ -232,7 +232,7 @@ namespace IDG.FSClient {
             for(byte i=0;i<len;i++){
                
                 JoyStickKey joy=new JoyStickKey((KeyNum)(message.getByte()),message.getV2()) ;
-                
+   //             Debug.LogError("rec+["+joy.key+"]");
                 if(joySticks.ContainsKey(joy.key)){
                     
                     joySticks[joy.key]=joy;

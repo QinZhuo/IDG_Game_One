@@ -107,28 +107,6 @@ namespace IDG
             shaps.Remove(obj);
             Tree4.Remove(obj);
         }
-
-        // public static List<NetData> CheckAll(NetData netObj)
-        // {
-        //     List<NetData> others = new List<NetData>();
-        //     foreach (Tree4 tree in netObj.trees)
-        //     {
-        //         var objs = tree.collisonInfo.Check(tree);
-        //         if (objs.ContainsKey(netObj))
-        //         {
-        //             foreach (var obj in tree.collisonInfo.Check(tree)[netObj])
-        //             {
-        //                 if (!others.Contains(obj))
-        //                 {
-        //                     others.Add(obj);
-        //                 }
-        //             }
-        //         }  
-        //     }
-        //     return others;
-        // }
-
-
         //GJK算法原理
         //两个物体进行明可夫斯基差操作 得到的新图形形状包含原点则这两个图形的是相交的
         /// <summary>

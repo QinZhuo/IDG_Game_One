@@ -425,7 +425,7 @@ GameObject:
   - component: {fileID: 112304112}
   - component: {fileID: 112304111}
   m_Layer: 5
-  m_Name: Image
+  m_Name: BackImage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -455,7 +455,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 112304109}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}
   m_Name: 
@@ -1176,6 +1176,11 @@ Prefab:
       propertyPath: m_Name
       value: ItemView (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 114382017265579876, guid: c37f792105803da44b0a72c2dbd0aee9,
+        type: 2}
+      propertyPath: skillId
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: c37f792105803da44b0a72c2dbd0aee9, type: 2}
   m_IsPrefabParent: 0
@@ -1336,7 +1341,7 @@ GameObject:
   - component: {fileID: 757022843}
   - component: {fileID: 757022842}
   m_Layer: 5
-  m_Name: Image (1)
+  m_Name: FillImage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1732,7 +1737,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1076490062}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 19a1f7fe38eb63240b4dd29fd20e1429, type: 3}
   m_Name: 
@@ -2618,6 +2623,11 @@ Prefab:
     - target: {fileID: 4633387847646972, guid: 4fb2c50bdfd830b46852ae73d3f16751, type: 2}
       propertyPath: m_RootOrder
       value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 23515255057056804, guid: 4fb2c50bdfd830b46852ae73d3f16751,
+        type: 2}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 4fb2c50bdfd830b46852ae73d3f16751, type: 2}

@@ -16,9 +16,9 @@ class SkillShoots:SkillBase
    
            
    
-    public override void Use()
+    public override void UseOver()
     {
-        base.Use();
+        base.UseOver();
        // UnityEngine.Debug.LogError("bulletUse" + data.Input.GetJoyStickDirection(key).ToRotation());
         for (int i = -30; i <= 30; i += 5)
         {
@@ -36,3 +36,34 @@ class SkillShoots:SkillBase
     }
 }
 
+class SkillGun:SkillBase
+{
+    GunBase gun;
+    public override void Init()
+    {
+        key = KeyNum.Skill1;
+        time = new FixedNumber(0.7f);
+        timer = new FixedNumber(0);
+        gun = new GunBase();
+        gun.Init(20, data);
+    
+    }
+   
+    
+   
+    public override void StayUse()
+    {
+        var rot=data.Input.GetJoyStickDirection(key);
+        if(gun!=null)  gun.Fire(data.transform.Position + rot,rot.ToRotation() );  
+     
+    }
+    protected void ShootBullet(Fixed2 position, FixedNumber rotation)
+    {
+        Bullet bullet = new Bullet();
+        bullet.user = data;
+        bullet.Init();
+        bullet.Reset(position, rotation);
+        NetObjectManager.Instantiate<Bullet>(bullet);
+      //  UnityEngine.Debug.LogError("bullet" + rotation);
+    }
+}

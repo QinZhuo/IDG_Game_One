@@ -8,8 +8,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <RootNamespace>
-    </RootNamespace>
+    <RootNamespace></RootNamespace>
     <ProjectGuid>{F9CDF815-17A5-CB77-1122-FD7C6C7FBEEB}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -52,63 +51,70 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\BulletShow.cs" />
-    <Compile Include="Assets\GunBase.cs" />
-    <Compile Include="Assets\Indalgame\BoxCollider2D_IDG.cs" />
-    <Compile Include="Assets\Indalgame\CircleCollider2D_IDG.cs" />
-    <Compile Include="Assets\Indalgame\Connection.cs" />
-    <Compile Include="Assets\Indalgame\DataManager.cs" />
-    <Compile Include="Assets\Indalgame\FightClient.cs" />
-    <Compile Include="Assets\Indalgame\FightClientForUnity3D.cs" />
-    <Compile Include="Assets\Indalgame\Fixed2.cs" />
-    <Compile Include="Assets\Indalgame\Fixed3.cs" />
-    <Compile Include="Assets\Indalgame\FixedNumber.cs" />
-    <Compile Include="Assets\Indalgame\FrameKey.cs" />
-    <Compile Include="Assets\Indalgame\InputCenter.cs" />
-    <Compile Include="Assets\Indalgame\JoyStick.cs" />
-    <Compile Include="Assets\Indalgame\MathR.cs" />
-    <Compile Include="Assets\Indalgame\NetObjectManager.cs" />
-    <Compile Include="Assets\Indalgame\NetObjectShow.cs" />
-    <Compile Include="Assets\Indalgame\Physics.cs" />
-    <Compile Include="Assets\Indalgame\PhysicsComponent.cs" />
-    <Compile Include="Assets\Indalgame\Protocol.cs" />
-    <Compile Include="Assets\Indalgame\Shap.cs" />
-    <Compile Include="Assets\Indalgame\ShowSplitTree.cs" />
-    <Compile Include="Assets\Indalgame\SplitTree4.cs" />
-    <Compile Include="Assets\Indalgame\TransformComponent.cs" />
-    <Compile Include="Assets\ItemBase.cs" />
-    <Compile Include="Assets\PlayerShow.cs" />
-    <Compile Include="Assets\Resources\DataSetting\GunManager.cs" />
-    <Compile Include="Assets\Resources\DataSetting\GunSetting.cs" />
-    <Compile Include="Assets\ShowInfo.cs" />
-    <Compile Include="Assets\ZombieShow.cs" />
-    <Reference Include="UnityEngine.UI">
-      <HintPath>D:/Unity2017_2_3/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.Networking">
-      <HintPath>D:/Unity2017_2_3/Editor/Data/UnityExtensions/Unity/Networking/UnityEngine.Networking.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.TestRunner">
-      <HintPath>D:/Unity2017_2_3/Editor/Data/UnityExtensions/Unity/TestRunner/UnityEngine.TestRunner.dll</HintPath>
-    </Reference>
-    <Reference Include="nunit.framework">
-      <HintPath>D:/Unity2017_2_3/Editor/Data/UnityExtensions/Unity/TestRunner/net35/unity-custom/nunit.framework.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.Timeline">
-      <HintPath>D:/Unity2017_2_3/Editor/Data/UnityExtensions/Unity/Timeline/RuntimeEditor/UnityEngine.Timeline.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.UIAutomation">
-      <HintPath>D:/Unity2017_2_3/Editor/Data/UnityExtensions/Unity/UIAutomation/UnityEngine.UIAutomation.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.GoogleAudioSpatializer">
-      <HintPath>D:/Unity2017_2_3/Editor/Data/UnityExtensions/Unity/UnityGoogleAudioSpatializer/RuntimeEditor/UnityEngine.GoogleAudioSpatializer.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.HoloLens">
-      <HintPath>D:/Unity2017_2_3/Editor/Data/UnityExtensions/Unity/UnityHoloLens/RuntimeEditor/UnityEngine.HoloLens.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.SpatialTracking">
-      <HintPath>D:/Unity2017_2_3/Editor/Data/UnityExtensions/Unity/UnitySpatialTracking/RuntimeEditor/UnityEngine.SpatialTracking.dll</HintPath>
-    </Reference>
+     <Compile Include="Assets\BulletShow.cs" />
+     <Compile Include="Assets\GunBase.cs" />
+     <Compile Include="Assets\IDG\BoxCollider2D_IDG.cs" />
+     <Compile Include="Assets\IDG\CircleCollider2D_IDG.cs" />
+     <Compile Include="Assets\IDG\ComponentBase.cs" />
+     <Compile Include="Assets\IDG\Connection.cs" />
+     <Compile Include="Assets\IDG\DataManager.cs" />
+     <Compile Include="Assets\IDG\Fixed2.cs" />
+     <Compile Include="Assets\IDG\Fixed3.cs" />
+     <Compile Include="Assets\IDG\FixedNumber.cs" />
+     <Compile Include="Assets\IDG\FrameKey.cs" />
+     <Compile Include="Assets\IDG\FSClient\FightClient.cs" />
+     <Compile Include="Assets\IDG\FSClient\FightClientForUnity3D.cs" />
+     <Compile Include="Assets\IDG\FSClient\InputCenter.cs" />
+     <Compile Include="Assets\IDG\JoyStick.cs" />
+     <Compile Include="Assets\IDG\MathR.cs" />
+     <Compile Include="Assets\IDG\NetObjectManager.cs" />
+     <Compile Include="Assets\IDG\NetObjectShow.cs" />
+     <Compile Include="Assets\IDG\Physics.cs" />
+     <Compile Include="Assets\IDG\PhysicsComponent.cs" />
+     <Compile Include="Assets\IDG\Protocol.cs" />
+     <Compile Include="Assets\IDG\Shap.cs" />
+     <Compile Include="Assets\IDG\ShowSplitTree.cs" />
+     <Compile Include="Assets\IDG\SplitTree4.cs" />
+     <Compile Include="Assets\IDG\TransformComponent.cs" />
+     <Compile Include="Assets\ItemBase.cs" />
+     <Compile Include="Assets\ItemManager.cs" />
+     <Compile Include="Assets\ItemView.cs" />
+     <Compile Include="Assets\PlayerShow.cs" />
+     <Compile Include="Assets\Resources\DataSetting\GunManager.cs" />
+     <Compile Include="Assets\Resources\DataSetting\GunSetting.cs" />
+     <Compile Include="Assets\ShowInfo.cs" />
+     <Compile Include="Assets\SkillBase.cs" />
+     <Compile Include="Assets\Skills.cs" />
+     <Compile Include="Assets\SkillTargetView.cs" />
+     <Compile Include="Assets\SkillUI.cs" />
+     <Compile Include="Assets\ZombieShow.cs" />
+ <Reference Include="UnityEngine.UI">
+ <HintPath>D:/Unity2017_2_3/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
+ </Reference>
+ <Reference Include="UnityEngine.Networking">
+ <HintPath>D:/Unity2017_2_3/Editor/Data/UnityExtensions/Unity/Networking/UnityEngine.Networking.dll</HintPath>
+ </Reference>
+ <Reference Include="UnityEngine.TestRunner">
+ <HintPath>D:/Unity2017_2_3/Editor/Data/UnityExtensions/Unity/TestRunner/UnityEngine.TestRunner.dll</HintPath>
+ </Reference>
+ <Reference Include="nunit.framework">
+ <HintPath>D:/Unity2017_2_3/Editor/Data/UnityExtensions/Unity/TestRunner/net35/unity-custom/nunit.framework.dll</HintPath>
+ </Reference>
+ <Reference Include="UnityEngine.Timeline">
+ <HintPath>D:/Unity2017_2_3/Editor/Data/UnityExtensions/Unity/Timeline/RuntimeEditor/UnityEngine.Timeline.dll</HintPath>
+ </Reference>
+ <Reference Include="UnityEngine.UIAutomation">
+ <HintPath>D:/Unity2017_2_3/Editor/Data/UnityExtensions/Unity/UIAutomation/UnityEngine.UIAutomation.dll</HintPath>
+ </Reference>
+ <Reference Include="UnityEngine.GoogleAudioSpatializer">
+ <HintPath>D:/Unity2017_2_3/Editor/Data/UnityExtensions/Unity/UnityGoogleAudioSpatializer/RuntimeEditor/UnityEngine.GoogleAudioSpatializer.dll</HintPath>
+ </Reference>
+ <Reference Include="UnityEngine.HoloLens">
+ <HintPath>D:/Unity2017_2_3/Editor/Data/UnityExtensions/Unity/UnityHoloLens/RuntimeEditor/UnityEngine.HoloLens.dll</HintPath>
+ </Reference>
+ <Reference Include="UnityEngine.SpatialTracking">
+ <HintPath>D:/Unity2017_2_3/Editor/Data/UnityExtensions/Unity/UnitySpatialTracking/RuntimeEditor/UnityEngine.SpatialTracking.dll</HintPath>
+ </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -118,4 +124,5 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  
 </Project>

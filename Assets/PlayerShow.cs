@@ -53,7 +53,7 @@ public abstract class HealthData : NetData
 }
 public class PlayerData: HealthData
 {
-    protected GunBase gun;
+
     public SkillList skillList;
     public override void Start()
     {
@@ -72,23 +72,16 @@ public class PlayerData: HealthData
     protected override void FrameUpdate()
     {
 
-       Fixed2 move = Input.GetJoyStickDirection(IDG.KeyNum.MoveKey);
-
+     //     Debug.LogError("move"+Input.GetKey(IDG.KeyNum.MoveKey) );
+       Fixed2 move =Input.GetKey(IDG.KeyNum.MoveKey) ? Input.GetJoyStickDirection(IDG.KeyNum.MoveKey):Fixed2.zero;
+   //     Debug.LogError("move"+move);
         transform.Position += move * deltaTime;
         if (move.x != 0 || move.y != 0)
         {
             transform.Rotation = move.ToRotation();
         }
-        if (Input.GetKeyUp(IDG.KeyNum.Attack))
-        {
-           if(gun!=null)  gun.Fire(transform.Position + transform.forward, transform.Rotation);
-        
-        }
+      
   
-    }
-    public void AddGun(GunBase gun)
-    {
-        this.gun = gun;
     }
 
     public override string PrefabPath()
