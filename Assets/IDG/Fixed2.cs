@@ -8,18 +8,11 @@ namespace IDG
     /// <summary>
     /// 定点数二维向量
     /// </summary>
+    [System.Serializable]
     public struct Fixed2
     {
-        public FixedNumber x
-        {
-            get;
-            private set;
-        }
-        public FixedNumber y
-        {
-            get;
-            private set;
-        }
+        public FixedNumber x;
+        public FixedNumber y;
        // public static float rotateOffset = 2 * Mathf.PI / 360;
 
         //public V3()

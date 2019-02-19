@@ -44,6 +44,13 @@ namespace IDG.FSClient
             }
         }
         private Connection _serverCon;
+
+        public InputCenter inputCenter;
+        public NetObjectManager objectManager;
+
+        public NetData localPlayer;
+        public ShapPhysics physics;
+        public object unityClient;
         private Queue<ProtocolBase> _messageList=new Queue<ProtocolBase>();
         /// <summary>
         /// 连接服务器函数
@@ -58,7 +65,11 @@ namespace IDG.FSClient
             ServerCon.socket.NoDelay=true;
             ServerCon.socket.Connect(serverIP, serverPort);
             ServerCon.socket.BeginReceive(ServerCon.readBuff,0, ServerCon.BuffRemain, SocketFlags.None, ReceiveCallBack, ServerCon);
-            InputCenter.Instance.Init(this, maxUserCount);
+            inputCenter=new InputCenter();
+            inputCenter.Init(this, maxUserCount);
+            objectManager=new NetObjectManager(this);
+            physics =new ShapPhysics();
+            physics.Init();
         }
         Dictionary<Connection, byte[]> lastBytesList = new Dictionary<Connection, byte[]>();
         /// <summary>
@@ -132,7 +143,7 @@ namespace IDG.FSClient
         /// </summary>
         public void Stop()
         {
-            InputCenter.Instance.Stop();
+            inputCenter.Stop();
         }
         /// <summary>
         /// 解析消息并进行消息分发
@@ -152,7 +163,7 @@ namespace IDG.FSClient
                     Debug.Log("clientID:" + ServerCon.clientId);
                     break;
                 case MessageType.Frame:
-                    InputCenter.Instance.ReceiveStep(protocol);
+                    inputCenter.ReceiveStep(protocol);
                     break;
                 default:
                     Debug.LogError("消息解析错误 未解析类型" + t);

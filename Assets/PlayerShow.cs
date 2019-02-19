@@ -5,14 +5,14 @@ using IDG;
 using IDG.FSClient;
 public class PlayerShow : NetObjectView<PlayerData> {
     // public NetInfo net;
-    public int clientId = -1;
+   // public int clientId = -1;
     static int playerUnitId = 1;
     public NetObjectView<PlayerData> netPrefab;
     public Animator anim;
     private new void Start()
     {
         base.Start();
-        data.ClientId = clientId;
+       // data.ClientId = clientId;
         anim.SetInteger("WeaponType", 1);
     }
     
@@ -53,19 +53,20 @@ public abstract class HealthData : NetData
 }
 public class PlayerData: HealthData
 {
-
+    
     public SkillList skillList;
     public override void Start()
     {
         this.tag = "Player";
         skillList= AddCommponent<SkillList>();
-       
+        Shap = new CircleShap(new FixedNumber(0.5f), 8);
         
         
      
         if (IsLocalPlayer)
         {
-            FightClientForUnity3D.Instance.playerData = this;
+            client.localPlayer = this;
+            Debug.Log("client.localPlayer");
         }
 
     }

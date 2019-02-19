@@ -7,6 +7,7 @@ public class SkillTargetView : MonoBehaviour {
     public JoyStick joyStick;
     public GameObject dirTarget;
 	// Use this for initialization
+    public FightClientForUnity3D unityClient;
 	void Start () {
         joyStick.BeginMove += OnBegin;
         joyStick.OnMove += OnDrag;
@@ -15,9 +16,10 @@ public class SkillTargetView : MonoBehaviour {
     }
     private void Update()
     {
-        if (FightClientForUnity3D.Instance != null&& FightClientForUnity3D.Instance.playerData!=null)
+        if (unityClient != null&& unityClient.client.localPlayer!=null)
         {
-            transform.position = FightClientForUnity3D.Instance.playerData.view.transform.position;
+            transform.position = unityClient.client.localPlayer.view.transform.position;
+          
         }
     }
     public void OnBegin()

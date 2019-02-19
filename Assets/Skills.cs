@@ -29,9 +29,9 @@ class SkillShoots:SkillBase
     {
         Bullet bullet = new Bullet();
         bullet.user = data;
-        bullet.Init();
+        bullet.Init(data.client);
         bullet.Reset(position, rotation);
-        NetObjectManager.Instantiate<Bullet>(bullet);
+        data.client.objectManager.Instantiate(bullet);
       //  UnityEngine.Debug.LogError("bullet" + rotation);
     }
 }
@@ -54,16 +54,16 @@ class SkillGun:SkillBase
     public override void StayUse()
     {
         var rot=data.Input.GetJoyStickDirection(key);
-        if(gun!=null)  gun.Fire(data.transform.Position + rot,rot.ToRotation() );  
+        if(gun!=null)  gun.Fire(data,rot.ToRotation() );  
      
     }
     protected void ShootBullet(Fixed2 position, FixedNumber rotation)
     {
         Bullet bullet = new Bullet();
         bullet.user = data;
-        bullet.Init();
+        bullet.Init(data .client);
         bullet.Reset(position, rotation);
-        NetObjectManager.Instantiate<Bullet>(bullet);
+        data.client.objectManager.Instantiate(bullet);
       //  UnityEngine.Debug.LogError("bullet" + rotation);
     }
 }

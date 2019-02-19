@@ -21,21 +21,25 @@ public class Bullet : NetData
 {
     public NetData user;
     public FixedNumber startTime;
-    public override void Init()
+    public override void Init(FSClient client)
     {
-        base.Init();
+        base.Init(client);
         physics.enable = true;
         isTrigger = true;
-        startTime = InputCenter.Time;
+        startTime = client.inputCenter.Time;
+    }
+    public override void Start()
+    {
+        Shap = new BoxShap(new FixedNumber(2), new FixedNumber(0.3f));
     }
     protected override void FrameUpdate()
     {
         
         transform.Position += transform.forward * (deltaTime * 10f);
         // Debug.Log("bullet" + Position);
-        if (InputCenter.Time - startTime > 3)
+        if (client.inputCenter.Time - startTime > 3)
         {
-            NetObjectManager.Destory<Bullet>(this.view);
+            client.objectManager.Destory(this.view);
         }
     }
     public override void OnPhysicsCheckStay(NetData other)
@@ -52,7 +56,7 @@ public class Bullet : NetData
         if (other.tag == "Player" && other != user)
         {
             UnityEngine.Debug.Log("Enter触发Bullet！！！！");
-            NetObjectManager.Destory<Bullet>(this.view);
+             client.objectManager.Destory(this.view);
             (other as HealthData).GetHurt(new FixedNumber(10));
         }
     }

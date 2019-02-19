@@ -18,55 +18,55 @@ namespace IDG
         /// <summary>
         /// 上次碰撞检测时间
         /// </summary>
-        FixedNumber lastCheckTime = new FixedNumber(-1000);
+        //FixedNumber lastCheckTime = new FixedNumber(-1000);
         /// <summary>
         /// 碰撞列表
         /// </summary>
-        Dictionary<NetData, List<NetData>> checkList=new Dictionary<NetData, List<NetData>>();
+       // Dictionary<NetData, List<NetData>> checkList=new Dictionary<NetData, List<NetData>>();
         /// <summary>
         /// 碰撞检测
         /// </summary>
         /// <param name="tree">检测的节点</param>
         /// <returns>碰撞的对象</returns>
-        public Dictionary<NetData, List<NetData>> Check(Tree4 tree)
-        {
-            if (!active&&InputCenter.Time<=lastCheckTime ) return checkList;
-            checkList.Clear();
-            int count = tree.objs.Count;
-            var objs = tree.objs;
-            for (int i = 0; i < count; i++)
-            {
-                for (int j = i + 1; j < count; j++)
-                {
-                    if (objs[i] != objs[j] && ShapPhysics.Check(objs[i], objs[j]))
-                    {
-                        if (checkList.ContainsKey(objs[i]))
-                        {
-                            checkList[objs[i]].Add(objs[j]);
-                        }
-                        else
-                        {
-                            checkList.Add(objs[i], new List<NetData>());
-                            checkList[objs[i]].Add(objs[j]);
-                        }
-                        if (checkList.ContainsKey(objs[j]))
-                        {
-                            checkList[objs[j]].Add(objs[i]);
-                        }
-                        else
-                        {
-                            checkList.Add(objs[j], new List<NetData>());
-                            checkList[objs[j]].Add(objs[i]);
-                        }
+        //public Dictionary<NetData, List<NetData>> Check(Tree4 tree,FixedNumber time)
+        //{
+        //    if (!active&&time<=lastCheckTime ) return checkList;
+        //    checkList.Clear();
+        //    int count = tree.objs.Count;
+        //    var objs = tree.objs;
+        //    for (int i = 0; i < count; i++)
+        //    {
+        //        for (int j = i + 1; j < count; j++)
+        //        {
+        //            if (objs[i] != objs[j] && ShapPhysics.Check(objs[i], objs[j]))
+        //            {
+        //                if (checkList.ContainsKey(objs[i]))
+        //                {
+        //                    checkList[objs[i]].Add(objs[j]);
+        //                }
+        //                else
+        //                {
+        //                    checkList.Add(objs[i], new List<NetData>());
+        //                    checkList[objs[i]].Add(objs[j]);
+        //                }
+        //                if (checkList.ContainsKey(objs[j]))
+        //                {
+        //                    checkList[objs[j]].Add(objs[i]);
+        //                }
+        //                else
+        //                {
+        //                    checkList.Add(objs[j], new List<NetData>());
+        //                    checkList[objs[j]].Add(objs[i]);
+        //                }
                         
-                    }
-                }
+        //            }
+        //        }
 
-            }
-            lastCheckTime = InputCenter.Time;
-            active = false;
-            return checkList;
-        }
+        //    }
+        //    lastCheckTime = time;
+        //    active = false;
+        //    return checkList;
+        //}
     }
     /// <summary>
     /// 物理检测
@@ -76,12 +76,12 @@ namespace IDG
         /// <summary>
         /// 图形列表
         /// </summary>
-        private static List<NetData> shaps = null;
+        private List<NetData> shaps = null;
         /// <summary>
         /// 空间分割四叉树对象
         /// </summary>
-        public static Tree4 tree = null;
-        public static void Init()
+        public Tree4 tree = null;
+        public void Init()
         {
             if (shaps == null && tree == null)
             {
@@ -93,7 +93,7 @@ namespace IDG
         /// 添加对象
         /// </summary>
         /// <param name="obj">游戏对象</param>
-        public static void Add(NetData obj)
+        public void Add(NetData obj)
         {
             shaps.Add(obj);
             tree.Add(obj);
@@ -102,7 +102,7 @@ namespace IDG
         /// 移除对象
         /// </summary>
         /// <param name="obj">游戏对象</param>
-        public static void Remove(NetData obj)
+        public void Remove(NetData obj)
         {
             shaps.Remove(obj);
             Tree4.Remove(obj);
@@ -237,7 +237,8 @@ namespace IDG
     /// <summary>
     /// 形状基类
     /// </summary>
-    public abstract class ShapBase
+    [System.Serializable]
+    public class ShapBase
     {
         private FixedNumber left;
         private FixedNumber right;
@@ -250,9 +251,23 @@ namespace IDG
         public Fixed2 position { get { if (data != null) { return data.transform.Position; } else { return Fixed2.zero; } } }
         public FixedNumber rotation { get { if (data != null) { return data.transform.Rotation; } else { return new FixedNumber(); } } }
         
+        public ShapBase()
+        {
+
+        }
+        public ShapBase(Fixed2[] points)
+        {
+            _points = points;
+            ResetSize();
+        }
+        
         public Fixed2 GetPoint(int index)
         {
             return _points[index].Rotate(rotation);
+        }
+        public Fixed2[] GetPoints()
+        {
+            return _points;
         }
         public int PointsCount
         {

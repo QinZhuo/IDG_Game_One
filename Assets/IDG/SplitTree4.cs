@@ -36,10 +36,7 @@ namespace IDG
         /// 空间中物体列表
         /// </summary>
         public List<NetData> objs;
-        /// <summary>
-        /// 树根
-        /// </summary>
-        public static Tree4 root;
+        
         /// <summary>
         /// 碰撞信息
         /// </summary>
@@ -88,7 +85,6 @@ namespace IDG
         public Tree4()
         {
             objs = new List<NetData>(SplitSize+1);
-            root = this;
             //size = MaxSize;
             border = new Tree4Border(new Fixed2(0,0), new FixedNumber(MaxSize));
             brother = new Tree4Brother();

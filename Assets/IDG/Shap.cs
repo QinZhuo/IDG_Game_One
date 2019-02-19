@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-namespace IDG.FSClient
+namespace IDG
 {
     public class CircleShap : ShapBase
     {
@@ -35,6 +35,11 @@ namespace IDG.FSClient
     }
     public abstract class Collider2DBase_IDG:MonoBehaviour
     {
+        public ShapBase shap;
+        public void InitShap()
+        {
+            shap = GetShap();
+        }
         public abstract ShapBase GetShap();
     }
 }

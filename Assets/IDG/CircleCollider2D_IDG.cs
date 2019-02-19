@@ -8,7 +8,7 @@ namespace IDG.FSClient
     
     public class CircleCollider2D_IDG : Collider2DBase_IDG
     {
-
+        
         public float r=1;
         public int num=8;
 

@@ -15,10 +15,10 @@ public class ZombieData : HealthData
     public override void Start()
     {
         this.tag = "Player";
-        
-     
-       // gun = new GunBase();
-       // gun.Init(2, this);
+        Shap = new CircleShap(new FixedNumber(0.5f), 8);
+
+        // gun = new GunBase();
+        // gun.Init(2, this);
     }
     protected override void FrameUpdate()
     {
@@ -29,11 +29,11 @@ public class ZombieData : HealthData
     protected override void Die()
     {
         base.Die();
-        NetObjectManager.Destory<ZombieData>(view);
+        client.objectManager.Destory(view);
     }
     public override string PrefabPath()
     {
-        return "Prefabs/Player";
+        return "Prefabs/Zombie";
     }
 }
 

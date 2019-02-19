@@ -4,55 +4,45 @@ using UnityEngine;
 using IDG;
 namespace IDG.FSClient
 {
+    abstract public class View:MonoBehaviour
+    {
+        public NetData data;
+        public virtual System.Type GetDataType()
+        {
+            return null;
+        }
+    }
     /// <summary>
     /// 网络物体显示类（需要渲染模型的物体的显示类）
     /// </summary>
     /// <typeparam name="T">该物体对应的数据类实现</typeparam>
-    abstract public class NetObjectView<T> : MonoBehaviour where T:NetData,new()
+    abstract public class NetObjectView<T> : View where T:NetData,new()
     {
       
         /// <summary>
         /// 数据类对象
         /// </summary>
-        public NetData data;
+        
 
         protected void Start()
         {
-
-          
-            InitData();
-            InitCollider();
             //net.Position = new V2(transform.position.x, transform.position.z);
             // net.Rotation =new Ratio( transform.rotation.y);
             //Debug.Log("net.Input.framUpdate += FrameUpdate;");
         }
-        /// <summary>
-        /// 初始化数据类信息
-        /// </summary>
-        protected void InitData() {
-            if (data == null)
-            {
-               
-                data = new T();
-                data.view = this;
-                data.Init();
-               
-                data.transform.Position = new Fixed2(transform.position.x, transform.position.z);
-             
-            }
-        }
-        /// <summary>
-        /// 初始化碰撞体信息
-        /// </summary>
-        protected void InitCollider()
-        {
-            Collider2DBase_IDG collider2D = GetComponent<Collider2DBase_IDG>();
-            if (collider2D != null)
-            {
-                Debug.Log("collider2D");
-                data.Shap= collider2D.GetShap();
-            }
-        }
+    
+        ///// <summary>
+        ///// 初始化碰撞体信息
+        ///// </summary>
+        //protected void InitCollider()
+        //{
+        //    Collider2DBase_IDG collider2D = GetComponent<Collider2DBase_IDG>();
+        //    if (collider2D != null)
+        //    {
+        //        Debug.Log("collider2D");
+        //        data.Shap= collider2D.GetShap();
+        //    }
+        //}
         /// <summary>
         /// 显示位置与网络位置进行差值同步
         /// </summary>
@@ -84,11 +74,17 @@ namespace IDG.FSClient
                 Gizmos.DrawCube((data.Shap.GetPoint(i) + data.transform.Position).ToVector3(), Vector3.one * 0.1f);
             }
         }
-
         
+        //public void InitClient(){
+        //    this.data.InitClient(FSClient.temp);
+       
+        //}
 
 
-
+        public override System.Type GetDataType()
+        {
+            return typeof(T);
+        }
     }
     //[System.Serializable]
 
@@ -101,19 +97,22 @@ namespace IDG.FSClient
         public string name;
         public bool active=true;
         
-        public int ClientId=-1;
+        public int clientId=-1;
         private ShapBase _shap;
          
-        public MonoBehaviour view;
+        public View view;
        
         public TransformComponent transform;
         public PhysicsComponent physics;
         public List<ComponentBase> comList;
+
+        public FSClient client;
+     
         public bool IsLocalPlayer
         {
             get
             {
-                return InputCenter.IsLocalId(ClientId);
+                return client.inputCenter.IsLocalId(clientId);
             }
         }
         public FixedNumber Width
@@ -153,9 +152,9 @@ namespace IDG.FSClient
             physics.Update();
            
         }
-        public virtual void Init()
+        public virtual void Init(FSClient client)
         {
-           
+            this.client = client;
             Input.framUpdate += DataFrameUpdate;
             comList = new List<ComponentBase>();
             physics =new PhysicsComponent();
@@ -175,6 +174,7 @@ namespace IDG.FSClient
         {
             
         }
+        
 
         public virtual void OnPhysicsCheckStay(NetData other)
         {
@@ -201,7 +201,7 @@ namespace IDG.FSClient
         {
             this.active = false;
             Input.framUpdate -= DataFrameUpdate;
-            ShapPhysics.Remove(this);
+            client.physics.Remove(this);
         }
        
         
@@ -219,14 +219,14 @@ namespace IDG.FSClient
 
                 if (_shap != null)
                 {
-                    ShapPhysics.Remove(this);
+                    client.physics.Remove(this);
                 }
                 if (value != null)
                 {
                     
                     _shap = value;
                     _shap.data = this;
-                    ShapPhysics.Add(this);
+                    client.physics.Add(this);
                     
                 }
                 else
@@ -248,7 +248,7 @@ namespace IDG.FSClient
         {
             get
             {
-                return InputCenter.Instance[this.ClientId];
+                return client.inputCenter[this.clientId];
             }
         }
        

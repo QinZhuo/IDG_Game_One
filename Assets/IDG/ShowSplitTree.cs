@@ -6,11 +6,11 @@ namespace IDG
 {
     public class ShowSplitTree : MonoBehaviour
     {
-        
+        public FightClientForUnity3D unityClient;
         // Use this for initialization
         void Start()
         {
-
+           
         }
 
         // Update is called once per frame
@@ -18,17 +18,17 @@ namespace IDG
         {
 
         }
-        private void OnDrawGizmos()
+        private void OnDrawGizmosSelected()
         {
             if (!enabled) return;
             //Gizmos.DrawCube(new Vector3(), new Vector3(100, 1, 100));
             //return;
-            if (ShapPhysics.tree!=null)
+            if (unityClient.client!=null&&unityClient.client.physics.tree != null)
             {
                 Tree4 node;// = ShapPhysics.tree;
                 Stack<Tree4> nodes = new Stack<Tree4>();
                 float size = 0;
-                nodes.Push(ShapPhysics.tree);
+                nodes.Push(unityClient.client.physics.tree);
                 Stack<int> indexs = new Stack<int>();
                 indexs.Push(-1);
                 int i = -1;
@@ -37,28 +37,29 @@ namespace IDG
                 colors[1] = Color.red;
                 colors[2] = Color.blue;
                 colors[3] = Color.yellow;
-                Color c=Color.black;
-                while (nodes.Count>0)
+                Color c = Color.black;
+                while (nodes.Count > 0)
                 {
                     node = nodes.Pop();
                     i = indexs.Pop();
                     //Debug.Log(1);
 
-                    size = (node.border.size).ToFloat()*2-node.depth*1f/Tree4.MaxDepth;
-                   
-                    if (i >= 0) {
-                        c  = colors[i];
+                    size = (node.border.size).ToFloat() * 2 - node.depth * 1f / Tree4.MaxDepth;
+
+                    if (i >= 0)
+                    {
+                        c = colors[i];
                     }
                     Gizmos.color = c;
-                    Gizmos.DrawWireCube(node.border.center.ToVector3(), new Vector3(size,(Tree4.MaxDepth- node.depth)*10, size));
-                    c.a = 0.2f*(1f * node.objs.Count/ Tree4.SplitSize);
+                    Gizmos.DrawWireCube(node.border.center.ToVector3(), new Vector3(size, (Tree4.MaxDepth - node.depth) * 10, size));
+                    c.a = 0.2f * (1f * node.objs.Count / Tree4.SplitSize);
                     Gizmos.color = c;
                     Gizmos.DrawCube(node.border.center.ToVector3(), new Vector3(size, (Tree4.MaxDepth - node.depth) * 10, size));
                     c.a = 0.3f;
                     Gizmos.color = c;
                     foreach (var item in node.objs)
                     {
-                        Gizmos.DrawSphere(item.transform.Position.ToVector3()+Vector3.up*(i+2), 1);
+                        Gizmos.DrawSphere(item.transform.Position.ToVector3() + Vector3.up * (i + 2), 1);
                     }
                     if (node.child != null)
                     {
@@ -71,10 +72,11 @@ namespace IDG
                         nodes.Push(node.child.RightUp);
                         indexs.Push(3);
                     }
-                   
+
                 }
             }
         }
+      
     }
 
 }

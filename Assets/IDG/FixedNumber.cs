@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using IDG;
 
+using System.Runtime.Serialization;
 
 
 namespace IDG
@@ -11,6 +12,7 @@ namespace IDG
     /// <summary>
     /// 定点数 使用Int64实现
     /// </summary>
+    [Serializable]
     public struct FixedNumber
     {
         /// <summary>
@@ -22,6 +24,7 @@ namespace IDG
         /// </summary>
         public static FixedNumber Zero = new FixedNumber(0);
         internal Int64 m_Bits;
+
         public FixedNumber(int x)
         {
             m_Bits = (x << Fix_Fracbits);
@@ -436,6 +439,8 @@ namespace IDG
             double tmp = (double)m_Bits / (double)(1 << Fix_Fracbits);
             return tmp.ToString();
         }
+
+      
     }
 }
 

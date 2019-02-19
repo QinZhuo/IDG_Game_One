@@ -16,10 +16,7 @@ namespace IDG.FSClient {
         /// 计时器
         /// </summary>
         protected Timer timer;
-        /// <summary>
-        /// 单例
-        /// </summary>
-        private static InputCenter instance;
+      
         /// <summary>
         /// 当前游戏时间 帧*帧间隔
         /// </summary>
@@ -37,9 +34,9 @@ namespace IDG.FSClient {
         /// 每帧调用函数
         /// </summary>
         public Action frameUpdate;
-        public static FixedNumber Time
+        public FixedNumber Time
         {
-            get { return instance. _time; }
+            get { return _time; }
         }
         /// <summary>
         /// 发送的摇杆操作信息
@@ -58,9 +55,9 @@ namespace IDG.FSClient {
         /// </summary>
         protected InputUnit[] _m_inputs;
 
-        public static bool IsLocalId(int id)
+        public bool IsLocalId(int id)
         {
-            return id == Instance.client.ServerCon.clientId;
+            return id == client.ServerCon.clientId;
         }
         public InputUnit this[int index]
         {
@@ -76,12 +73,7 @@ namespace IDG.FSClient {
                 }
             }
         }
-        public static InputCenter Instance {
-            get { if (instance == null) { instance = new InputCenter(); }
-                return instance;
-            }
-           
-        }
+       
         /// <summary>
         /// 接收帧消息 并解析消息
         /// </summary>
@@ -135,7 +127,7 @@ namespace IDG.FSClient {
             sendKey=new FrameKey();
             for (int i = 0; i < maxClient+1; i++)
             {
-                _m_inputs[i] = new InputUnit();
+                _m_inputs[i] = new InputUnit(this);
                 _m_inputs[i].Init();
             }
         }
@@ -204,10 +196,17 @@ namespace IDG.FSClient {
     public class InputUnit
     {
 
+
+        public InputUnit(InputCenter center){
+            inputCenter=center;
+        }
         /// <summary>
         /// 帧按键信息
         /// </summary>
         private FrameKey frameKey;
+        
+        public InputCenter inputCenter;
+
         /// <summary>
         /// 帧摇杆信息
         /// </summary>
@@ -297,11 +296,11 @@ namespace IDG.FSClient {
         public Action framUpdate
         {
             set {
-                InputCenter.Instance.frameUpdate=value;
+                inputCenter.frameUpdate=value;
             }
             get
             {
-                return InputCenter.Instance.frameUpdate;
+                return inputCenter.frameUpdate;
             }
         }
     }

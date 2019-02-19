@@ -13,14 +13,20 @@ public class SkillUI : MonoBehaviour {
 	
 	
 	// Update is called once per frame
+
+    public FightClientForUnity3D unityClient;
+    void Start () {
+       
+
+    }
 	void Update () {
         if (skillList == null)
         {
-            if(FightClientForUnity3D.Instance!=null
-                &&FightClientForUnity3D.Instance.playerData!=null
+            if(unityClient!=null
+                &&unityClient.client.localPlayer!=null
                 )
             {
-                skillList = FightClientForUnity3D.Instance.playerData.skillList;
+                skillList =(unityClient.client.localPlayer as PlayerData).skillList;
             }
         }
         SkillBase skill = GetSkill(joy.key);

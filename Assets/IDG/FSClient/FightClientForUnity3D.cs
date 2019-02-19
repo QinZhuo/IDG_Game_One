@@ -10,25 +10,40 @@ using UnityEngine.UI;
 /// </summary>
 public class FightClientForUnity3D : MonoBehaviour {
     
-    protected FSClient client;
-    public static FightClientForUnity3D instance;
+    public FSClient client;
+    //public static FightClientForUnity3D instance;
     public List<JoyStick> joySticks;
-    public PlayerData playerData;
-    public static FightClientForUnity3D Instance
-    {
-        get { return instance; }
-    }
+    public int testCount=2;
+    static int idCount=0;
+    public int id;
+    Dictionary<KeyCode, int> KeyToId;
+    // public static FightClientForUnity3D Instance
+    // {
+    //     get { return instance; }
+    // }
     // Use this for initialization
     void Awake () {
-        if (instance == null) instance = this;
+        id = idCount++;
+        if (idCount <= 1)
+        {
+            for (int i = 0; i < testCount; i++)
+            {
+                GameObject.Instantiate(gameObject);
+            }
+        }
         client = new FSClient();
+        KeyToId = new Dictionary<KeyCode, int>();
+        KeyToId.Add(KeyCode.F1, 0);
+        KeyToId.Add(KeyCode.F2, 1);
+        KeyToId.Add(KeyCode.F3, 2);
+        client.unityClient = this;
         client.Connect("127.0.0.1", 12345,10);
 
         // foreach (JoyStick joyStick in joySticks)
         // {
         //     InputCenter.Instance.AddJoyStick(joyStick.frameKey,joyStick.GetInfo());
         // }
-        ShapPhysics.Init();
+       
         //V2 v2 = new V2(1, 0);
         //for (int i =0; i <= 360; i+=30)
         //{
@@ -48,6 +63,7 @@ public class FightClientForUnity3D : MonoBehaviour {
         // V2 v2 = new V2(-5, 99);
         // Debug.Log("(-5, 99)" + v2.x * v2.x + "," + v2.y * v2.y);
         //  Debug.Log("normalized"+v2.normalized);
+      
 
     }
 	
@@ -56,7 +72,7 @@ public class FightClientForUnity3D : MonoBehaviour {
     
 	// Update is called once per frame
 	void Update () {
-        
+        ChangeClient();
        if (client.MessageList.Count > 0)
        {
            client.ParseMessage(client.MessageList.Dequeue());
@@ -64,6 +80,34 @@ public class FightClientForUnity3D : MonoBehaviour {
        
         
         CommitKey();
+    }
+    public void ChangeClient()
+    {
+        foreach (var t in KeyToId)
+        {
+            if (Input.GetKeyDown(t.Key))
+            {
+                if (id == t.Value)
+                {
+                    ChildActive(true);
+                }
+                else
+                {
+                    ChildActive(false);
+                }
+            }
+        }
+ 
+    }
+    public void ChildActive(bool active)
+    {
+        foreach (var item in GetComponentsInChildren<Transform>(true))
+        {
+            if (item.gameObject != gameObject)
+            {
+                item.gameObject.SetActive(active);
+            }
+        }
     }
     public void CommitKey()
     {
@@ -73,12 +117,12 @@ public class FightClientForUnity3D : MonoBehaviour {
         //     key |= IDG.KeyNum.Attack;
         // }
        // InputCenter.Instance.
-        InputCenter.Instance.SetKey(Input.GetKey(KeyCode.J),KeyNum.Attack);
+        client.inputCenter.SetKey(Input.GetKey(KeyCode.J),KeyNum.Attack);
 
 
         foreach (var joy in joySticks)
         {
-             InputCenter.Instance.SetJoyStick(joy.key,joy.GetInfo());
+              client.inputCenter.SetJoyStick(joy.key,joy.GetInfo());
         }
         
         // InputCenter.Instance.SetKey(Input.GetKey(KeyCode.A),KeyNum.Left);

@@ -14,12 +14,16 @@ public class ItemData : NetData
 {
     public NetData user;
 
-    public override void Init()
+    public override void Init(FSClient client)
     {
-        base.Init();
+        base.Init(client);
         physics.enable = true;
         isTrigger = true;
 
+    }
+    public override void Start()
+    {
+        Shap = new BoxShap(new FixedNumber(1), new FixedNumber(1));
     }
     protected override void FrameUpdate()
     {
@@ -40,7 +44,7 @@ public class ItemData : NetData
         if (other.tag == "Player" && other != user)
         {
             UnityEngine.Debug.Log("Enter触发Bullet！！！！");
-            NetObjectManager.Destory<ItemData>(this.view);
+            client.objectManager.Destory(this.view);
             //var gun = new GunBase();
             //gun.Init(20, this);
             //(other as PlayerData).AddGun(gun);
