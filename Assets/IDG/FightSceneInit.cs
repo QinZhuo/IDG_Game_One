@@ -12,21 +12,78 @@ public class FightSceneInit : MonoBehaviour {
    
     private void Awake()
     {
+        id = idCount++;
+       
         for (int i = 0; i < views.Length; i++)
         {
             Destroy(views[i].gameObject);
         }
-        
-    }
-    void Start () {
+        if (id ==0)
+        {
+            for (int i = 0; i < testCount; i++)
+            {
+                GameObject.Instantiate(gameObject);
+
+            }
+        }
         InitScene();
+    }
+
+    public int testCount = 2;
+    static int idCount = 0;
+    public int id;
+    Dictionary<KeyCode, int> KeyToId;
+    void Start () {
+
+
+        if (id>=1)
+        {
+            ChildActive(false);
+        }
+        KeyToId = new Dictionary<KeyCode, int>();
+        KeyToId.Add(KeyCode.F1, 0);
+        KeyToId.Add(KeyCode.F2, 1);
+        KeyToId.Add(KeyCode.F3, 2);
+
+       
+    }
+    private void Update()
+    {
+        ChangeClient();
+    }
+    public void ChangeClient()
+    {
+        foreach (var t in KeyToId)
+        {
+            if (Input.GetKeyDown(t.Key))
+            {
+                if (id == t.Value)
+                {
+                    ChildActive(true);
+                }
+                else
+                {
+                    ChildActive(false);
+                }
+            }
+        }
 
     }
-	[ContextMenu("SaveScene")]
+    public void ChildActive(bool active)
+    {
+        foreach (var item in GetComponentsInChildren<Transform>(true))
+        {
+            if (item.gameObject != gameObject)
+            {
+                item.gameObject.SetActive(active);
+            }
+        }
+    }
+    [ContextMenu("SaveScene")]
 	public void SaveScene()
     {
         sceneInfo = new List<DataInitInfo>();
-        views = GetComponentsInChildren<View>();
+        views = GetComponentsInChildren<View>(true);
         foreach (var v in views)
         {
             var info = new DataInitInfo();

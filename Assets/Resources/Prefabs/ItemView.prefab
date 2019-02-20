@@ -21,7 +21,6 @@ GameObject:
   - component: {fileID: 4806065920073088}
   - component: {fileID: 33539221008477626}
   - component: {fileID: 23945419000795880}
-  - component: {fileID: 114355808597195622}
   - component: {fileID: 114413926232399020}
   m_Layer: 0
   m_Name: ItemView
@@ -84,19 +83,6 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1096416791740874}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!114 &114355808597195622
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1096416791740874}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f69226dc194115641a9e7d85d90e5c44, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  x: 1
-  y: 1
 --- !u!114 &114413926232399020
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -282,8 +282,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4325977294200994}
   - component: {fileID: 114428175159262102}
-  - component: {fileID: 114523792115975790}
-  - component: {fileID: 114473680170891010}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -1578,33 +1576,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   anim: {fileID: 95537050335376340}
---- !u!114 &114473680170891010
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1256972627039808}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6968b3ade9e58744fb1b61a03d210c0b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  values:
-  - key: clientId
-    value: 0
---- !u!114 &114523792115975790
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1256972627039808}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bdb426caba0d86446b6efcdc35f0e14a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  r: 0.5
-  num: 16
 --- !u!136 &136844654566789002
 CapsuleCollider:
   m_ObjectHideFlags: 1

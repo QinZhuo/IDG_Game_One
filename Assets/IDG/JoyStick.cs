@@ -16,6 +16,7 @@ namespace IDG.MobileInput
         float maxScale;
         Coroutine coroutine;
         bool isDown;
+        bool onDrag;
         Fixed2 dir = Fixed2.zero;
         public KeyNum key;
         public Action BeginMove;
@@ -28,23 +29,28 @@ namespace IDG.MobileInput
         public KeyCode right;
         private void Update()
         {
-            if (!useKey|| isDown) return;
+            if (!useKey|| onDrag) return;
             Vector3 pos = new Vector3();
+            isDown = false; 
             if (Input.GetKey(left))
             {
                 pos.x -= 1;
+                isDown = true;
             }
             if (Input.GetKey(right))
             {
                 pos.x += 1;
+                isDown = true;
             }
             if (Input.GetKey(down))
             {
                 pos.y -= 1;
+                isDown = true;
             }
             if (Input.GetKey(up))
             {
                 pos.y += 1;
+                isDown = true;
             }
             moveObj.transform.position = transform.position + pos.normalized * maxScale;
             Vector3 tmp = GetVector3();
@@ -73,6 +79,7 @@ namespace IDG.MobileInput
         public void OnBeginDrag(PointerEventData eventData)
         {
             isDown = true;
+            onDrag = true;
             Vector3 tmp = GetVector3();
             dir=new Fixed2(tmp.x, tmp.y);
             if (BeginMove != null)
@@ -117,6 +124,7 @@ namespace IDG.MobileInput
             }
             //direction = new V2();
             isDown = false;
+            onDrag = false;
         }
 
         // Use this for initialization

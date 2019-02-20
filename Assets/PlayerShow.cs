@@ -6,8 +6,6 @@ using IDG.FSClient;
 public class PlayerShow : NetObjectView<PlayerData> {
     // public NetInfo net;
    // public int clientId = -1;
-    static int playerUnitId = 1;
-    public NetObjectView<PlayerData> netPrefab;
     public Animator anim;
     private new void Start()
     {

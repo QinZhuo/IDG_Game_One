@@ -13,29 +13,16 @@ public class FightClientForUnity3D : MonoBehaviour {
     public FSClient client;
     //public static FightClientForUnity3D instance;
     public List<JoyStick> joySticks;
-    public int testCount=2;
-    static int idCount=0;
-    public int id;
-    Dictionary<KeyCode, int> KeyToId;
+
     // public static FightClientForUnity3D Instance
     // {
     //     get { return instance; }
     // }
     // Use this for initialization
     void Awake () {
-        id = idCount++;
-        if (idCount <= 1)
-        {
-            for (int i = 0; i < testCount; i++)
-            {
-                GameObject.Instantiate(gameObject);
-            }
-        }
+        
         client = new FSClient();
-        KeyToId = new Dictionary<KeyCode, int>();
-        KeyToId.Add(KeyCode.F1, 0);
-        KeyToId.Add(KeyCode.F2, 1);
-        KeyToId.Add(KeyCode.F3, 2);
+   
         client.unityClient = this;
         client.Connect("127.0.0.1", 12345,10);
 
@@ -72,7 +59,7 @@ public class FightClientForUnity3D : MonoBehaviour {
     
 	// Update is called once per frame
 	void Update () {
-        ChangeClient();
+       
        if (client.MessageList.Count > 0)
        {
            client.ParseMessage(client.MessageList.Dequeue());
@@ -81,34 +68,8 @@ public class FightClientForUnity3D : MonoBehaviour {
         
         CommitKey();
     }
-    public void ChangeClient()
-    {
-        foreach (var t in KeyToId)
-        {
-            if (Input.GetKeyDown(t.Key))
-            {
-                if (id == t.Value)
-                {
-                    ChildActive(true);
-                }
-                else
-                {
-                    ChildActive(false);
-                }
-            }
-        }
- 
-    }
-    public void ChildActive(bool active)
-    {
-        foreach (var item in GetComponentsInChildren<Transform>(true))
-        {
-            if (item.gameObject != gameObject)
-            {
-                item.gameObject.SetActive(active);
-            }
-        }
-    }
+   
+   
     public void CommitKey()
     {
         
