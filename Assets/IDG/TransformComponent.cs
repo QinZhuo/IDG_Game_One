@@ -25,6 +25,7 @@ namespace IDG
             }
             set
             {
+                if(_position==value)return;
                 if (data.Shap == null)
                 {
                     _position = value;
@@ -34,7 +35,7 @@ namespace IDG
                 else
                 {
                     _position = value;
-                    Tree4.SetActive(data);
+                    data.client.physics.tree.SetActive(data);
 
                 }
 
@@ -76,7 +77,7 @@ namespace IDG
         public void PhysicsEffect()
         {
             if (data.Shap == null) return;
-            if (data.isTrigger || !data.physics.CheckCollision(data))
+            if (data.isTrigger || !data.rigibody.CheckCollision(data))
             {
                 if (_position != _lastPos || _rotation != _lastRota)
                 {

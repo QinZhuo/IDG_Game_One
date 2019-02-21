@@ -25,6 +25,7 @@ public class ItemManager
         skillTable=new Dictionary<SkillId, Func<SkillBase>>();
         skillTable.Add(SkillId.Shoots,()=>{return new SkillShoots();});
         skillTable.Add(SkillId.Gun,()=>{return new SkillGun();});
+         skillTable.Add(SkillId.Ray,()=>{return new SkillRay();});
     }
     public static SkillBase GetSkill(SkillId skillId){
         
@@ -36,4 +37,5 @@ public enum SkillId
 {
     Shoots,
     Gun,
+    Ray,
 }

@@ -103,7 +103,7 @@ namespace IDG.FSClient
         public View view;
        
         public TransformComponent transform;
-        public PhysicsComponent physics;
+        public PhysicsComponent rigibody;
         public List<ComponentBase> comList;
 
         public FSClient client;
@@ -149,7 +149,7 @@ namespace IDG.FSClient
             {
                 item.Update();
             }
-            physics.Update();
+            rigibody.Update();
            
         }
         public virtual void Init(FSClient client)
@@ -157,8 +157,8 @@ namespace IDG.FSClient
             this.client = client;
             Input.framUpdate += DataFrameUpdate;
             comList = new List<ComponentBase>();
-            physics =new PhysicsComponent();
-            physics.Init(OnPhysicsCheckEnter,OnPhysicsCheckStay,OnPhysicsCheckExit);
+            rigibody =new PhysicsComponent();
+            rigibody.Init(OnPhysicsCheckEnter,OnPhysicsCheckStay,OnPhysicsCheckExit);
             transform=new TransformComponent();
             transform.Init(this);
             Debug.Log(name+"init");

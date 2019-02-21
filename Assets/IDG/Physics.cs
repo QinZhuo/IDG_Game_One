@@ -14,7 +14,7 @@ namespace IDG
         /// <summary>
         /// 是否激活
         /// </summary>
-        public bool active = true;
+        public bool active = false;
         /// <summary>
         /// 上次碰撞检测时间
         /// </summary>
@@ -107,6 +107,8 @@ namespace IDG
             shaps.Remove(obj);
             Tree4.Remove(obj);
         }
+
+        
         //GJK算法原理
         //两个物体进行明可夫斯基差操作 得到的新图形形状包含原点则这两个图形的是相交的
         /// <summary>
@@ -116,11 +118,19 @@ namespace IDG
         /// <param name="a">检测对象a</param>
         /// <param name="b">检测对象b</param>
         /// <returns>是否碰撞</returns>
-        public static bool Check(NetData a, NetData b)
+        public static bool Check(ShapBase a, ShapBase b)
         {
-            return Tree4.BoxCheck(a, b)&&GJKCheck(a.Shap, b.Shap);//;// xB&&yB;
+            return BoxCheck(a, b)&&GJKCheck(a, b);//;// xB&&yB;
         }
-        
+        public List<NetData> OverlapShap(ShapBase shap,Fixed2 position)
+        {
+            shap.position = position;
+            return OverlapShap(shap);
+        }
+        public List<NetData> OverlapShap(ShapBase shap)
+        {
+            return tree.CheckShap(shap);
+        }
         /// <summary>
         /// GJK算法的多边形碰撞检测
         /// </summary>
@@ -155,6 +165,18 @@ namespace IDG
              
 
             }
+        }
+
+        public static bool BoxCheck(ShapBase objA, ShapBase objB)
+        {
+            if (FixedNumber.Abs((objA.position.x - objB.position.x)) < (objA.width + objB.width) / 2
+                &&
+                FixedNumber.Abs((objA.position.y - objB.position.y)) < (objA.height + objB.height) / 2
+                )
+            {
+                return true;
+            }
+            return false;
         }
     }
 
@@ -246,10 +268,16 @@ namespace IDG
         private FixedNumber down;
         public FixedNumber height;// { get { return Ratio.AbsMax(up,down); } }
         public FixedNumber width;// { get { return Ratio.AbsMax(left, right); } }
-        private Fixed2[] _points;
+        protected Fixed2[] _points;
         public NetData data;
-        public Fixed2 position { get { if (data != null) { return data.transform.Position; } else { return Fixed2.zero; } } }
+        public Fixed2 position { get { if (data != null) { return data.transform.Position; } else { return _position; } }
+            set
+            {
+                _position = value;
+            }
+        }
         public FixedNumber rotation { get { if (data != null) { return data.transform.Rotation; } else { return new FixedNumber(); } } }
+        protected Fixed2 _position=Fixed2.zero;
         
         public ShapBase()
         {
@@ -260,7 +288,7 @@ namespace IDG
             _points = points;
             ResetSize();
         }
-        
+    
         public Fixed2 GetPoint(int index)
         {
             return _points[index].Rotate(rotation);

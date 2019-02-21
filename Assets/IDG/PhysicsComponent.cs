@@ -8,7 +8,9 @@ namespace IDG
 {
     public class PhysicsComponent
     {
-        public bool enable=false;
+        public bool useCheckCallBack=false;
+
+        public bool useCheck=false;
      
         protected List<NetData> lastCollisonDatas = new List<NetData>();
         public List<NetData> collisonDatas=new List<NetData>();
@@ -20,7 +22,7 @@ namespace IDG
             OnPhysicsCheckExit=exit;
         }
         public void Update(){
-            if (enable)
+            if (useCheckCallBack)
             {
                 foreach (var other in this.collisonDatas)
                 {

@@ -51,6 +51,7 @@ namespace IDG.FSClient
         public NetData localPlayer;
         public ShapPhysics physics;
         public object unityClient;
+        public IDG.FSClient.Random random;
         private Queue<ProtocolBase> _messageList=new Queue<ProtocolBase>();
         /// <summary>
         /// 连接服务器函数
@@ -70,6 +71,7 @@ namespace IDG.FSClient
             objectManager=new NetObjectManager(this);
             physics =new ShapPhysics();
             physics.Init();
+            random =new IDG.FSClient.Random(20190220);
         }
         Dictionary<Connection, byte[]> lastBytesList = new Dictionary<Connection, byte[]>();
         /// <summary>

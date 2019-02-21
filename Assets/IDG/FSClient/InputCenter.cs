@@ -101,7 +101,7 @@ namespace IDG.FSClient {
                 {
                    
                     frameUpdate();
-                    Tree4.CheckTree();
+                    client.physics.tree.CheckTree();
                 }
                 this._time += FSClient.deltaTime;
             }

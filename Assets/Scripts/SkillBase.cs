@@ -13,11 +13,11 @@ public class SkillBase:ComponentBase
     public virtual void UseOver()
     {
         timer = time;
-        UnityEngine.Debug.LogError("UseOver");
+     //   UnityEngine.Debug.LogError("UseOver");
     }
     public virtual void StayUse(){
       //  timer = time;
-        UnityEngine.Debug.LogError("StayUse");
+      //  UnityEngine.Debug.LogError("StayUse");
     }
     public override void Update()
     {
@@ -64,7 +64,7 @@ public class SkillList:ComponentBase
         {
             if (item.Value.Count>0)
             {
-                item.Value[0].Update();
+                item.Value[item.Value.Count-1].Update();
             }
         } 
     }

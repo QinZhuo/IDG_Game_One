@@ -33,13 +33,28 @@ namespace IDG
             Points = v2s;
         }
     }
-    public abstract class Collider2DBase_IDG:MonoBehaviour
+    public class RayShap : ShapBase
     {
-        public ShapBase shap;
-        public void InitShap()
+        public static RayShap GetRay(Fixed2 origin, Fixed2 direction,FixedNumber length)
         {
-            shap = GetShap();
+            var shap = new RayShap(direction.normalized*length);
+            shap._position = origin;
+            return shap;
         }
-        public abstract ShapBase GetShap();
+        public RayShap ResetDirection(Fixed2 origin, Fixed2 direction,FixedNumber length)
+        {
+            position = origin;
+            _points[1] = direction * length;
+            ResetSize();
+            return this;
+        }
+
+        public RayShap(Fixed2 direction)
+        {
+            Fixed2[] v2s = new Fixed2[2];
+            v2s[0] = Fixed2.zero;
+            v2s[1] = direction;
+            Points = v2s;
+        }
     }
 }

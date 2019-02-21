@@ -58,7 +58,7 @@ public class PlayerData: HealthData
         this.tag = "Player";
         skillList= AddCommponent<SkillList>();
         Shap = new CircleShap(new FixedNumber(0.5f), 8);
-        
+        rigibody.useCheck=true;
         
      
         if (IsLocalPlayer)

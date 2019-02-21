@@ -13,7 +13,7 @@ public class FightClientForUnity3D : MonoBehaviour {
     public FSClient client;
     //public static FightClientForUnity3D instance;
     public List<JoyStick> joySticks;
-
+    public Camera mainCamera;
     // public static FightClientForUnity3D Instance
     // {
     //     get { return instance; }

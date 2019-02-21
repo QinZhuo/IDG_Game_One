@@ -128,6 +128,7 @@ public class FightSceneInit : MonoBehaviour {
             }
         }
     }
+    
 }
 [System.Serializable]
 public struct DataInitInfo

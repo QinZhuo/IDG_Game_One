@@ -19,7 +19,7 @@ namespace IDG
         /// <summary>
         /// 空间中物体数多余该值时进行空间分割
         /// </summary>
-        public static int SplitSize = 5;
+        public static int SplitSize =10;
         /// <summary>
         /// 孩子节点
         /// </summary>
@@ -48,17 +48,65 @@ namespace IDG
         /// <summary>
         /// 被激活的树节点列表
         /// </summary>
-        public static List<Tree4> activeTreeList=new List<Tree4>();
+        public  List<Tree4> activeTreeList=new List<Tree4>();
 
-        public static void CheckTree()
+        public  void CheckTree()
         {
+          //  Debug.LogErrorFormat("activeTreeListCount : {0}",activeTreeList.Count);
             foreach (var tree in activeTreeList)
             {
+                tree.DebugActiveTree();
                 Check(tree);
+                 
             }
+            activeTreeList.Clear();
         }
 
-        public static void Check(Tree4 tree)
+        public void DebugActiveTree(){
+            Color c=Color.magenta;
+            c.a=0.4f;
+            if(collisonInfo.active){    
+                for (int x = -1; x <= 1; x++)
+                {
+                    for (int z = -1; z <= 1; z++)
+                    {
+                        UnityEngine.Debug.DrawRay(border.center.ToVector3(),new Vector3(x,0,z)*border.size.ToFloat()*0.5f,c,0.2f);
+                    }
+                }    
+            }
+        }
+        public List<NetData> CheckShap(ShapBase shap)
+        {
+            List<NetData> objs=new List<NetData>();
+           var treeList=GetInTress(shap);
+           foreach (var tree in treeList)
+           {
+                for (int i = 0; i < tree.objs.Count; i++)
+                {
+                    if (ShapPhysics.Check(shap, tree.objs[i].Shap)){
+                        objs.Add(tree.objs[i]);
+                    }
+                }
+           }
+            return objs;
+        }
+        public List<Tree4> GetInTress(ShapBase shap)
+        {
+            List<Tree4> treeList = new List<Tree4>();
+            if (child == null)
+            {
+                if (IsIn(shap))
+                {
+                    treeList.Add(this);
+                }
+            }
+            else
+            {
+                treeList.AddRange(child.GetInTrees(shap));
+            }
+            return treeList;
+        }
+        static void Check(Tree4 tree)
         {
             if (!tree.collisonInfo.active ) return ;
             
@@ -68,10 +116,10 @@ namespace IDG
             {
                 for (int j = i + 1; j < count; j++)
                 {
-                    if (objs[i] != objs[j] && ShapPhysics.Check(objs[i], objs[j]))
+                    if (objs[i] != objs[j]&&(objs[i].rigibody.useCheck||objs[j].rigibody.useCheck)&& ShapPhysics.Check(objs[i].Shap, objs[j].Shap))
                     {
-                        objs[i].physics.collisonDatas.Add(objs[j]);
-                        objs[j].physics.collisonDatas.Add(objs[i]);
+                        objs[i].rigibody.collisonDatas.Add(objs[j]);
+                        objs[j].rigibody.collisonDatas.Add(objs[i]);
                     }
                 }
 
@@ -111,7 +159,7 @@ namespace IDG
         }
         public void Add(NetData obj)
         {
-            if (!IsIn(obj)) return;
+            if (!IsIn(obj.Shap)) return;
             if (objs.Contains(obj)) return;
             if (child == null)
             {
@@ -128,7 +176,6 @@ namespace IDG
         }
         private void Link(NetData obj)
         {
-            
             objs.Add(obj);
             obj.trees.Add(this);
         }
@@ -151,18 +198,8 @@ namespace IDG
                 obj.trees.Remove(this);
             }
         }
-        public static bool BoxCheck(NetData objA,NetData objB)
-        {
-            if (FixedNumber.Abs( (objA.transform.Position.x-objB.transform.Position.x))<(objA.Width+objB.Width)/2
-                &&
-                FixedNumber.Abs((objA.transform.Position.y - objB.transform.Position.y)) < (objA.Height + objB.Height) / 2
-                )
-            {
-                return true;
-            }
-            return false;
-        }
-        public static void SetActive(NetData obj)
+        
+        public void SetActive(NetData obj)
         {
             foreach (var item in obj.trees)
             {
@@ -182,18 +219,18 @@ namespace IDG
         }
         public void SubMove(NetData obj)
         {
-            if (!IsIn(obj))
+            if (!IsIn(obj.Shap))
             {
                 DisLink(obj);
             }
             brother.Add(obj);
             //root.Add(obj);
         }
-        public bool IsIn(NetData obj)
+        public bool IsIn(ShapBase shap)
         {
-            if(( (border.center.x-obj.transform.Position.x).Abs()<=(border.size+obj.Width/2))
+            if(( (border.center.x- shap.position.x).Abs()<=(border.size+shap.width/2))
                 &&
-                ((border.center.y - obj.transform.Position.y).Abs() <= (border.size + obj.Height/2))
+                ((border.center.y - shap.position.y).Abs() <= (border.size + shap.height/2))
                 )
             {
                 return true;
@@ -231,6 +268,16 @@ namespace IDG
             trees[(int)Pos.RightUp].brother = new Tree4Brother(LeftUp, brother.Right, brother.Up, RightDown);
             trees[(int)Pos.RightDown].brother = new Tree4Brother(LeftDown, brother.Right, RightUp, brother.Down);
         }
+
+        public List<Tree4> GetInTrees(ShapBase shap)
+        {
+            List<Tree4> treeList = new List<Tree4>();
+            foreach (var t in trees)
+            {
+                treeList.AddRange(t.GetInTress(shap));
+            }
+            return treeList;
+        }
         /// <summary>
         /// 向子节点添加对象
         /// </summary>
@@ -267,6 +314,8 @@ namespace IDG
             brothers[(int)Dir.Up] = up;
             brothers[(int)Dir.Down] = down;
         }
+
+        
         /// <summary>
         /// 向邻居节点添加对象
         /// </summary>

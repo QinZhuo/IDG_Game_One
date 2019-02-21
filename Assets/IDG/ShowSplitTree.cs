@@ -55,6 +55,10 @@ namespace IDG
                     c.a = 0.2f * (1f * node.objs.Count / Tree4.SplitSize);
                     Gizmos.color = c;
                     Gizmos.DrawCube(node.border.center.ToVector3(), new Vector3(size, (Tree4.MaxDepth - node.depth) * 10, size));
+                     Gizmos.color = Color.black;
+
+                    
+                   
                     c.a = 0.3f;
                     Gizmos.color = c;
                     foreach (var item in node.objs)
